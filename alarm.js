@@ -44,7 +44,7 @@
     { k: "file", t: "📁 ফোনের নিজের অডিও ফাইল (অফলাইনে বাজে)", r: null, file: true }
   ];
 
-  var list = [], meta = { exact: true, notif: true, playing: false };
+  var list = [], meta = { exact: true, notif: true, playing: false, battery: true };
   var built = false, adding = false;
 
   function aud() { return window.__drAud; }
@@ -74,7 +74,7 @@
   async function reload() {
     var r = await P.list();
     list = r.alarms || [];
-    meta = { exact: r.exact !== false, notif: r.notif !== false, playing: !!r.playing };
+    meta = { exact: r.exact !== false, notif: r.notif !== false, playing: !!r.playing, battery: r.battery !== false };
   }
   async function persist() {
     var r = await P.save({ alarms: list });
@@ -112,6 +112,13 @@
       host.appendChild(eb);
     }
 
+    if (!meta.battery) {
+      var bb = el("button", "al-warn", "🔋 ব্যাটারি সীমাবদ্ধতা বন্ধ করুন (অ্যাপটিকে “Don’t optimize / Unrestricted” দিন, নইলে ফোন অ্যালার্ম আটকে দিতে পারে)");
+      bb.type = "button";
+      bb.onclick = function () { P.openBatterySettings(); setTimeout(function () { reload().then(render); }, 5000); };
+      host.appendChild(bb);
+    }
+
     var top = el("div", "al-top");
     var add = el("button", "al-add", adding ? "✕ বাতিল" : "＋ নতুন অ্যালার্ম");
     add.type = "button";
@@ -127,8 +134,34 @@
 
     if (adding) host.appendChild(form());
 
+    host.appendChild(diag());
     list.slice().sort(function (a, b) { return a.time < b.time ? -1 : 1; }).forEach(function (a) { host.appendChild(card(a)); });
 
+  }
+
+  /* নির্ণয়: আসল অ্যালার্ম-পথে ১ মিনিটের পরীক্ষা ও লগ */
+  function diag() {
+    var d = el("div", "al-form");
+    d.appendChild(el("div", "al-d", "অ্যালার্ম না বাজলে: নিচের বোতাম চেপে অ্যাপ বন্ধ করে ফোন লক করুন, ১ মিনিট অপেক্ষা করুন। তারপর অ্যাপ খুলে “লগ দেখুন” চাপুন।"));
+    var row = el("div", "al-top");
+    var t = el("button", "al-add", "⏱ ১ মিনিট পরে পরীক্ষা"); t.type = "button";
+    t.onclick = function () {
+      var a = list[0] || { id: 1, on: true, title: "পরীক্ষা", repeat: 1, urls: [] };
+      var q = PRESETS[2];
+      var test = { id: -99, on: true, title: "পরীক্ষা: সূরা ফাতিহা", repeat: 1, urls: build(q, 1) };
+      P.testIn({ alarm: test, secs: 60 }).then(function () { alert("১ মিনিট পরের পরীক্ষা-অ্যালার্ম বসানো হয়েছে। এখন অ্যাপ বন্ধ করে ফোন লক করুন।"); })
+        .catch(function (e) { alert("বসানো যায়নি: " + (e && e.message || "")); });
+    };
+    row.appendChild(t);
+    var lg = el("button", "al-add", "📋 লগ দেখুন"); lg.type = "button";
+    var out = el("pre", "al-d"); out.style.whiteSpace = "pre-wrap"; out.style.fontSize = "12px"; out.style.direction = "ltr";
+    lg.onclick = function () {
+      P.getLog().then(function (r) { out.textContent = (r.log && r.log.length) ? r.log.join("\n") : "এখনো কোনো লগ নেই — অ্যালার্ম একবারও আসেনি।"; })
+        .catch(function (e) { out.textContent = "লগ পড়া যায়নি"; });
+    };
+    row.appendChild(lg);
+    d.appendChild(row); d.appendChild(out);
+    return d;
   }
 
   function form() {

@@ -31,7 +31,7 @@ public class RuqyahAudioService extends Service {
     private MediaPlayer mp;
     private PowerManager.WakeLock wl;
     private List<List<String>> items = new ArrayList<>();
-    private int repeat = 1, round = 0, idx = 0, cand = 0, fails = 0;
+    private int repeat = 1, round = 0, idx = 0, cand = 0, fails = 0, attempts = 0;
     private boolean stopped = false;
 
     @Override public IBinder onBind(Intent i) { return null; }
@@ -58,7 +58,8 @@ public class RuqyahAudioService extends Service {
         if (items.isEmpty()) { finish(); return START_NOT_STICKY; }
         playing = true;
         stopped = false;
-        round = 0; idx = 0; cand = 0; fails = 0;
+        round = 0; idx = 0; cand = 0; fails = 0; attempts = 0;
+        AlarmStore.log(this, "সার্ভিস শুরু: " + items.size() + "টি অডিও, " + repeat + " বার");
         try {
             PowerManager pm = getSystemService(PowerManager.class);
             wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "masnunruqyah:audio");
@@ -102,7 +103,14 @@ public class RuqyahAudioService extends Service {
         List<String> c = items.get(idx);
         if (cand >= c.size()) { // এই আয়াতের সব লিংক ব্যর্থ: পরেরটায়
             idx++; cand = 0; fails++;
-            if (fails >= 6) { finish(); return; } // পরপর অনেকগুলো ব্যর্থ (নেট নেই) — আর চেষ্টা নয়
+            if (fails >= 6) { // পরপর অনেকগুলো ব্যর্থ (নেট নেই?) — ২০ সেকেন্ড পরে আবার, সর্বোচ্চ ৫ বার
+                if (attempts < 5) {
+                    attempts++; fails = 0; idx = 0; cand = 0;
+                    AlarmStore.log(this, "অডিও চালানো যায়নি, ২০ সেকেন্ড পরে আবার চেষ্টা (" + attempts + "/৫)");
+                    h.postDelayed(this::playCurrent, 20000);
+                } else { AlarmStore.log(this, "বারবার চেষ্টা করেও অডিও চালানো যায়নি"); finish(); }
+                return;
+            }
             h.post(this::playCurrent);
             return;
         }
@@ -111,12 +119,15 @@ public class RuqyahAudioService extends Service {
             mp = new MediaPlayer();
             mp.setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build());
             mp.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
-            mp.setDataSource(c.get(cand));
-            mp.setOnPreparedListener(m -> { if (!stopped) { fails = 0; m.start(); } });
+            String src = c.get(cand);
+            if (src.startsWith("/") && !new java.io.File(src).exists()) throw new java.io.FileNotFoundException(src);
+            mp.setDataSource(src);
+            mp.setOnPreparedListener(m -> { if (!stopped) { fails = 0; m.start(); AlarmStore.log(this, "অডিও বাজছে"); } });
             mp.setOnCompletionListener(m -> { idx++; cand = 0; h.post(this::playCurrent); });
-            mp.setOnErrorListener((m, w, x) -> { cand++; h.post(this::playCurrent); return true; });
+            mp.setOnErrorListener((m, w, x) -> { AlarmStore.log(this, "প্লেয়ার ত্রুটি " + w + "/" + x); cand++; h.post(this::playCurrent); return true; });
             mp.prepareAsync();
         } catch (Exception e) {
+            AlarmStore.log(this, "অডিও খুলতে ব্যর্থ: " + e.getClass().getSimpleName() + " " + e.getMessage());
             cand++;
             h.post(this::playCurrent);
         }

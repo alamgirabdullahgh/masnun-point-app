@@ -35,6 +35,23 @@ public class AlarmStore {
         return null;
     }
 
+    // নির্ণয়ের লগ: শেষ ২৫টি ঘটনা (অ্যালার্ম এল কিনা, সার্ভিস চালু হলো কিনা, অডিও কেন চলেনি)
+    static synchronized void log(Context c, String msg) {
+        try {
+            JSONArray a = new JSONArray(sp(c).getString("log", "[]"));
+            JSONArray n = new JSONArray();
+            String t = new java.text.SimpleDateFormat("dd/MM HH:mm:ss", java.util.Locale.US).format(new java.util.Date());
+            int from = Math.max(0, a.length() - 24);
+            for (int i = from; i < a.length(); i++) n.put(a.optString(i));
+            n.put(t + "  " + msg);
+            sp(c).edit().putString("log", n.toString()).apply();
+        } catch (Exception e) { }
+    }
+
+    static JSONArray getLog(Context c) {
+        try { return new JSONArray(sp(c).getString("log", "[]")); } catch (Exception e) { return new JSONArray(); }
+    }
+
     static boolean canExact(Context c) {
         AlarmManager am = c.getSystemService(AlarmManager.class);
         return Build.VERSION.SDK_INT < 31 || am.canScheduleExactAlarms();

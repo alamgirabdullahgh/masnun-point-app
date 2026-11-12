@@ -38,6 +38,9 @@ public class AudioAlarmPlugin extends Plugin {
         boolean n = Build.VERSION.SDK_INT < 33 || ContextCompat.checkSelfPermission(getContext(), Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
         r.put("notif", n);
         r.put("playing", RuqyahAudioService.playing);
+        boolean b = true;
+        try { b = Build.VERSION.SDK_INT < 23 || getContext().getSystemService(android.os.PowerManager.class).isIgnoringBatteryOptimizations(getContext().getPackageName()); } catch (Exception e) { }
+        r.put("battery", b);
         return r;
     }
 
@@ -64,6 +67,48 @@ public class AudioAlarmPlugin extends Plugin {
             ContextCompat.startForegroundService(getContext(), s);
             call.resolve();
         } catch (Exception e) { call.reject(String.valueOf(e.getMessage())); }
+    }
+
+    // আসল অ্যালার্ম-পথে পরীক্ষা: AlarmManager দিয়ে ৬০ সেকেন্ড পরে বাজায়
+    @PluginMethod
+    public void testIn(PluginCall call) {
+        try {
+            JSObject al = call.getObject("alarm");
+            int secs = call.getInt("secs", 60);
+            Intent i = new Intent(getContext(), AlarmReceiver.class).setAction(AlarmStore.ACTION).putExtra("id", -99).putExtra("alarmJson", al.toString());
+            android.app.PendingIntent p = android.app.PendingIntent.getBroadcast(getContext(), 99999, i, android.app.PendingIntent.FLAG_UPDATE_CURRENT | android.app.PendingIntent.FLAG_IMMUTABLE);
+            android.app.AlarmManager am = getContext().getSystemService(android.app.AlarmManager.class);
+            long t = System.currentTimeMillis() + secs * 1000L;
+            if (AlarmStore.canExact(getContext())) am.setExactAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, t, p);
+            else am.setAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, t, p);
+            AlarmStore.log(getContext(), "পরীক্ষা-অ্যালার্ম বসানো হলো (" + secs + " সেকেন্ড পরে, exact=" + AlarmStore.canExact(getContext()) + ")");
+            call.resolve();
+        } catch (Exception e) { call.reject(String.valueOf(e.getMessage())); }
+    }
+
+    @PluginMethod
+    public void getLog(PluginCall call) {
+        try {
+            JSObject r = new JSObject();
+            r.put("log", new JSArray(AlarmStore.getLog(getContext()).toString()));
+            call.resolve(r);
+        } catch (Exception e) { call.reject(String.valueOf(e.getMessage())); }
+    }
+
+    @PluginMethod
+    public void openBatterySettings(PluginCall call) {
+        try {
+            Intent i = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(i);
+        } catch (Exception e) {
+            try {
+                Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getContext().getPackageName()));
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(i);
+            } catch (Exception e2) { }
+        }
+        call.resolve();
     }
 
     @PluginMethod
