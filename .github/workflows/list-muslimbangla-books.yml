@@ -1,0 +1,40 @@
+name: List MuslimBangla Books
+# muslimbangla.com-এ কোন কিতাব কোন book-id তে আছে তা খুঁজে data-src/muslimbangla/books-index.json-এ রাখে (প্রতি অনুরোধে ২ সেকেন্ড বিরতি)।
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Probe book ids
+        run: |
+          mkdir -p data-src/muslimbangla
+          node -e '
+          const fs=require("fs");
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+          (async()=>{
+            const out=[];
+            for(let id=1;id<=40;id++){
+              try{
+                const r=await fetch(`https://muslimbangla.com/hadith-book/${id}/chapters`,{headers:{"user-agent":"daily-ruqyah-index/1.0"}});
+                const t=await r.text();
+                const title=(/<title>([^<]*)<\/title>/.exec(t)||[])[1]||"";
+                const ch=new Set([...t.matchAll(new RegExp("/hadith-book/"+id+"/chapter/(\\d+)","g"))].map(m=>m[1])).size;
+                out.push({id,status:r.status,title:title.trim(),chaptersOnPage1:ch});
+              }catch(e){out.push({id,error:String(e)})}
+              await sleep(2000);
+            }
+            fs.writeFileSync("data-src/muslimbangla/books-index.json",JSON.stringify(out,null,1));
+          })();'
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data-src/muslimbangla/books-index.json
+          git commit -m "muslimbangla book index" || echo none
+          git push

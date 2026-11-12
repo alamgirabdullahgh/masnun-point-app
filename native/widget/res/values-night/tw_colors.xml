@@ -1,0 +1,8 @@
+<resources>
+    <color name="w_bg">#16211C</color>
+    <color name="w_text">#E8F0EA</color>
+    <color name="w_text2">#B3C9BB</color>
+    <color name="w_cell_on">#1F4A39</color>
+    <color name="w_bar_bg">#2A4034</color>
+    <color name="w_bar_fg">#1E8E62</color>
+</resources>

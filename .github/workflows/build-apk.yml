@@ -1,0 +1,98 @@
+name: Build APK
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["README.md", "input/**", "output/**", ".github/workflows/ocr.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - name: Prepare web files
+        run: |
+          mkdir www
+          cp -r index.html app.js boot.js widget.js alarm.js symptom.js style.css sw.js manifest.webmanifest icons fonts data www/
+      - name: Create Android project
+        run: |
+          npm init -y >/dev/null
+          npm i @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+          npx cap add android
+          npx cap sync android
+      - name: Add updater, fixed signing key and version
+        run: |
+          # স্থির সাইনিং কী: একই কী দিয়ে সই করা হয়, তাই নতুন সংস্করণ আগেরটার ওপরেই ইনস্টল হয়
+          cp native/dr.keystore android/app/dr.keystore
+          D=android/app/src/main/java/com/dailyruqyah/app
+          cp native/*.java $D/
+          # টাইম উইজেট (Kotlin) ও তার লেআউট/ছবি/রং অ্যাপের ভেতরে
+          cp native/widget/kotlin/*.kt $D/
+          cp -r native/widget/res/. android/app/src/main/res/
+          # উইজেট Java-তে নয়, Kotlin-এ লেখা: Kotlin চালু ও minSdk ২৬ (java.time-এর জন্য)
+          sed -i "s/minSdkVersion = 22/minSdkVersion = 26/" android/variables.gradle
+          python3 - <<'PY'
+          import re
+          g=open('android/app/build.gradle').read()
+          g=re.sub(r'versionCode \d+','versionCode '+str(100+${{ github.run_number }}),g,1)
+          g=re.sub(r'versionName "[^"]*"','versionName "1.0.${{ github.run_number }}"',g,1)
+          g=g.replace('android {','android {\n    signingConfigs {\n        fixed {\n            storeFile file("dr.keystore")\n            storePassword "dailyruqyah"\n            keyAlias "dailyruqyah"\n            keyPassword "dailyruqyah"\n        }\n    }',1)
+          g=g.replace('buildTypes {','buildTypes {\n        debug {\n            signingConfig signingConfigs.fixed\n        }',1)
+          g=g.replace("apply plugin: 'com.android.application'","apply plugin: 'com.android.application'\napply plugin: 'kotlin-android'",1)
+          g=g.replace('android {','android {\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_17\n        targetCompatibility JavaVersion.VERSION_17\n    }\n    kotlinOptions {\n        jvmTarget = "17"\n    }',1)
+          rb=open('android/build.gradle').read()
+          rb=rb.replace("classpath 'com.android.tools.build:gradle:8.2.1'","classpath 'com.android.tools.build:gradle:8.2.1'\n        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22'",1)
+          open('android/build.gradle','w').write(rb)
+          open('android/app/build.gradle','w').write(g)
+          m=open('android/app/src/main/AndroidManifest.xml').read()
+          m=m.replace('<application','<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />\n    <uses-permission android:name="android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION" />\n    <application',1)
+          perms=''.join('    <uses-permission android:name="android.permission.%s" />\n'%x for x in ['ACCESS_BACKGROUND_LOCATION','RECEIVE_BOOT_COMPLETED','WAKE_LOCK','FOREGROUND_SERVICE','FOREGROUND_SERVICE_MEDIA_PLAYBACK','FOREGROUND_SERVICE_DATA_SYNC','POST_NOTIFICATIONS','USE_EXACT_ALARM'])
+          perms+='    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />\n'
+          perms+='    <uses-feature android:name="android.hardware.location" android:required="false" />\n'
+          m=m.replace('    <application',perms+'    <application',1)
+          comp='''    <receiver android:name=".UpdateResultReceiver" android:exported="false" />
+              <receiver android:name=".AlarmReceiver" android:exported="false" />
+              <receiver android:name=".BgUpdater$UpdateTickReceiver" android:exported="false" />
+              <receiver android:name=".AlarmBootReceiver" android:exported="true">
+                  <intent-filter>
+                      <action android:name="android.intent.action.BOOT_COMPLETED" />
+                      <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                      <action android:name="android.intent.action.TIME_SET" />
+                      <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                  </intent-filter>
+              </receiver>
+              <service android:name=".OfflineAudioService" android:exported="false" android:foregroundServiceType="dataSync" />
+              <service android:name=".RuqyahAudioService" android:exported="false" android:foregroundServiceType="mediaPlayback" />
+              <activity android:name=".WidgetSettingsActivity" android:exported="false" android:label="@string/tw_widget_name" android:theme="@android:style/Theme.Material.NoActionBar" />
+              <receiver android:name=".ClockWidget" android:exported="true" android:label="@string/tw_widget_name">
+                  <intent-filter>
+                      <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                      <action android:name="android.intent.action.BOOT_COMPLETED" />
+                      <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                      <action android:name="android.intent.action.TIME_SET" />
+                      <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                      <action android:name="android.intent.action.DATE_CHANGED" />
+                  </intent-filter>
+                  <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info" />
+              </receiver>
+              <receiver android:name=".LocationReceiver" android:exported="false" />
+              <provider android:name=".ApkShareProvider" android:authorities="com.dailyruqyah.app.apkshare" android:exported="false" android:grantUriPermissions="true" />
+          </application>'''
+          m=m.replace('</application>',comp,1)
+          open('android/app/src/main/AndroidManifest.xml','w').write(m)
+          PY
+          grep -n "versionCode\|versionName\|signingConfig" android/app/build.gradle
+      - name: Build debug APK
+        run: cd android && chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - name: Publish APK to Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk Daily-Ruqyah.apk
+          gh release delete latest --yes --cleanup-tag 2>/dev/null || true
+          gh release create "v1.0.${{ github.run_number }}" Daily-Ruqyah.apk --title "Daily Ruqyah v1.0.${{ github.run_number }}" --notes "ডাউনলোড করে ফোনে ইনস্টল করুন। অ্যাপের ভেতর থেকেও আপডেট করা যায়।" --latest

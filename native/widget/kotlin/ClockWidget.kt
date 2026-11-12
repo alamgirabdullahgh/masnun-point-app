@@ -1,0 +1,330 @@
+package com.dailyruqyah.app
+
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.graphics.Paint
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.TypedValue
+import android.widget.RemoteViews
+import android.widget.Toast
+import java.time.ZonedDateTime
+
+// হোম স্ক্রিনের একটি উইজেট: সময় + ইংরেজি তারিখ, আরবি + বাংলা তারিখ, পাঁচ ওয়াক্ত নামাজ
+class ClockWidget : AppWidgetProvider() {
+
+    override fun onUpdate(ctx: Context, mgr: AppWidgetManager, ids: IntArray) { LocationUpdater.register(ctx); refresh(ctx) }
+    override fun onEnabled(ctx: Context) { LocationUpdater.register(ctx); refresh(ctx) }
+    override fun onDisabled(ctx: Context) = cancel(ctx)
+    override fun onAppWidgetOptionsChanged(ctx: Context, mgr: AppWidgetManager, id: Int, opts: Bundle) = refresh(ctx)
+
+    override fun onReceive(ctx: Context, intent: Intent) {
+        super.onReceive(ctx, intent)
+        when (intent.action) {
+            ACTION_PICK -> pick(ctx, intent.getIntExtra("idx", -1))
+            // "আপডেট লোকেশন": এখনই নতুন অবস্থান চায় (নেট লাগে); পেলে উইজেট নিজে নতুন হয়
+            ACTION_LOCUPD -> locUpdate(ctx)
+            // রিবুট বা অ্যাপ আপডেটের পর অবস্থানের অনুরোধ আবার চালু করতে হয়
+            Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED -> {
+                LocationUpdater.register(ctx); refresh(ctx)
+            }
+            ACTION_TICK, Intent.ACTION_TIME_CHANGED, Intent.ACTION_TIMEZONE_CHANGED, Intent.ACTION_DATE_CHANGED -> {
+                refresh(ctx)
+            }
+        }
+    }
+
+    // "আপডেট লোকেশন": এখনই নতুন অবস্থান নেয় ও ফলাফল টোস্টে জানায়।
+    // ব্রডকাস্ট ধরে রাখার সীমা ১০ সেকেন্ড — তার বেশি হলে অ্যাপ "responding করছে না" দেখায় (আগের ১৫ সেকেন্ডের অপেক্ষায় এটাই হতো), তাই সময়সীমা ৮ সেকেন্ড।
+    private fun locUpdate(ctx: Context) {
+        val app = ctx.applicationContext
+        val ui = Handler(Looper.getMainLooper())
+        fun say(m: String) { ui.post { try { Toast.makeText(app, m, Toast.LENGTH_SHORT).show() } catch (e: Exception) { } } }
+        if (!Cfg(app).auto) { say("স্বয়ংক্রিয় অবস্থান বন্ধ আছে — উইজেট-সেটিংসে চালু করুন"); return }
+        if (!LocationUpdater.hasPerm(app)) {
+            say("আগে অবস্থানের অনুমতি দিন")
+            try { app.startActivity(Intent(app, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) } catch (e: Exception) { }
+            return
+        }
+        val pr = goAsync()
+        val timer = Handler(Looper.getMainLooper())
+        val done = java.util.concurrent.atomic.AtomicBoolean(false)
+        var cancel: (() -> Unit)? = null
+        val fin = {
+            if (done.compareAndSet(false, true)) {
+                timer.removeCallbacksAndMessages(null)
+                try { cancel?.invoke() } catch (e: Exception) { }
+                try { pr.finish() } catch (e: Exception) { }
+            }
+        }
+        val fail = "অবস্থান পাওয়া যায়নি — ফোনের লোকেশন ও নেটওয়ার্ক চালু আছে কিনা দেখুন"
+        try {
+            LocationUpdater.sync(app); refresh(app)
+            say("📍 অবস্থান খোঁজা হচ্ছে…")
+            cancel = LocationUpdater.freshFix(app) { got, moved ->
+                refresh(app)
+                say(if (!got) fail else if (moved) "✓ অবস্থান হালনাগাদ হয়েছে: " + Cfg(app).placeName() else "✓ অবস্থান ঠিকই আছে: " + Cfg(app).placeName())
+                fin()
+            }
+            timer.postDelayed({ if (!done.get()) { say(fail); fin() } }, 8000)
+        } catch (e: Exception) { fin() }
+    }
+
+    // ws/we = প্রতিটি ওয়াক্তের শুরু ও শেষ (আজ মধ্যরাত থেকে মিনিট; ইশার শেষ পরদিনের ফজরে, তাই ১৪৪০ ছাড়াতে পারে / ফজরের আগে ইশার শুরু ঋণাত্মক হতে পারে); nowMin = এখন (ভগ্নাংশসহ মিনিট)
+    class Snap(
+        val hijri: String, val bangla: String, val min: IntArray, val cur: Int, val nextAt: Long, val sunrise: Int, val sunset: Int,
+        val ws: IntArray, val we: IntArray, val nowMin: Double,
+        val tahajjud: Int // তাহাজ্জুদের শুরু = রাতের (সূর্যাস্ত→ফজর) শেষ তৃতীয়াংশের শুরু; শেষ = ফজর (we[4])
+    )
+
+    // নফল সালাতের সময়: নাম, শুরু, শেষ (মিনিট)
+    class Nafl(val name: String, val start: Int, val end: Int)
+
+    companion object {
+        const val ACTION_TICK = "com.rahcare.timewidget.TICK"
+        const val ACTION_PICK = "com.rahcare.timewidget.PICK"
+        const val ACTION_LOCUPD = "com.dailyruqyah.app.LOCUPD"
+        private const val TICK_MS = 5 * 60 * 1000L // প্রগ্রেস বার নতুন করে আঁকার ব্যবধান
+        private const val DUHA_AFTER_SUNRISE = 24 // ইশরাক শুরু (নিষিদ্ধ সময় শেষ): সূর্যোদয়ের ২৪ মিনিট পর (ইসলামিক ফাউন্ডেশনের স্থায়ী সময়সূচির নোট)
+        private const val ISHRAQ_END_AFTER_SUNRISE = 60 // ইশরাকের সময় শেষ ধরা হয়েছে: সূর্যোদয়ের প্রায় ১ ঘণ্টা পর; এরপর সালাতুদ্দোহা (চাশত)
+        private const val DUHA_BEFORE_DHUHR = 6 // চাশত শেষ: যোহরের লেখা সময়ের ৬ মিনিট আগে (ইসলামিক ফাউন্ডেশনের নোট)
+        val NAMES = arrayOf("ফজর", "যোহর", "আসর", "মাগরিব", "ইশা")
+        private val CELL = intArrayOf(R.id.c0, R.id.c1, R.id.c2, R.id.c3, R.id.c4)
+        private val NAME = intArrayOf(R.id.n0, R.id.n1, R.id.n2, R.id.n3, R.id.n4)
+        private val TIME = intArrayOf(R.id.t0, R.id.t1, R.id.t2, R.id.t3, R.id.t4)
+
+        // আজকের সব হিসাব
+        fun compute(ctx: Context, now: ZonedDateTime = ZonedDateTime.now()): Snap {
+            val c = Cfg(ctx)
+            val zone = now.zone
+            val date = now.toLocalDate()
+            val tz = zone.rules.getOffset(now.toInstant()).totalSeconds / 3600.0
+            val t = Prayer.times(date, c.lat(), c.lng(), tz, 18.0, 18.0, c.hanafi)
+            val m = intArrayOf(
+                Prayer.minutes(t.fajr) + c.off(0), Prayer.minutes(t.dhuhr) + c.off(1), Prayer.minutes(t.asr) + c.off(2),
+                Prayer.minutes(t.maghrib) + c.off(3), Prayer.minutes(t.isha) + c.off(4)
+            )
+            val nowMin = now.hour * 60 + now.minute
+            var cur = 4 // ফজরের আগে হলে আগের রাতের ইশার ওয়াক্ত চলছে
+            for (i in 0..4) if (m[i] <= nowMin) cur = i
+
+            val start = date.atStartOfDay(zone).toInstant().toEpochMilli()
+            var next = date.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli() + 5000L
+            for (i in 0..4) if (m[i] > nowMin) next = minOf(next, start + m[i] * 60000L)
+
+            // প্রতিটি ওয়াক্তের শুরু ও শেষ: ফজর→সূর্যোদয়, যোহর→আসরের শুরু, আসর→সূর্যাস্ত, মাগরিব→ইশার শুরু, ইশা→পরদিনের ফজর
+            val sunriseMin = Prayer.minutes(t.sunrise)
+            val sunsetMin = Prayer.minutes(t.maghrib)
+            val ws = m.copyOf()
+            val we = intArrayOf(sunriseMin, m[2], sunsetMin, m[4], 0)
+            val nightStart: Int // চলতি রাতের শুরু = সূর্যাস্ত (আজ মধ্যরাত থেকে মিনিট)
+            if (nowMin < m[0]) {
+                // ফজরের আগে: চলতি ইশা গতকালের, শেষ আজকের ফজরে
+                val y = Prayer.times(date.minusDays(1), c.lat(), c.lng(), tz, 18.0, 18.0, c.hanafi)
+                ws[4] = Prayer.minutes(y.isha) + c.off(4) - 1440
+                we[4] = m[0]
+                nightStart = Prayer.minutes(y.maghrib) - 1440
+            } else {
+                val tomorrow = date.plusDays(1)
+                val tz2 = zone.rules.getOffset(tomorrow.atStartOfDay(zone).toInstant()).totalSeconds / 3600.0
+                val n = Prayer.times(tomorrow, c.lat(), c.lng(), tz2, 18.0, 18.0, c.hanafi)
+                we[4] = Prayer.minutes(n.fajr) + c.off(0) + 1440
+                nightStart = sunsetMin
+            }
+            // তাহাজ্জুদ: সূর্যাস্ত থেকে ফজর পর্যন্ত সময়কে তিন ভাগ করে শেষ ভাগের শুরু
+            val tahajjud = nightStart + ((we[4] - nightStart) * 2.0 / 3.0).toInt()
+            val nowF = nowMin + now.second / 60.0
+
+            return Snap(
+                HijriDate.text(date.plusDays(c.hijriShift().toLong())),
+                BanglaDate.text(date.plusDays(c.banglaAdj.toLong())),
+                m, cur, next, sunriseMin, sunsetMin, ws, we, nowF, tahajjud
+            )
+        }
+
+        // চলতি ওয়াক্তের সাথে সংশ্লিষ্ট নফল সালাত (না থাকলে null):
+        //  ফজরের ওয়াক্ত শেষে (সূর্যোদয়ের পর, যোহরের আগে): ইশরাক → সালাতুদ্দোহা (চাশত)
+        //  মাগরিব: আউয়াবীন (মাগরিবের পর থেকে ইশার শুরু পর্যন্ত)
+        //  ইশা: তাহাজ্জুদ (রাতের শেষ তৃতীয়াংশ থেকে ফজর পর্যন্ত)
+        fun nafl(s: Snap, cur: Int): Nafl? {
+            val ishraqStart = s.sunrise + DUHA_AFTER_SUNRISE
+            val ishraqEnd = (s.sunrise + ISHRAQ_END_AFTER_SUNRISE).coerceAtMost(s.min[1] - DUHA_BEFORE_DHUHR - 1)
+            val duhaEnd = (s.min[1] - DUHA_BEFORE_DHUHR).coerceAtLeast(ishraqEnd + 1)
+            return when {
+                cur == 0 && s.nowMin >= s.sunrise && s.nowMin < s.min[1] ->
+                    if (s.nowMin < ishraqEnd) Nafl("ইশরাক", ishraqStart, ishraqEnd) else Nafl("সালাতুদ্দোহা", ishraqEnd, duhaEnd)
+                cur == 3 -> Nafl("আউয়াবীন", s.ws[3], s.we[3])
+                cur == 4 -> Nafl("তাহাজ্জুদ", s.tahajjud, s.we[4])
+                else -> null
+            }
+        }
+
+        // নিচের সারিতে ডিফল্টে নফল দেখানো হবে কি না: ফজর-শেষ থেকে যোহর-শুরুর ফাঁকে, আর রাতের শেষ তৃতীয়াংশে
+        // (আউয়াবীন মাগরিবের ওয়াক্তের ভেতরেই, তাই ডিফল্টে মাগরিব দেখায়; মাগরিবের ঘরে চাপলে আউয়াবীন দেখায়)
+        private fun naflByDefault(s: Snap): Boolean = when (s.cur) {
+            0 -> nafl(s, 0) != null
+            4 -> s.nowMin >= s.tahajjud
+            else -> false
+        }
+
+        // দুই তারিখ এক লাইনে ধরাতে উইজেটের প্রস্থ মেপে লেখা প্রয়োজনে ছোট হয়
+        private fun fitSp(ctx: Context, a: String, b: String, baseSp: Float, widthDp: Int): Float {
+            val dm = ctx.resources.displayMetrics
+            val avail = (widthDp - 28 - 8) * dm.density * 0.93f
+            val p = Paint(Paint.ANTI_ALIAS_FLAG)
+            p.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, baseSp, dm)
+            val need = p.measureText(a) + p.measureText(b)
+            return if (need <= avail || need <= 0f) baseSp else (baseSp * avail / need).coerceAtLeast(baseSp * 0.55f)
+        }
+
+        private fun build(ctx: Context, s: Snap, widthDp: Int, layout: Int = R.layout.widget_v2): RemoteViews {
+            val c = Cfg(ctx)
+            val rv = RemoteViews(ctx.packageName, layout)
+            val k = c.scale / 100f
+            fun size(id: Int, sp: Float) = rv.setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_SP, sp * k)
+
+            rv.setTextViewText(R.id.zz_loc, c.placeName())
+            size(R.id.zz_loc, 12f)
+            rv.setTextViewText(R.id.hijri, s.hijri)
+            rv.setTextViewText(R.id.bangla, s.bangla)
+            size(R.id.time, 40f); size(R.id.ampm, 12f); size(R.id.endate, 15f)
+            val dsp = fitSp(ctx, s.hijri, s.bangla, 12f * k, widthDp)
+            rv.setTextViewTextSize(R.id.hijri, TypedValue.COMPLEX_UNIT_SP, dsp)
+            rv.setTextViewTextSize(R.id.bangla, TypedValue.COMPLEX_UNIT_SP, dsp)
+            rv.setTextViewText(R.id.zz_sunrise, "সূর্যোদয় " + Prayer.fmt(s.sunrise, c.bnDigits))
+            rv.setTextViewText(R.id.zz_sunset, "সূর্যাস্ত " + Prayer.fmt(s.sunset, c.bnDigits))
+            size(R.id.zz_sunrise, 11f); size(R.id.zz_sunset, 11f)
+            for (i in 0..4) {
+                rv.setTextViewText(NAME[i], NAMES[i])
+                rv.setTextViewText(TIME[i], Prayer.fmt(s.min[i], c.bnDigits))
+                size(NAME[i], 11f); size(TIME[i], 14f)
+                // চলতি ওয়াক্তের ঘরটি হালকা সবুজে চিহ্নিত
+                rv.setInt(CELL[i], "setBackgroundResource", if (i == s.cur) R.drawable.cell_on else 0)
+                // ঘরে চাপলে নিচের সারিতে সেই ওয়াক্তের শুরু-শেষ দেখায়; একই ঘরে আবার চাপলে চলতি ওয়াক্তে ফেরে
+                rv.setOnClickPendingIntent(CELL[i], pickIntent(ctx, i))
+            }
+            // নিচের সারি: ওয়াক্তের শুরু (বামে) · প্রগ্রেস বার · শেষ (ডানে); ডিফল্টে চলতি ওয়াক্ত।
+            // ফজর শেষ (সূর্যোদয়) থেকে যোহর শুরুর মাঝের ফাঁকে ডিফল্টে সালাতুদ্দোহা দেখায় (কোনো ওয়াক্তের ঘরে চাপলে সেটিই দেখায়)
+            val shown = shownIndex(c, s)
+            val nf = if (shown == NAFL) nafl(s, s.cur) else null
+            val bs = nf?.start ?: s.ws[shown.coerceIn(0, 4)]
+            val be = nf?.end ?: s.we[shown.coerceIn(0, 4)]
+            val span = (be - bs).coerceAtLeast(1)
+            val frac = ((s.nowMin - bs) / span).coerceIn(0.0, 1.0)
+            rv.setTextViewText(R.id.zz_ws, (if (nf != null) nf.name + " শুরু " else "ওয়াক্ত শুরু ") + Prayer.fmt(bs, c.bnDigits))
+            rv.setTextViewText(R.id.zz_we, (if (nf != null) "শেষ " else "ওয়াক্ত শেষ ") + Prayer.fmt(be, c.bnDigits))
+            size(R.id.zz_ws, 11f); size(R.id.zz_we, 11f)
+            rv.setProgressBar(R.id.zz_wbar, 1000, (frac * 1000).toInt(), false)
+            val open = PendingIntent.getActivity(
+                ctx, 0, Intent(ctx, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            rv.setOnClickPendingIntent(R.id.root, open)
+            // অনুমতি না থাকলে সরাসরি অ্যাপ খোলে (সেখানে অনুমতি চায়); নইলে অবস্থান হালনাগাদ — ব্যাকগ্রাউন্ড ব্রডকাস্ট থেকে অ্যাক্টিভিটি খোলা আটকে যেতে পারে বলে এই ভাগ
+            rv.setOnClickPendingIntent(R.id.zz_upd,
+                if (c.auto && !LocationUpdater.hasPerm(ctx)) PendingIntent.getActivity(
+                    ctx, 31, Intent(ctx, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                ) else PendingIntent.getBroadcast(
+                    ctx, 30, Intent(ctx, ClockWidget::class.java).setAction(ACTION_LOCUPD),
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                ))
+            return rv
+        }
+
+        private fun pickIntent(ctx: Context, i: Int): PendingIntent = PendingIntent.getBroadcast(
+            ctx, 10 + i, Intent(ctx, ClockWidget::class.java).setAction(ACTION_PICK).putExtra("idx", i),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        // নিচের সারিতে এখন কী দেখানো হচ্ছে: 0–৪ = সেই ওয়াক্ত, NAFL = চলতি ওয়াক্তের নফল সালাত
+        private const val NAFL = 5
+        // চলতি ওয়াক্ত কোন দিনের: ফজরের আগের ইশা গতকালের ওয়াক্ত (পুরনো বাছাই পরদিনের একই ওয়াক্তে ফিরে আসা ঠেকাতে)
+        private fun windowDay(s: Snap): Long =
+            java.time.LocalDate.now().toEpochDay() - (if (s.cur == 4 && s.nowMin < s.min[0]) 1L else 0L)
+
+        private fun shownIndex(c: Cfg, s: Snap): Int {
+            val picked = (c.pick in 0..4 || (c.pick == NAFL && nafl(s, s.cur) != null)) && c.pickCur == s.cur && c.pickDay == windowDay(s)
+            return if (picked) c.pick else if (naflByDefault(s)) NAFL else s.cur
+        }
+
+        // কোনো ওয়াক্তের ঘরে চাপ: সেটি বেছে নেয়; আবার চাপলে ডিফল্টে ফেরে।
+        // চলতি ওয়াক্তের ঘরে চাপলে (সংশ্লিষ্ট নফল থাকলে) নফলের সময় আর ওয়াক্তের সময় পালাক্রমে দেখায়।
+        private fun pick(ctx: Context, i: Int) {
+            if (i !in 0..4) return
+            val c = Cfg(ctx)
+            val s = compute(ctx)
+            val shown = shownIndex(c, s)
+            val target = if (i == s.cur && nafl(s, s.cur) != null) (if (shown == NAFL) s.cur else NAFL) else i
+            c.pick = if (target == shown) -1 else target
+            c.pickCur = s.cur
+            c.pickDay = windowDay(s)
+            refresh(ctx)
+        }
+
+        private fun tickIntent(ctx: Context): PendingIntent = PendingIntent.getBroadcast(
+            ctx, 0, Intent(ctx, ClockWidget::class.java).setAction(ACTION_TICK),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        fun cancel(ctx: Context) {
+            (ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager).cancel(tickIntent(ctx))
+        }
+
+        // সব উইজেট নতুন করে আঁকে এবং পরের বদলের (পরের ওয়াক্ত বা মধ্যরাত) জন্য অ্যালার্ম বসায়
+        // আগের সংস্করণে চালু হওয়া লক স্ক্রিন নোটিফিকেশন সরিয়ে দেয় (এই সুবিধা আর নেই)
+        private fun removeOldLockCard(ctx: Context) {
+            try {
+                val nm = ctx.getSystemService(android.app.NotificationManager::class.java)
+                nm.cancel(4242)
+                nm.deleteNotificationChannel("lockcard")
+            } catch (e: Exception) {
+            }
+        }
+
+        // অ্যাপের ভেতরে হুবহু একই উইজেট দেখানোর জন্য (হোম স্ক্রিনের উইজেটের একই RemoteViews)
+        @JvmStatic
+        fun viewFor(ctx: Context, widthDp: Int): RemoteViews {
+            LocationUpdater.sync(ctx)
+            return build(ctx, compute(ctx), widthDp)
+        }
+
+        /** হোম-স্ক্রিনে উইজেট বসানোর তালিকায়/পিন-শিটে লাইভ প্রিভিউ (Android 15+: setWidgetPreview); আগের ভার্সনে এই API নেই, তখন ছবির প্রিভিউই থাকে */
+        @JvmStatic
+        fun pushPreview(ctx: Context, force: Boolean = false) {
+            if (android.os.Build.VERSION.SDK_INT < 35) return
+            val now = System.currentTimeMillis()
+            if (!force && now - lastPreviewAt < 10 * 60 * 1000L) return
+            try {
+                lastPreviewAt = now
+                val mgr = AppWidgetManager.getInstance(ctx)
+                val m = AppWidgetManager::class.java.getMethod("setWidgetPreview", ComponentName::class.java, Int::class.javaPrimitiveType, RemoteViews::class.java)
+                m.invoke(mgr, ComponentName(ctx, ClockWidget::class.java), 1, viewFor(ctx, 250))   // 1 = WIDGET_CATEGORY_HOME_SCREEN
+            } catch (e: Exception) { }
+        }
+        @Volatile private var lastPreviewAt = 0L
+
+        fun refresh(ctx: Context) {
+            removeOldLockCard(ctx)
+            pushPreview(ctx)
+            try {
+                val mgr = AppWidgetManager.getInstance(ctx)
+                val ids = mgr.getAppWidgetIds(ComponentName(ctx, ClockWidget::class.java))
+                if (ids.isEmpty()) { cancel(ctx); return }
+                LocationUpdater.sync(ctx) // ফোনের সর্বশেষ জানা অবস্থান বদলে থাকলে এখানেই ধরে নেয়
+                val s = compute(ctx)
+                for (id in ids) {
+                    val w = mgr.getAppWidgetOptions(id).getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0).let { if (it > 0) it else 250 }
+                    mgr.updateAppWidget(id, build(ctx, s, w))
+                }
+                (ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
+                    .setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, minOf(s.nextAt, System.currentTimeMillis() + TICK_MS), tickIntent(ctx))
+            } catch (e: Exception) {
+            }
+        }
+    }
+}

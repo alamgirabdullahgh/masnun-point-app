@@ -1,0 +1,86 @@
+name: Audio 32k test
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg parallel sox libsox-fmt-mp3 python3-numpy
+      - name: Download all verses (Alafasy 128kbps original)
+        run: |
+          mkdir -p src && python3 - <<'PY' > list.txt
+          a=[int(x) for x in open('tools/audio/ayn.txt').read().split(',')]
+          for s,c in enumerate(a,1):
+              for v in range(1,c+1): print('%03d%03d'%(s,v))
+          PY
+          cat list.txt | parallel -j8 'f=src/{}.mp3; for i in 1 2 3; do curl -sf --max-time 60 -o $f https://everyayah.com/data/Alafasy_128kbps/{}.mp3 && break; sleep 2; done'
+          ls src | wc -l
+      - name: Encode candidates for all verses
+        run: |
+          mkdir -p a64 a32 a32b a24
+          cat list.txt | parallel -j4 'ffmpeg -v error -y -i src/{}.mp3 -ac 1 -c:a libmp3lame -b:a 64k a64/{}.mp3'
+          cat list.txt | parallel -j4 'ffmpeg -v error -y -i src/{}.mp3 -ac 1 -ar 22050 -c:a libmp3lame -b:a 32k a32/{}.mp3'
+          cat list.txt | parallel -j4 'ffmpeg -v error -y -i src/{}.mp3 -ac 1 -ar 24000 -c:a libmp3lame -b:a 32k a32b/{}.mp3'
+          cat list.txt | parallel -j4 'ffmpeg -v error -y -i src/{}.mp3 -ac 1 -ar 16000 -c:a libmp3lame -b:a 24k a24/{}.mp3'
+          for d in src a64 a32 a32b a24; do echo "$d $(du -sm $d | cut -f1) MB"; done | tee sizes.txt
+      - name: Quality metrics
+        run: |
+          python3 - <<'PY' | tee quality.txt
+          import subprocess,numpy as np,random
+          random.seed(1)
+          ids=[l.strip() for l in open('list.txt')]
+          pick=['001001','002255','018010','036001','112001','067001']+random.sample(ids,24)
+          def pcm(f,ar=16000):
+              o=subprocess.run(['ffmpeg','-v','error','-i',f,'-ac','1','-ar',str(ar),'-f','f32le','-'],capture_output=True).stdout
+              return np.frombuffer(o,dtype=np.float32)
+          def align(a,b):
+              n=min(len(a),len(b)); return a[:n],b[:n]
+          def best_snr(ref,t):
+              # allow encoder delay: search shift
+              best=-99
+              for sh in range(0,2400,16):
+                  r=ref[sh:]; x=t[:len(r)] if sh else t
+                  n=min(len(r),len(t)); 
+                  r=ref[sh:sh+n]; x=t[:len(r)]
+                  if len(r)<8000: continue
+                  e=np.sum((r-x)**2)+1e-12; s=np.sum(r**2)
+                  best=max(best,10*np.log10(s/e))
+              return best
+          def lsd(ref,t):
+              n=min(len(ref),len(t)); ref=ref[:n]; t=t[:n]
+              w=512; k=np.hanning(w); L=[]
+              for i in range(0,n-w,w):
+                  A=np.abs(np.fft.rfft(ref[i:i+w]*k))+1e-6; B=np.abs(np.fft.rfft(t[i:i+w]*k))+1e-6
+                  if np.sum(A**2)<1e-3: continue
+                  L.append(np.sqrt(np.mean((20*np.log10(A)-20*np.log10(B))**2)))
+              return float(np.mean(L))
+          res={d:[] for d in ['a64','a32','a32b','a24']}
+          for i in pick:
+              ref=pcm(f'src/{i}.mp3')
+              for d in res:
+                  t=pcm(f'{d}/{i}.mp3')
+                  res[d].append((best_snr(ref,t),lsd(ref,t)))
+          print('files tested',len(pick),'(16kHz-band, compared with 128kbps original)')
+          for d,v in res.items():
+              v=np.array(v); print(d,'SNR dB mean %.1f min %.1f | spectral dist dB mean %.2f max %.2f'%(v[:,0].mean(),v[:,0].min(),v[:,1].mean(),v[:,1].max()))
+          PY
+      - name: Publish listening samples and report
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p smp
+          for i in 001001 002255 018010 112001; do
+            cp src/$i.mp3 smp/${i}_128k_original.mp3
+            cp a64/$i.mp3 smp/${i}_64k.mp3
+            cp a32/$i.mp3 smp/${i}_32k_22khz.mp3
+            cp a32b/$i.mp3 smp/${i}_32k_24khz.mp3
+            cp a24/$i.mp3 smp/${i}_24k_16khz.mp3
+          done
+          { echo '## sizes'; cat sizes.txt; echo; echo '## quality'; cat quality.txt; } > report.md
+          gh release delete audio-test -y --cleanup-tag 2>/dev/null || true
+          gh release create audio-test smp/*.mp3 -t "Audio 32k test" -F report.md

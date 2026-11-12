@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Daily Ruqyah</title>
+<meta name="description" content="Daily Ruqyah — কুরআনের আয়াত খোঁজা, বিষয়ভিত্তিক ও রোগ অনুযায়ী আয়াত, সম্পূর্ণ কুরআন পাঠ, হাদিস সার্চ, অডিও ও কপি">
+<meta name="theme-color" content="#073b2e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Daily Ruqyah">
+<link rel="stylesheet" href="style.css?v=26">
+</head>
+<body>
+<header class="dr-bar">
+ <button class="dr-menu" id="drMenu" type="button" aria-label="মেনু খুলুন" aria-controls="drSide" aria-expanded="false"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+ <div class="dr-brand"><img src="icons/icon-192.png" alt=""><span>Daily Ruqyah</span></div>
+ <a class="dr-menu dr-sbtn" href="#search" data-nav="search" aria-label="সার্চ"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.2 15.2L20 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></a>
+</header>
+<div id="drWidget" style="padding:0 12px"></div>
+<div class="dr-wbar" id="drWBar" hidden><button id="drWSet" type="button">📲 হোম স্ক্রিনে বসান</button></div>
+<div class="dr-scrim" id="drScrim"></div>
+<nav class="dr-side" id="drSide" aria-label="মেনু" aria-hidden="true">
+ <div class="dr-side-head">
+  <img src="icons/icon-192.png" alt="">
+  <div><b>Daily Ruqyah</b><small>কুরআন · রুকিয়া · আরোগ্য</small></div>
+  <button class="dr-x" id="drClose" type="button" aria-label="বন্ধ করুন">✕</button>
+ </div>
+ <div class="dr-off" id="drOff"><div class="off-t">অফলাইন অডিও: যাচাই হচ্ছে…</div><div class="off-b"><i class="off-f"></i></div></div>
+ <div class="dr-side-sec">সম্পূর্ণ কুরআন পড়ুন</div>
+ <a class="dr-nav" href="#read/arbn" data-nav="read/arbn"><i class="ar">عب</i><span>আরবি ও বাংলা অনুবাদসহ</span></a>
+ <div class="dr-side-sec">রুকইয়াহ অডিও ও উইজেট</div>
+ <a class="dr-nav" href="#alarm" data-nav="alarm"><i>⏰</i><span>রুকইয়াহ অডিও অ্যালার্ম</span></a>
+<div class="dr-vbar"><b id="drVer">Daily Ruqyah</b><button class="dr-share" id="drShare" type="button">Share</button></div>
+</nav>
+<nav class="dr-bnav" aria-label="নেভিগেশন"><a class="dr-bn" href="#topics" data-nav="topics"><i>📚</i><span>বিষয়ভিত্তিক আয়াত</span></a><a class="dr-bn" href="#home" data-nav="home"><i>🏠</i><span>হোম</span></a><a class="dr-bn" href="#diag" data-nav="diag"><i>🩺</i><span>ডায়াগনোসিস</span></a></nav>
+<div class="dr-ufl" id="drUfl" hidden><button class="dr-ubtn" id="drUbtn" type="button"><span class="ph" id="drUph">Update</span><span class="pt" id="drUpt"></span></button></div>
+<main class="dr-main">
+<div class="rs-box" id="drHome" hidden></div>
+<div class="rs-box" id="drSym" hidden>
+<div id="za"><h2>Symptom Diagnosis (গবেষণা সংস্করণ)</h2><div class="zm">⚕ <b>গুরুত্বপূর্ণ:</b> এই টুলের যেকোনো প্যাটার্ন-মিল কোনো নিশ্চিত রোগনির্ণয় নয়। প্রতিটি কেসে, বিশেষত মাসিক/জরায়ু, বুক-হৃদযন্ত্র, স্নায়বিক (অবশ/খিঁচুনি/অজ্ঞান) সংক্রান্ত উপসর্গে — সংশ্লিষ্ট বিশেষজ্ঞ ডাক্তারের মাধ্যমে মেডিক্যাল পরীক্ষা সমান্তরালভাবে করাতে হবে। রুকইয়াহর প্রতিক্রিয়া মেডিক্যাল টেস্টের বিকল্প নয়।</div><div id="zd"></div><div id="zt"></div><div style="margin-top:10px"><h3>প্রতিটি কেসের জন্য মেডিক্যাল স্ক্রিনিং রেকর্ড</h3><div class="zf">মেডিক্যাল টেস্ট করানো হয়েছে কি? ফলাফল কী?<br><textarea id="zi" rows="3" placeholder="যেমন: গাইনি পরীক্ষা করানো হয়েছে, রিপোর্ট নরমাল / থাইরয়েড টেস্ট বাকি আছে ইত্যাদি"></textarea><br><button id="zb">সংরক্ষণ করুন</button> <span id="zu" class="zk"></span></div></div></div>
+</div>
+<div class="rs-box" id="rsBox" hidden>
+ <div class="dr-inst" id="drInst"></div>
+ <div class="rs-bar"><button class="rs-ib" id="rsKb" type="button" title="আরবি কীবোর্ড">⌨</button><input id="rsQ" type="text" dir="auto" enterkeyhint="search" style="text-align:center" placeholder="সার্চ করুন" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"><button class="rs-ib" id="rsX" type="button" title="মুছুন">✕</button><button class="rs-ib" id="rsGo" type="button" title="সার্চ">🔍</button></div>
+ <button class="rs-tp" id="rsTp" type="button"><span>📚 বিষয়ভিত্তিক আয়াত</span><i>›</i></button>
+ <div class="rs-pad" id="rsPad"></div>
+ <div class="rs-info" id="rsInfo"></div>
+ <div id="rsOut"></div>
+</div>
+<div class="rs-box dr-reader" id="drReader" hidden></div>
+<div class="rs-box" id="drAlarm" hidden></div>
+</main>
+<script src="widget.js?v=10"></script>
+<script src="symptom.js?v=1"></script>
+<script src="app.js?v=32"></script>
+<script src="alarm.js?v=3"></script>
+<script src="boot.js?v=6"></script>
+<script src="data/hadith-norm.js?v=2"></script>
+<script src="data/hadith.js?v=15"></script>
+</body>
+</html>

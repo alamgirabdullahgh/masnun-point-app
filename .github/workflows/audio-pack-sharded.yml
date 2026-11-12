@@ -1,0 +1,85 @@
+name: Audio pack sharded (20 parallel)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  encode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg parallel
+      - name: Make this shard's verse list
+        run: |
+          python3 - <<'PY' > list.txt
+          a=[int(x) for x in open('tools/audio/ayn.txt').read().split(',')]
+          n=0
+          for s,c in enumerate(a,1):
+              for v in range(1,c+1):
+                  n+=1
+                  if n % 20 == ${{ matrix.shard }}: print('%d %03d%03d %d'%(s,s,v,n))
+          PY
+          wc -l list.txt
+      - name: Download and encode (32k 22.05kHz mono x1.20)
+        run: |
+          mkdir -p src out
+          enc() { s=$1; p=$2; n=$3
+            [ -s out/$n.mp3 ] && return 0
+            for i in 1 2 3 4 5; do
+              curl -sf --max-time 90 -o src/$p.mp3 https://everyayah.com/data/Alafasy_128kbps/$p.mp3 && \
+              ffmpeg -v error -y -i src/$p.mp3 -ac 1 -af atempo=1.2 -ar 22050 -c:a libmp3lame -b:a 32k out/$n.mp3.tmp -f mp3 && mv out/$n.mp3.tmp out/$n.mp3 && rm -f src/$p.mp3 && return 0
+              sleep $((i*3))
+            done
+            return 1; }
+          export -f enc
+          want=$(wc -l < list.txt)
+          for pass in 1 2 3; do
+            cat list.txt | parallel -j4 --colsep ' ' 'enc {1} {2} {3}' || true
+            [ "$(ls out/*.mp3 2>/dev/null | wc -l)" -ge "$want" ] && break
+          done
+          echo "shard ${{ matrix.shard }}: $(ls out/*.mp3 | wc -l) / $want"
+          test "$(ls out/*.mp3 | wc -l)" -eq "$want"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shard-${{ matrix.shard }}
+          path: out/
+          retention-days: 2
+  publish:
+    needs: encode
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: shard-*
+          path: out
+          merge-multiple: true
+      - name: Zip per surah
+        run: |
+          echo "files: $(ls out/*.mp3 | wc -l)"
+          test "$(ls out/*.mp3 | wc -l)" -eq 6236
+          mkdir -p zips
+          python3 - <<'PY'
+          import zipfile,os
+          a=[int(x) for x in open('tools/audio/ayn.txt').read().split(',')]
+          n=0; tot=0
+          for s,c in enumerate(a,1):
+              with zipfile.ZipFile('zips/s%03d.zip'%s,'w',zipfile.ZIP_STORED) as z:
+                  for v in range(c):
+                      n+=1; z.write('out/%d.mp3'%n, '%d.mp3'%n)
+              tot+=os.path.getsize('zips/s%03d.zip'%s)
+          print('zips total MB', round(tot/1048576,1), 'verses', n)
+          PY
+      - name: Publish release audio-pack-32k-120
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete audio-pack-32k-120 -y --cleanup-tag || true
+          gh release create audio-pack-32k-120 zips/*.zip --title "Audio pack 32k 22kHz x1.20" --notes "Alafasy, mono, MP3 32kbps 22.05kHz, tempo x1.20 (pitch unchanged). 114 zips (s001..s114), entries named <global ayah number>.mp3. Built from Alafasy_128kbps originals."

@@ -1,0 +1,85 @@
+name: Scrape MuslimBangla Hadith (sharded)
+
+# বড় কিতাব (যেমন মুসনাদে আহমদ, book 17) অধ্যায় ভাগ করে ৩টি সমান্তরাল জবে স্ক্র্যাপ করে।
+# প্রতিটি জবে প্রতি অনুরোধের মাঝে ≥২ সেকেন্ড বিরতি থাকে (tools/scrape-muslimbangla.js)।
+# মাঝপথে থামলে বা ব্যর্থ হলে "Re-run failed jobs" দিন — ক্যাশ থেকে আগের পেজ বাদ দিয়ে এগোবে।
+on:
+  workflow_dispatch:
+    inputs:
+      book_id:
+        description: 'Book ID to scrape in 3 parallel shards (e.g. 17)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Restore page cache (resume)
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/muslimbangla-cache/${{ inputs.book_id }}
+          key: mb-cache-${{ inputs.book_id }}-s${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            mb-cache-${{ inputs.book_id }}-s${{ matrix.shard }}-
+      - name: Run scraper shard
+        env:
+          SHARD: ${{ matrix.shard }}/3
+        run: |
+          set -o pipefail
+          node tools/scrape-muslimbangla.js ${{ inputs.book_id }} shard-out 2>&1 | tee /tmp/shard.log
+      - name: Report failure log
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          { echo "book ${{ inputs.book_id }} shard ${{ matrix.shard }} ব্যর্থ। লগের শেষ অংশ:"; echo '```'; tail -n 25 /tmp/shard.log | cut -c1-300; echo '```'; } > /tmp/c.txt
+          gh issue comment 24 --body-file /tmp/c.txt
+      - name: Save page cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/muslimbangla-cache/${{ inputs.book_id }}
+          key: mb-cache-${{ inputs.book_id }}-s${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shard-${{ matrix.shard }}
+          path: shard-out/*.json
+          if-no-files-found: error
+
+  merge:
+    needs: scrape
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: shard-*
+          merge-multiple: true
+          path: shard-out
+      - name: Validate shards and copy into data-src
+        run: node tools/merge-shards.js ${{ inputs.book_id }} shard-out
+      - name: Commit and push
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data-src/muslimbangla/
+          git commit -m "Auto-scrape book ${{ inputs.book_id }} from muslimbangla (3 shards)" || echo "No changes"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push

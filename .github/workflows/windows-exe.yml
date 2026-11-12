@@ -1,0 +1,33 @@
+name: Windows EXE
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: অ্যাপের ফাইল desktop/app-এ কপি (আমল-গাইডের ডেটা বাদ)
+        shell: bash
+        run: |
+          mkdir -p desktop/app
+          cp index.html style.css app.js alarm.js symptom.js widget.js boot.js sw.js manifest.webmanifest desktop/app/
+          cp -r icons fonts desktop/app/
+          mkdir -p desktop/app/data
+          for f in data/*; do
+            case "$f" in data/amol-guide.json) ;; *) cp -r "$f" desktop/app/data/ ;; esac
+          done
+      - name: Build installer
+        working-directory: desktop
+        run: |
+          npm install --no-audit --no-fund
+          npx electron-builder --win nsis --publish never
+      - name: Release
+        shell: bash
+        env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: |
+          TAG="windows-$(date +%Y%m%d-%H%M)"
+          gh release create "$TAG" desktop/dist/*.exe --title "Daily Ruqyah (Windows) $TAG" --notes "Windows ইনস্টলার"

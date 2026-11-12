@@ -1,0 +1,18 @@
+name: Audio stereo check
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  chk:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - run: |
+          for f in 001001 002255 018010 036001 112001 067001; do
+            curl -sf -o $f.mp3 https://everyayah.com/data/Alafasy_128kbps/$f.mp3
+            L=$(ffmpeg -hide_banner -i $f.mp3 -af "pan=mono|c0=c0,volumedetect" -f null - 2>&1 | grep mean_volume | sed 's/.*mean_volume: //')
+            R=$(ffmpeg -hide_banner -i $f.mp3 -af "pan=mono|c0=c1,volumedetect" -f null - 2>&1 | grep mean_volume | sed 's/.*mean_volume: //')
+            S=$(ffmpeg -hide_banner -i $f.mp3 -af "pan=mono|c0=c0-c1,volumedetect" -f null - 2>&1 | grep mean_volume | sed 's/.*mean_volume: //')
+            echo "RESULT $f left=$L right=$R side(L-R)=$S"
+          done

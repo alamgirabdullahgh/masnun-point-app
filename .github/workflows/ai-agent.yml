@@ -1,0 +1,70 @@
+# মন্তব্যে "/ai <কাজ>" লিখলে ফ্রি AI-গুলো পালা করে চেষ্টা করে (একটা সীমা ছুঁলে বা ব্যর্থ হলে পরেরটা)।
+# শুধু রিপো-মালিকের মন্তব্যে চলে। Secrets: GROQ_API_KEY, OPENROUTER_API_KEY (যেটা আছে সেটাই ব্যবহার হয়)।
+name: AI Agent
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+jobs:
+  agent:
+    if: github.event.comment.author_association == 'OWNER' && startsWith(github.event.comment.body, '/ai')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Install aider
+        run: pip install -q aider-chat
+      - name: Try models in order
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          TASK: ${{ github.event.comment.body }}
+        run: |
+          TASK="${TASK#/ai}"
+          TASK="$(printf '%s' "$TASK" | sed '/^---$/,$d')"
+          MODELS=""
+          [ -n "$GROQ_API_KEY" ] && MODELS="$MODELS groq/llama-3.3-70b-versatile groq/openai/gpt-oss-120b"
+          if [ -n "$OPENROUTER_API_KEY" ]; then
+            ORM=$(curl -s --max-time 30 https://openrouter.ai/api/v1/models | python3 -c "
+          import sys,json
+          try: d=json.load(sys.stdin)['data']
+          except Exception: d=[]
+          pref=['coder','qwen','deepseek','gpt-oss','glm','llama','kimi','mistral','gemma']
+          f=[m for m in d if m['id'].endswith(':free') and (m.get('context_length') or 0)>=60000 and not any(x in m['id'] for x in ('vl','vision','embed','guard','image'))]
+          f.sort(key=lambda m:(min([i for i,x in enumerate(pref) if x in m['id']] or [99]),-(m.get('context_length') or 0)))
+          print(' '.join('openrouter/'+m['id'] for m in f[:4]))
+          ")
+            MODELS="$MODELS $ORM"
+          fi
+          : > /tmp/log.txt
+          echo '.aider*' >> .git/info/exclude
+          for M in $MODELS; do
+            echo "== $M" | tee -a /tmp/log.txt
+            git checkout -q -- . ; git clean -fdq
+            if timeout 600 aider --model "$M" --yes-always --no-auto-commits --no-gitignore --no-detect-urls --edit-format whole --no-check-update --no-analytics --no-show-model-warnings --map-tokens 1024 --message "$TASK" >> /tmp/log.txt 2>&1 && [ -n "$(git status --porcelain)" ]; then
+              echo "$M" > /tmp/used.txt; break
+            fi
+            echo "ব্যর্থ বা কিছু বদলায়নি: $M" | tee -a /tmp/log.txt
+          done
+      - name: Open PR or report
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          N: ${{ github.event.issue.number }}
+        run: |
+          if [ -f /tmp/used.txt ] && [ -n "$(git status --porcelain)" ]; then
+            M=$(cat /tmp/used.txt); B="ai/issue-$N-$GITHUB_RUN_ID"
+            git config user.name "ai-bot"; git config user.email "ai-bot@users.noreply.github.com"
+            git checkout -q -b "$B"; git add -A; git commit -q -m "AI ($M): issue #$N"
+            git push -q origin "$B"
+            gh pr create --base main --head "$B" --title "AI: issue #$N" --body "Fixes #$N. মডেল: $M"
+            gh issue comment "$N" --body "PR তৈরি হয়েছে। মডেল: $M"
+          else
+            { echo "কোনো মডেল কাজ শেষ করতে পারেনি। শেষ লগ:"; echo '```'; tail -c 1500 /tmp/log.txt 2>/dev/null; echo '```'; } > /tmp/c.txt
+            gh issue comment "$N" --body-file /tmp/c.txt
+          fi

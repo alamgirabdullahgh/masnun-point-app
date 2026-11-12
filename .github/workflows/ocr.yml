@@ -1,0 +1,223 @@
+name: Auto OCR
+
+on:
+  # ছোট PDF (২৫MB পর্যন্ত): input/ ফোল্ডারে আপলোড করলে চলবে
+  push:
+    paths:
+      - 'input/**'
+  # বড় PDF (২GB পর্যন্ত): Release-এ PDF সংযুক্ত করে Publish করলে চলবে
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      pdf_url:
+        description: 'ডাইরেক্ট ডাউনলোড লিংক (ঐচ্ছিক)'
+        required: false
+      release_id:
+        description: 'Draft/Release ID (ঐচ্ছিক, Publish ছাড়াই PDF নেওয়া যায়)'
+        required: false
+      list_only:
+        description: 'শুধু ফোল্ডারের তালিকা দেখাও, OCR করো না (true/false)'
+        required: false
+      only_names:
+        description: 'শুধু এই নামের অংশ মিললে OCR হবে, কমা দিয়ে আলাদা (ফোল্ডার মোডে, ঐচ্ছিক)'
+        required: false
+      skip_names:
+        description: 'বাদ দেওয়ার নামের অংশ, কমা দিয়ে আলাদা (ফোল্ডার মোডে)'
+        required: false
+      folder_url:
+        description: 'Google Drive ফোল্ডারের লিংক (ঐচ্ছিক): ফোল্ডারের প্রতিটি PDF আলাদা জবে OCR হয়ে output/-এ .txt হবে'
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  ocr:
+    if: ${{ github.event.inputs.folder_url == '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'release' && 'main' || github.ref }}
+
+      - name: Install OCR tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ocrmypdf tesseract-ocr-ben tesseract-ocr-eng
+
+      - name: Download PDFs from release
+        if: ${{ github.event_name == 'release' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p input
+          gh release download "${{ github.event.release.tag_name }}" --pattern '*.pdf' --dir input
+
+      - name: Download PDFs from release by ID (works for drafts)
+        if: ${{ github.event.inputs.release_id != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p input
+          gh api "repos/${{ github.repository }}/releases/${{ github.event.inputs.release_id }}" \
+            --jq '.assets[] | select(.name | endswith(".pdf")) | "\(.id) \(.name)"' |
+          while read -r aid aname; do
+            gh api -H "Accept: application/octet-stream" "repos/${{ github.repository }}/releases/assets/$aid" > "input/$aname"
+          done
+          ls -la input
+
+      - name: Download PDF from link (if given)
+        if: ${{ github.event.inputs.pdf_url != '' }}
+        env:
+          PDF_URL: ${{ github.event.inputs.pdf_url }}
+        run: |
+          mkdir -p input
+          if echo "$PDF_URL" | grep -q "drive.google.com"; then
+            pip install -q --break-system-packages -U gdown
+            FID=$(echo "$PDF_URL" | sed -n 's|.*/d/\([^/?]*\).*|\1|p')
+            [ -z "$FID" ] && FID=$(echo "$PDF_URL" | sed -n 's|.*[?&]id=\([^&]*\).*|\1|p')
+            echo "Drive file id: $FID"
+            gdown "$FID" -O "input/book_$(date +%s).pdf"
+          else
+            curl -L "$PDF_URL" -o "input/linked_$(date +%s).pdf"
+          fi
+          ls -la input
+
+      - name: Run OCR
+        run: |
+          mkdir -p output
+          shopt -s nullglob
+          for pdf in input/*.pdf; do
+            name=$(basename "$pdf" .pdf)
+            [ -f "output/$name.txt" ] && continue
+            ocrmypdf -l ben+eng --force-ocr --optimize 0 --jobs 2 --output-type pdf --sidecar "output/$name.txt" "$pdf" "work_$name.pdf"
+            # ১০০MB-এর কম হলে PDF-ও রিপোতে রাখা হবে
+            if [ "$(stat -c%s "work_$name.pdf")" -lt 95000000 ]; then
+              mv "work_$name.pdf" "output/$name.pdf"
+            fi
+          done
+
+      - name: Attach results to release
+        if: ${{ github.event_name == 'release' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          for f in work_*.pdf; do
+            n="${f#work_}"
+            mv "$f" "ocr_$n"
+            gh release upload "${{ github.event.release.tag_name }}" "ocr_$n" --clobber
+          done
+          for f in output/*.txt; do
+            gh release upload "${{ github.event.release.tag_name }}" "$f" --clobber
+          done
+          # বড় PDF যেগুলো output/-এ নেই সেগুলোও উপরে আপলোড হয়েছে
+
+      - name: Commit results
+        run: |
+          rm -f work_*.pdf
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add output
+          git diff --cached --quiet || (git commit -m "Auto OCR results" && git pull --rebase -q origin main && git push)
+
+  # ---------- Drive ফোল্ডার: প্রতিটি বই আলাদা জবে (একই ocrmypdf সেটিংস) ----------
+  list-folder:
+    if: ${{ github.event.inputs.folder_url != '' }}
+    runs-on: ubuntu-latest
+    outputs:
+      books: ${{ steps.l.outputs.books }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: List PDFs in Drive folder
+        id: l
+        env:
+          FOLDER_URL: ${{ github.event.inputs.folder_url }}
+          LIST_ONLY: ${{ github.event.inputs.list_only }}
+          SKIP_NAMES: ${{ github.event.inputs.skip_names }}
+          ONLY_NAMES: ${{ github.event.inputs.only_names }}
+        run: |
+          pip install -q --break-system-packages -U gdown
+          python3 - <<'PY'
+          import gdown, json, os, re
+          try:
+              fs = gdown.download_folder(url=os.environ['FOLDER_URL'], skip_download=True, quiet=True, use_cookies=False) or []
+          except BaseException as e:
+              print('::error::LISTFAIL ' + type(e).__name__ + ': ' + re.sub(r'\s+', ' ', str(e))[:500]); raise
+          books, skipped = [], []
+          for f in fs:
+              p = f.path
+              if not p.lower().endswith('.pdf'):
+                  skipped.append(p); continue
+              name = re.sub(r'[\\/:*?"<>|]+', '_', os.path.splitext(p)[0]).strip()
+              on = [k.strip() for k in os.environ.get('ONLY_NAMES','').split(',') if k.strip()]
+              if on and not any(k in p for k in on):
+                  skipped.append(p + ' (শুধু-তালিকার বাইরে)'); continue
+              if any(k.strip() and k.strip() in p for k in os.environ.get('SKIP_NAMES','').split(',')):
+                  skipped.append(p + ' (বাদ তালিকায়)'); continue
+              if os.path.exists(f'output/{name}.txt'):
+                  skipped.append(p + ' (আগেই আছে)'); continue
+              books.append({'id': f.id, 'name': name})
+          print('::notice::FILES ' + ' || '.join(f.path for f in fs)[:3000])
+          if os.environ.get('LIST_ONLY') == 'true': books = []
+          print('PDF:', len(books), '| বাদ:', len(skipped))
+          for b in books: print(' -', b['name'])
+          for x in skipped: print(' skip', x)
+          open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8').write('books=' + json.dumps(books, ensure_ascii=False) + '\n')
+          PY
+
+  ocr-book:
+    needs: list-folder
+    if: ${{ needs.list-folder.outputs.books != '[]' && needs.list-folder.outputs.books != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        book: ${{ fromJson(needs.list-folder.outputs.books) }}
+    steps:
+      - name: Install OCR tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ocrmypdf qpdf tesseract-ocr-ben tesseract-ocr-eng
+          pip install -q --break-system-packages -U gdown
+      - name: Download and OCR
+        env:
+          BID: ${{ matrix.book.id }}
+          BNAME: ${{ matrix.book.name }}
+        run: |
+          mkdir -p input output
+          gdown "$BID" -O input/book.pdf
+          # এনক্রিপ্টেড (owner-password) PDF হলে আগে ডিক্রিপ্ট
+          qpdf --password= --decrypt input/book.pdf input/dec.pdf || true   # কোড ৩ = সতর্কতা, আউটপুট তবু তৈরি হয়
+          if [ -s input/dec.pdf ]; then mv input/dec.pdf input/book.pdf; echo decrypted; else echo "ডিক্রিপ্ট হয়নি"; qpdf --show-encryption input/book.pdf || true; fi
+          echo "::notice::DIAG size=$(stat -c%s input/book.pdf) head=$(head -c 8 input/book.pdf | tr -c '[:print:]' '?') enc=$(qpdf --show-encryption input/book.pdf 2>&1 | tr '\n' ' ' | cut -c1-300) check=$(qpdf --check input/book.pdf 2>&1 | tail -3 | tr '\n' ' ' | cut -c1-200)"
+          ocrmypdf -l ben+eng --force-ocr --optimize 0 --jobs 2 --output-type pdf --sidecar "output/$BNAME.txt" input/book.pdf work.pdf 2>&1 | tail -15 | while read -r l; do echo "::warning::OCRLOG $l"; done; test -s "output/$BNAME.txt"
+          ls -la output
+      - uses: actions/upload-artifact@v4
+        with:
+          name: txt-${{ strategy.job-index }}
+          path: output/*.txt
+
+  commit-folder:
+    needs: ocr-book
+    if: ${{ !cancelled() && needs.ocr-book.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: txt-*
+          path: collected
+          merge-multiple: true
+      - name: Commit results
+        run: |
+          mkdir -p output
+          cp -n collected/*.txt output/ 2>/dev/null || true
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add output
+          git diff --cached --quiet || (git commit -m "Auto OCR results (Drive folder)" && git pull --rebase -q origin main && git push)

@@ -1,0 +1,122 @@
+name: Arabic OCR (per book)
+
+# আরবি কিতাবের জন্য আলাদা OCR (ভাষা: ara)। প্রতিটি বই আলাদা জবে চলে।
+# ফলাফল: output/<নাম>.ar.txt  (আগের output/<নাম>.txt ছোঁয়া হয় না)
+on:
+  workflow_dispatch:
+    inputs:
+      folder_url:
+        description: 'Google Drive ফোল্ডারের লিংক'
+        required: false
+        default: 'https://drive.google.com/drive/folders/1yLgI5-pWfWFpVj9KfQoWqd4436zP0W0L'
+      only_names:
+        description: 'শুধু এই নামের অংশ মিললে OCR হবে, কমা দিয়ে আলাদা'
+        required: false
+        default: 'আররুকইয়াতুশরইয়াতুলিলএলাজ,আররুকইয়াতুশরঈয়াহ,আল ওয়াকায়তু ওয়াল এলাজ,আলফাতওয়াযাহাবি,তুরুকুলহিসানফিইলাজ,রুকইয়াহ শরঈয়াহ ওয়াসসুন্নাহ'
+      list_only:
+        description: 'শুধু তালিকা দেখাও, OCR করো না (true/false)'
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  list-folder:
+    runs-on: ubuntu-latest
+    outputs:
+      books: ${{ steps.l.outputs.books }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: List matching PDFs
+        id: l
+        env:
+          FOLDER_URL: ${{ github.event.inputs.folder_url }}
+          ONLY_NAMES: ${{ github.event.inputs.only_names }}
+          LIST_ONLY: ${{ github.event.inputs.list_only }}
+        run: |
+          pip install -q --break-system-packages -U gdown
+          python3 - <<'PY'
+          import gdown, json, os, re, unicodedata
+          N = lambda s: unicodedata.normalize('NFC', s)
+          try:
+              fs = gdown.download_folder(url=os.environ['FOLDER_URL'], skip_download=True, quiet=True, use_cookies=False) or []
+          except BaseException as e:
+              print('::error::LISTFAIL ' + type(e).__name__ + ': ' + re.sub(r'\s+', ' ', str(e))[:500]); raise
+          on = [N(k.strip()) for k in os.environ.get('ONLY_NAMES','').split(',') if k.strip()]
+          books, skipped = [], []
+          for f in fs:
+              p = f.path
+              if not p.lower().endswith('.pdf'):
+                  skipped.append(p); continue
+              if on and not any(k in N(p) for k in on):
+                  skipped.append(p + ' (তালিকার বাইরে)'); continue
+              name = re.sub(r'[\\/:*?"<>|]+', '_', os.path.splitext(p)[0]).strip()
+              if os.path.exists(f'output/{name}.ar.txt'):
+                  skipped.append(p + ' (আরবি OCR আগেই আছে)'); continue
+              books.append({'id': f.id, 'name': name})
+          if os.environ.get('LIST_ONLY') == 'true': books = []
+          print('PDF:', len(books), '| বাদ:', len(skipped))
+          for b in books: print(' -', b['name'])
+          for x in skipped: print(' skip', x)
+          open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8').write('books=' + json.dumps(books, ensure_ascii=False) + '\n')
+          PY
+
+  ocr-book:
+    needs: list-folder
+    if: ${{ needs.list-folder.outputs.books != '[]' && needs.list-folder.outputs.books != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        book: ${{ fromJson(needs.list-folder.outputs.books) }}
+    steps:
+      - name: Install OCR tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ocrmypdf qpdf tesseract-ocr-ara tesseract-ocr-eng
+          pip install -q --break-system-packages -U gdown
+      - name: Download and Arabic OCR
+        env:
+          BID: ${{ matrix.book.id }}
+          BNAME: ${{ matrix.book.name }}
+        run: |
+          mkdir -p input output
+          gdown "$BID" -O input/book.pdf
+          qpdf --password= --decrypt input/book.pdf input/dec.pdf || true
+          if [ -s input/dec.pdf ]; then mv input/dec.pdf input/book.pdf; echo decrypted; fi
+          echo "::notice::DIAG size=$(stat -c%s input/book.pdf) pages=$(qpdf --show-npages input/book.pdf 2>&1 | tail -1)"
+          ocrmypdf -l ara --force-ocr --oversample 300 --optimize 0 --jobs 2 --output-type pdf --sidecar "output/$BNAME.ar.txt" input/book.pdf work.pdf 2>&1 | tail -15 | while read -r l; do echo "::warning::OCRLOG $l"; done
+          test -s "output/$BNAME.ar.txt"
+          # দ্রুত মান-যাচাই: আরবি অক্ষর কতগুলো এল
+          python3 - <<'PY'
+          import os,re
+          t=open(f"output/{os.environ['BNAME']}.ar.txt",encoding='utf-8',errors='ignore').read()
+          ar=len(re.findall(r'[؀-ۿ]',t))
+          print(f"::notice::ARABIC_CHARS={ar} TOTAL_CHARS={len(t)}")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ar-${{ strategy.job-index }}
+          path: output/*.ar.txt
+
+  commit-folder:
+    needs: ocr-book
+    if: ${{ !cancelled() && needs.ocr-book.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ar-*
+          path: collected
+          merge-multiple: true
+      - name: Commit results
+        run: |
+          mkdir -p output
+          cp -n collected/*.ar.txt output/ 2>/dev/null || true
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add output
+          git diff --cached --quiet || (git commit -m "Arabic OCR results (per book)" && git pull --rebase -q origin main && git push)
