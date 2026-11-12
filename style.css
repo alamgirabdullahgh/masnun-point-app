@@ -379,31 +379,6 @@ button,input,select{font-family:inherit}
 body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}
 .dr-ufl{bottom:calc(82px + env(safe-area-inset-bottom))!important}
 
-/* Symptom Diagnosis টুল */
-#drSym{padding:6px 0 20px!important}
-#za{max-width:100%;font-family:Arial;color:#222;background:#fff;border:1px solid #bbb;border-radius:6px;padding:6px}
-#za table{width:100%;table-layout:fixed;border-collapse:collapse}
-#za td,#za th{border:1px solid #bbb;padding:2px;vertical-align:top}
-#za th{font-size:11px;background:#444;color:#fff}
-#za h2,#za h3{text-align:center;margin:6px 0}
-#zd div{font-size:12px;padding:2px 0}
-.zo{display:block;font-size:10px;text-align:center;padding:3px 0;background:#f5f5f5;color:#222;margin:1px;border-radius:3px;cursor:pointer;letter-spacing:-.3px}
-.zo.zc{background:#2e7d32;color:#fff}
-.zo.zn{outline:2px solid #1565c0}
-.zg{margin-top:4px;display:none;box-sizing:border-box;width:100%;background:#fbfbfb;border:1px solid #bbb;border-radius:5px;padding:6px}
-.zr{font-size:11px;line-height:1.35;padding:4px 6px;border-left:5px solid;margin:2px 0;background:#fafafa;color:#222;border-radius:2px}
-.zp{cursor:pointer}
-.zr.zh{background:#dff0d8;outline:2px solid #2e7d32;font-weight:700}
-.ze{color:#999;font-style:italic}
-.zl{font-size:9px;opacity:.6;padding:2px 6px}
-.zm{background:#fff3cd;color:#664d03;border:1px solid #ffe69c;border-radius:6px;padding:8px;font-size:12px;margin:8px 0;line-height:1.5}
-.zf{background:#eef6ee;color:#1b3a1b;border:1px dashed #2e7d32;border-radius:4px;padding:6px;font-size:11px;margin-top:4px}
-#za textarea{width:95%;font-size:11px;font-family:Arial;margin-top:3px}
-.zx{font-size:11px;line-height:1.5;background:#eef2f7;color:#1a2a3a;border-left:5px solid #37474f;border-radius:2px;padding:5px 7px;margin-top:3px}
-.zx b{display:block;font-size:10px;color:#37474f;margin-bottom:3px}
-.zx ul{margin:3px 0;padding-left:16px}.zx li{margin:2px 0}
-.zk{font-size:10px;color:#777}
-
 /* ---------- সার্চ ফলাফলের অপশন প্যানেল: গ্রুপ করা কার্ড, সমান মাপের বোতাম ---------- */
 .rs-info{font-size:13px;line-height:1.6;color:var(--text-sub)}
 .rs-seg{display:flex;gap:4px;margin-top:12px;padding:4px;border-radius:15px;background:var(--primary-light);border:1px solid var(--border-light)}

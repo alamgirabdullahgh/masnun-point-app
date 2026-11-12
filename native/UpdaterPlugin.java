@@ -78,10 +78,10 @@ public class UpdaterPlugin extends Plugin {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("application/vnd.android.package-archive");
             i.putExtra(Intent.EXTRA_STREAM, u);
-            i.putExtra(Intent.EXTRA_SUBJECT, "মাসনুন রুকইয়াহ");
+            i.putExtra(Intent.EXTRA_SUBJECT, "Masnun Ruqyah");
             i.setClipData(android.content.ClipData.newRawUri(ApkShareProvider.NAME, u));
             i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Intent ch = Intent.createChooser(i, "মাসনুন রুকইয়াহ শেয়ার করুন");
+            Intent ch = Intent.createChooser(i, "Masnun Ruqyah শেয়ার করুন");
             ch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             c.startActivity(ch);
             call.resolve();

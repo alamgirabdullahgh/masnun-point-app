@@ -18,7 +18,7 @@ jobs:
       - name: Prepare web files
         run: |
           mkdir www
-          cp -r index.html app.js boot.js widget.js alarm.js routine.js mushaf.js symptom.js style.css sw.js manifest.webmanifest icons fonts data www/
+          cp -r index.html app.js boot.js widget.js alarm.js routine.js mushaf.js style.css sw.js manifest.webmanifest icons fonts data www/
       - name: Create Android project
         run: |
           npm init -y >/dev/null
@@ -98,4 +98,4 @@ jobs:
         run: |
           cp android/app/build/outputs/apk/debug/app-debug.apk Masnun-Ruqyah.apk
           gh release delete latest --yes --cleanup-tag 2>/dev/null || true
-          gh release create "v1.0.${{ github.run_number }}" Masnun-Ruqyah.apk --title "মাসনুন রুকইয়াহ v1.0.${{ github.run_number }}" --notes "ডাউনলোড করে ফোনে ইনস্টল করুন। অ্যাপের ভেতর থেকেও আপডেট করা যায়।" --latest
+          gh release create "v1.0.${{ github.run_number }}" Masnun-Ruqyah.apk --title "Masnun Ruqyah v1.0.${{ github.run_number }}" --notes "ডাউনলোড করে ফোনে ইনস্টল করুন। অ্যাপের ভেতর থেকেও আপডেট করা যায়।" --latest

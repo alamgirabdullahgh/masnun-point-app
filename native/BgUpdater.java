@@ -161,13 +161,13 @@ public class BgUpdater {
     }
 
     static void notice(Context c) {
-        notify(c, 31, "update", "মাসনুন রুকইয়াহ আপডেট", NotificationManager.IMPORTANCE_DEFAULT,
-                "মাসনুন রুকইয়াহ-এর নতুন সংস্করণ এসেছে", "চাপুন — অ্যাপ খুলে আপডেট করুন", openApp(c));
+        notify(c, 31, "update", "Masnun Ruqyah আপডেট", NotificationManager.IMPORTANCE_DEFAULT,
+                "Masnun Ruqyah-এর নতুন সংস্করণ এসেছে", "চাপুন — অ্যাপ খুলে আপডেট করুন", openApp(c));
     }
 
     static void confirmNotice(Context c, Intent ui) {
-        notify(c, 32, "update", "মাসনুন রুকইয়াহ আপডেট", NotificationManager.IMPORTANCE_DEFAULT,
-                "মাসনুন রুকইয়াহ-এর নতুন সংস্করণ তৈরি", "চাপুন — ইনস্টল নিশ্চিত করুন", ui);
+        notify(c, 32, "update", "Masnun Ruqyah আপডেট", NotificationManager.IMPORTANCE_DEFAULT,
+                "Masnun Ruqyah-এর নতুন সংস্করণ তৈরি", "চাপুন — ইনস্টল নিশ্চিত করুন", ui);
     }
 
     static void clearNotice(Context c) {
