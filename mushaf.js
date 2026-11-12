@@ -43,7 +43,7 @@
    else if(r.ban)h+='<div class="mq-r mq-ban"><span lang="ar" dir="rtl">سورة '+esc(SAR[r.ban-1])+'</span></div>';
    else if(r.bis)h+='<div class="mq-r mq-c mq-bis" dir="rtl" lang="ar">'+spans(words(BIS))+'</div>';
    else{var sp=ck?ayspans(words(r.t),ck,pf,st):spans(words(r.t));h+='<div class="mq-r'+(st.pf?' mq-pfr':'')+'" dir="rtl" lang="ar">'+sp+'</div>'}}
-  return '<div class="mq-hd" dir="rtl"><span lang="ar">الجزء '+ad(juz(n))+'</span><span class="mq-pn">'+bn(n-JST[juz(n)-1]+1)+' / '+bn((juz(n)<30?JST[juz(n)]:TOT+1)-JST[juz(n)-1])+'</span><span lang="ar">'+esc(SAR[s-1])+' '+ad(s)+'</span></div>'
+  return '<div class="mq-hd" dir="rtl"><span lang="ar">الجزء '+ad(juz(n))+'</span><button type="button" class="mq-pn" data-pj="1" aria-label="পাতা নম্বর">'+bn(n)+'</button><span lang="ar">'+esc(SAR[s-1])+' '+ad(s)+'</span></div>'
    +'<button type="button" class="mq-bm'+(BM===n?' on':'')+'" data-bm="1" aria-label="বুকমার্ক"><svg viewBox="0 0 22 30" width="22" height="30"><path d="M2 1h18v27l-9-7-9 7z"/></svg></button>'
    +'<div class="mq-fr">'+h+'</div><div class="mq-ft" lang="ar">منزل '+ad(manzil(s))+'</div>';
  }
@@ -61,7 +61,8 @@
  }
  function foot(){
   var f=$("mqFoot");if(!f)return;
-  f.innerHTML=(BM&&BM!==PG)?'<button type="button" data-jump="1">🔖 বুকমার্ক করা পাতা '+bn(BM)+'-এ যান</button>':'১৫ লাইনের মুসহাফ · পাতা '+bn(PG)+(BM===PG?' · 🔖 বুকমার্ক করা':'');
+  var on=!!(BM&&BM!==PG);f.hidden=!on;
+  f.innerHTML=on?'<button type="button" data-jump="1" aria-label="বুকমার্কে যান">🔖 '+bn(BM)+'</button>':'';
  }
  function mount(n,L,dir){
   var st=$("mqStage");if(!st)return;
@@ -81,7 +82,7 @@
  }
  function show(n,dir){
   PG=n;try{localStorage.setItem("mq-pg",n)}catch(e){}try{history.replaceState(null,"","#mushaf/"+n)}catch(e){}
-  var inp=$("mqP");if(inp)inp.value=n;foot();
+  foot();
   var tk=++TK,k=Math.floor((n-1)/30);
   Promise.all([chunk(k),FONT,paP()]).then(function(a){if(tk!==TK)return;mount(n,a[0][n],dir);
     if(n%30>20&&n<TOT)chunk(k+1).catch(function(){});if(n%30<=9&&k>0)chunk(k-1).catch(function(){})})
@@ -91,11 +92,26 @@
  /* অডিও: প্রতি আয়াতের আলাদা MP3 (Alafasy), বাজা আয়াত পাতায় হাইলাইট; পাতার শেষে নিজে পরের পাতা */
  var p3=function(n){return String(n).padStart(3,"0")};
  function aurls(k){var q=k.split(":");return["https://everyayah.com/data/Alafasy_64kbps/"+p3(q[0])+p3(q[1])+".mp3","https://everyayah.com/data/Alafasy_128kbps/"+p3(q[0])+p3(q[1])+".mp3"]}
- function hl(){var sh=box&&box.querySelector(".mq-cur");if(sh){[].forEach.call(sh.querySelectorAll(".mq-on"),function(x){x.classList.remove("mq-on")});
-  if(AK){[].forEach.call(sh.querySelectorAll('[data-a="'+AK+'"]'),function(x){x.classList.add("mq-on")})}}
-  var b=$("mqPl");if(b){var pl=!!(AU&&!AU.paused);b.textContent=pl?"⏸":"▶";b.setAttribute("aria-label",pl?"থামান":"চালান")}}
+ var RAF=0,WW=null;
+ function wlen(x){return Math.max(1,(x.textContent||"").replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\uf500-\uf5ff\u06df\s]/g,"").length)}
+ function wordsOf(){
+  var sh=box&&box.querySelector(".mq-cur");if(!sh||!AK)return WW=null;
+  var el=[].slice.call(sh.querySelectorAll('[data-a="'+AK+'"]'));if(!el.length)return WW=null;
+  var tot=0,cum=el.map(function(x){tot+=wlen(x);return tot});return WW={el:el,cum:cum,tot:tot,k:AK,p:PG};
+ }
+ function prog(){
+  RAF=0;if(!AU||!AK)return;
+  if(!WW||WW.k!==AK||WW.p!==PG)wordsOf();
+  if(WW){var d=AU.duration,t=AU.currentTime,f=(d&&isFinite(d)&&d>0)?Math.min(1,t/d):0;
+   /* শুরুর/শেষের সামান্য নীরবতা বাদ দিয়ে হিসাব */
+   f=Math.min(1,Math.max(0,(f-.03)/.9));var x=f*WW.tot;
+   WW.el.forEach(function(e,i){var on=(i===0&&AU.currentTime>0)||x>(i?WW.cum[i-1]:0);e.classList.toggle("mq-on",on)})}
+  if(!AU.paused)RAF=requestAnimationFrame(prog)}
+ function hl(){var sh=box&&box.querySelector(".mq-cur");if(sh){[].forEach.call(sh.querySelectorAll(".mq-on"),function(x){x.classList.remove("mq-on")});WW=null;
+  if(AK){wordsOf();if(AU&&!RAF)RAF=requestAnimationFrame(prog)}}
+  var b=$("mqPl");if(b){var pl=!!(AU&&!AU.paused);b.textContent=pl?"⏸":"▶";b.setAttribute("aria-label",pl?"থামান":"চালান");if(pl&&!RAF)RAF=requestAnimationFrame(prog)}}
  function nextK(k){var q=k.split(":"),s=+q[0],a=+q[1]+1;if(a>CNT[s-1]){s++;a=1}return s>114?null:s+":"+a}
- function stopAud(){if(AU){AU.onended=AU.onerror=AU.onplay=AU.onpause=null;try{AU.pause();AU.removeAttribute("src");AU.load()}catch(e){}}AU=null;AK=null;hl()}
+ function stopAud(){if(AU){AU.onended=AU.onerror=AU.onplay=AU.onpause=null;try{AU.pause();AU.removeAttribute("src");AU.load()}catch(e){}}AU=null;AK=null;WW=null;if(RAF){cancelAnimationFrame(RAF);RAF=0}hl()}
  function playK(k){
   if(!k){stopAud();return}
   AK=k;var u=aurls(k),i=0;
@@ -117,7 +133,7 @@
  function cycleSpeed(b){var L=[.75,1,1.25,1.5,2];SP=L[(L.indexOf(SP)+1)%L.length];if(AU)AU.playbackRate=SP;b.textContent=SP+"x"}
  function draw(){
   if(!box)return;
-  box.innerHTML='<h2 class="am-h">আরবি কুরআন</h2><div class="mq-nav"><button type="button" data-g="1" aria-label="পরের পাতা">‹ পরের</button><label>পাতা <input id="mqP" type="number" min="1" max="'+TOT+'" value="'+PG+'"> / '+bn(TOT)+'</label><button type="button" data-g="-1" aria-label="আগের পাতা">আগের ›</button></div><div class="mq-stage" id="mqStage"><div class="mq-sheet mq-cur"><div class="am-load">লোড হচ্ছে…</div></div></div><div class="mq-ab"><button type="button" data-sp="1" aria-label="গতি">'+SP+'x</button><button type="button" id="mqPl" class="mq-pl" data-pl="1" aria-label="চালান">▶</button><button type="button" data-rp="1" aria-label="আয়াত পুনরাবৃত্তি" class="'+(RP1?'on':'')+'">🔁</button></div><div class="mq-foot" id="mqFoot"></div>';
+  box.innerHTML='<div class="mq-stage" id="mqStage"><div class="mq-sheet mq-cur"><div class="am-load">লোড হচ্ছে…</div></div></div><div class="mq-ab"><button type="button" data-sp="1" aria-label="গতি">'+SP+'x</button><button type="button" id="mqPl" class="mq-pl" data-pl="1" aria-label="চালান">▶</button><button type="button" data-rp="1" aria-label="আয়াত পুনরাবৃত্তি" class="'+(RP1?'on':'')+'">🔁</button><span class="mq-foot" id="mqFoot" hidden></span></div>';
   show(PG,0);
  }
  function init(){
@@ -130,11 +146,12 @@
    if(b=t.closest("[data-g]")){go(PG+ +b.dataset.g)}
    else if(t.closest("[data-bm]")){BM=(BM===PG)?0:PG;try{localStorage.setItem("mq-bm",BM)}catch(x){}var r=box.querySelector(".mq-cur .mq-bm");if(r)r.classList.toggle("on",BM===PG);foot()}
    else if(t.closest("[data-jump]")){go(BM)}
+   else if(t.closest("[data-pj]")){var v=prompt("পাতা নম্বর (১–"+bn(TOT)+")",bn(PG));if(v!=null){v=parseInt(String(v).replace(/[০-৯]/g,function(c){return BD.indexOf(c)}),10);if(v)go(v)}}
    else if(b=t.closest("[data-pl]")){togglePlay()}
    else if(b=t.closest("[data-sp]")){cycleSpeed(b)}
    else if(b=t.closest("[data-rp]")){RP1=!RP1;b.classList.toggle("on",RP1)}});
-  window.addEventListener("hashchange",function(){if(!/^#mushaf/.test(location.hash||""))stopAud()});
-  box.addEventListener("change",function(e){if(e.target.id==="mqP")go(+e.target.value)});
+  window.addEventListener("hashchange",function(){if(!/^#mushaf/.test(location.hash||"")){stopAud();document.body.classList.remove("mq-fs")}});
+  
   var sx=0,sy=0;
   box.addEventListener("touchstart",function(e){if(e.target.closest&&e.target.closest("input"))return;sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
   box.addEventListener("touchend",function(e){if(!sx)return;var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;sx=0;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)go(PG+(dx>0?1:-1))},{passive:true});
@@ -142,6 +159,6 @@
   var rz;window.addEventListener("resize",function(){clearTimeout(rz);rz=setTimeout(function(){if(box&&!box.hidden)fit(box.querySelector(".mq-cur"))},120)});
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){if(box&&!box.hidden)fit(box.querySelector(".mq-cur"))});
  }
- window.__drMushaf=function(sub){init();if(!box)return;var n=parseInt(sub,10);if(n)PG=Math.max(1,Math.min(TOT,n));else{try{PG=+localStorage.getItem("mq-pg")||PG}catch(e){}}draw()};
+ window.__drMushaf=function(sub){document.body.classList.add("mq-fs");init();if(!box)return;var n=parseInt(sub,10);if(n)PG=Math.max(1,Math.min(TOT,n));else{try{PG=+localStorage.getItem("mq-pg")||PG}catch(e){}}draw()};
  var m=/^#mushaf(?:\/(\d+))?/.exec(location.hash||"");if(m)window.__drMushaf(m[1]);
 })();
