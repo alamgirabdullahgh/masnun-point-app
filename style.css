@@ -372,8 +372,8 @@ button,input,select{font-family:inherit}
 /* নিচের নেভিগেশন বার (স্ক্রলে সরে না) */
 .dr-sbtn{text-decoration:none}
 .dr-bnav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;background:var(--card-bg);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -4px 14px rgba(0,0,0,.08)}
-.dr-bn,.dr-bk{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px 7px;color:var(--text-muted);text-decoration:none;font-size:11.5px;font-weight:700;-webkit-tap-highlight-color:transparent}
-.dr-bn i,.dr-bk i{font-style:normal;font-size:21px;line-height:1}
+.dr-bn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px 7px;color:var(--text-muted);text-decoration:none;font-size:11.5px;font-weight:700;-webkit-tap-highlight-color:transparent}
+.dr-bn i{font-style:normal;font-size:21px;line-height:1}
 .dr-bn.on{color:var(--primary)}
 .dr-bn.on i{transform:scale(1.12)}
 body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}
@@ -546,10 +546,13 @@ body.mq-fs .dr-bnav,body.mq-fs .dr-ufl{display:none!important}
 .mq-foot button{min-width:0;height:36px;padding:0 12px;font-size:13px}
 .mq-sheet .mq-on{background:#f3d65a;color:#111}
 
-.dr-bk{background:none;border:0;font-family:inherit;cursor:pointer}
-.dr-bk:active{color:var(--primary)}
 .mq-ft{display:flex;align-items:center;justify-content:space-between;direction:ltr;padding:0 14px 0 14px;height:22px}
 .mq-ft>span:first-child{flex:1;text-align:center;padding-left:90px}
 .mq-pj{font:600 12.5px/1 var(--font-main,system-ui),sans-serif;color:#0a5240;white-space:nowrap}
 .mq-sheet .mq-on{background:linear-gradient(to left,#f3d65a var(--p,0%),transparent var(--p,0%));color:#111;border-radius:3px}
 .mq-sheet .mq-pf.mq-on{background:linear-gradient(to left,#f3d65a var(--p,0%),#8da01f var(--p,0%));color:#111}
+
+.dr-backrow{padding:8px 12px 0;display:flex;justify-content:flex-start}
+.dr-backrow[hidden]{display:none}
+.dr-backbtn{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--border);background:var(--card-bg);color:var(--primary);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.08);-webkit-tap-highlight-color:transparent}
+.dr-backbtn:active{background:color-mix(in srgb,var(--primary) 14%,var(--card-bg))}

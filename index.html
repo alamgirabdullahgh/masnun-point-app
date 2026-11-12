@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Masnun Ruqyah">
-<link rel="stylesheet" href="style.css?v=35">
+<link rel="stylesheet" href="style.css?v=36">
 </head>
 <body>
 <header class="dr-bar">
@@ -20,6 +20,7 @@
  <div class="dr-brand"><img src="icons/icon-192.png" alt=""><span>Masnun Ruqyah</span></div>
  <a class="dr-menu dr-sbtn" href="#search" data-nav="search" aria-label="সার্চ"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.2 15.2L20 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></a>
 </header>
+<div class="dr-backrow" id="drBackRow" hidden><button class="dr-backbtn" id="drBack" type="button" aria-label="আগের পাতায় ফিরুন"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
 <div id="drWidget" style="padding:0 12px"></div>
 <div class="dr-wbar" id="drWBar" hidden><button id="drWSet" type="button">📲 হোম স্ক্রিনে বসান</button></div>
 <div class="dr-scrim" id="drScrim"></div>
@@ -39,7 +40,7 @@
  <a class="dr-nav" href="#routine" data-nav="routine"><i>🗓</i><span>দৈনিক রুটিন ও রোগীর করণীয়</span></a>
 <div class="dr-vbar"><b id="drVer">Masnun Ruqyah</b><button class="dr-share" id="drShare" type="button">Share</button></div>
 </nav>
-<nav class="dr-bnav" aria-label="নেভিগেশন"><button class="dr-bk" id="drBack" type="button" aria-label="আগের পাতায় ফিরুন" style="visibility:hidden"><i>←</i><span>ফিরুন</span></button><a class="dr-bn" href="#topics" data-nav="topics"><i>📚</i><span>বিষয়ভিত্তিক আয়াত</span></a><a class="dr-bn" href="#home" data-nav="home"><i>🏠</i><span>হোম</span></a></nav>
+<nav class="dr-bnav" aria-label="নেভিগেশন"><a class="dr-bn" href="#topics" data-nav="topics"><i>📚</i><span>বিষয়ভিত্তিক আয়াত</span></a><a class="dr-bn" href="#home" data-nav="home"><i>🏠</i><span>হোম</span></a></nav>
 <div class="dr-ufl" id="drUfl" hidden><button class="dr-ubtn" id="drUbtn" type="button"><span class="ph" id="drUph">Update</span><span class="pt" id="drUpt"></span></button></div>
 <main class="dr-main">
 <div class="rs-box" id="drRoutine" hidden></div>
@@ -59,7 +60,7 @@
 <script src="widget.js?v=10"></script>
 <script src="routine.js?v=2"></script>
 <script src="mushaf.js?v=7"></script>
-<script src="app.js?v=37"></script>
+<script src="app.js?v=38"></script>
 <script src="alarm.js?v=3"></script>
 <script src="boot.js?v=6"></script>
 <script src="data/hadith-norm.js?v=2"></script>

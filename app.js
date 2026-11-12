@@ -960,7 +960,7 @@ function drShell(){
   else if(p[0]==="alarm"&&al){key="alarm";box.hidden=true;rd.hidden=true;al.hidden=false;window.DRALARM&&DRALARM.show();window.scrollTo(0,0)}
   else if(p[0]==="read"&&RMODES.some(m=>m[0]===p[1])){key="read/"+p[1];const s=+p[2]||0;box.hidden=true;rd.hidden=false;renderReader(p[1],s>=1&&s<=114?s:0);window.scrollTo(0,0)}
   else{rd.hidden=true;box.hidden=false;RG++;if(p[0]==="topics"){key="topics";SHOWT&&SHOWT(true);window.scrollTo(0,0)}else if(prev.startsWith("read/")||prev===""||prev==="home"||prev==="alarm"||prev==="routine"||prev==="mushaf")window.scrollTo(0,0)}
-  prev=key;lastH=h;{const bk=$("drBack");if(bk)bk.style.visibility=key==="home"?"hidden":"visible";window.__drNav=(window.__drNav||0)+1}{const sh=key==="home"?"":"none";["drWidget","drWBar"].forEach(i=>{const x=$(i);if(x)x.style.display=sh})}navs.forEach(a=>a.classList.toggle("on",a.dataset.nav===key))};
+  prev=key;lastH=h;{const bk=$("drBackRow");if(bk)bk.hidden=key==="home";window.__drNav=(window.__drNav||0)+1}{const sh=key==="home"?"":"none";["drWidget","drWBar"].forEach(i=>{const x=$(i);if(x)x.style.display=sh})}navs.forEach(a=>a.classList.toggle("on",a.dataset.nav===key))};
  {const bk=$("drBack");if(bk)bk.onclick=()=>{if((window.__drNav||0)>1)history.back();else location.hash="#home"}}
  navs.forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const h=a.getAttribute("href");if(location.hash===h)route();else location.hash=h;open(false)}));
  addEventListener("hashchange",route);
