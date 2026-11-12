@@ -1,4 +1,4 @@
-package com.dailyruqyah.app;
+package com.masnun.ruqyah;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -16,7 +16,7 @@ import java.util.Calendar;
 // অ্যালার্ম: {id, time:"HH:MM", days:[0..6] (0=রবি; ফাঁকা = প্রতিদিন), on, title, repeat, urls:[[url,…ফলব্যাক],…]}
 public class AlarmStore {
     static final String PREF = "dr_alarm";
-    static final String ACTION = "com.dailyruqyah.app.AUDIO_ALARM";
+    static final String ACTION = "com.masnun.ruqyah.AUDIO_ALARM";
 
     static SharedPreferences sp(Context c) { return c.getSharedPreferences(PREF, Context.MODE_PRIVATE); }
 

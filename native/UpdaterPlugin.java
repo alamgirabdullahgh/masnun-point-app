@@ -1,4 +1,4 @@
-package com.dailyruqyah.app;
+package com.masnun.ruqyah;
 
 import android.app.PendingIntent;
 import android.content.Context;

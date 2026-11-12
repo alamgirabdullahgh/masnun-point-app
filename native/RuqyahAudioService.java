@@ -1,4 +1,4 @@
-package com.dailyruqyah.app;
+package com.masnun.ruqyah;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -24,7 +24,7 @@ import java.util.List;
 
 // রুকইয়াহ অডিও চালায় (আয়াতের তালিকা ধরে একটার পর একটা, প্রতিটির ফলব্যাক লিংকসহ); নোটিফিকেশনে "বন্ধ করুন" বোতাম
 public class RuqyahAudioService extends Service {
-    static final String STOP = "com.dailyruqyah.app.STOP_AUDIO";
+    static final String STOP = "com.masnun.ruqyah.STOP_AUDIO";
     static volatile boolean playing = false;
 
     private final Handler h = new Handler(Looper.getMainLooper());
@@ -61,7 +61,7 @@ public class RuqyahAudioService extends Service {
         round = 0; idx = 0; cand = 0; fails = 0;
         try {
             PowerManager pm = getSystemService(PowerManager.class);
-            wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "dailyruqyah:audio");
+            wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "masnunruqyah:audio");
             wl.acquire(3 * 60 * 60 * 1000L);
         } catch (Exception e) { }
         try {

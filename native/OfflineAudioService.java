@@ -1,4 +1,4 @@
-package com.dailyruqyah.app;
+package com.masnun.ruqyah;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -68,7 +68,7 @@ public class OfflineAudioService extends Service {
         running = true;
         try {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "dailyruqyah:offlineaudio");
+            wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "masnunruqyah:offlineaudio");
             wl.acquire(6 * 60 * 60 * 1000L);
         } catch (Exception e) { }
         new Thread(this::work, "off-audio").start();

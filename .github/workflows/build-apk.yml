@@ -26,10 +26,13 @@ jobs:
           npx cap add android
           npx cap sync android
       - name: Add updater, fixed signing key and version
+        env:
+          MASNUN_KEYSTORE_B64: ${{ secrets.MASNUN_KEYSTORE_B64 }}
+          MASNUN_KEY_PASSWORD: ${{ secrets.MASNUN_KEY_PASSWORD }}
         run: |
           # স্থির সাইনিং কী: একই কী দিয়ে সই করা হয়, তাই নতুন সংস্করণ আগেরটার ওপরেই ইনস্টল হয়
-          cp native/dr.keystore android/app/dr.keystore
-          D=android/app/src/main/java/com/dailyruqyah/app
+          echo "$MASNUN_KEYSTORE_B64" | base64 -d > android/app/masnun.keystore
+          D=android/app/src/main/java/com/masnun/ruqyah
           cp native/*.java $D/
           # টাইম উইজেট (Kotlin) ও তার লেআউট/ছবি/রং অ্যাপের ভেতরে
           cp native/widget/kotlin/*.kt $D/
@@ -37,11 +40,11 @@ jobs:
           # উইজেট Java-তে নয়, Kotlin-এ লেখা: Kotlin চালু ও minSdk ২৬ (java.time-এর জন্য)
           sed -i "s/minSdkVersion = 22/minSdkVersion = 26/" android/variables.gradle
           python3 - <<'PY'
-          import re
+          import re,os
           g=open('android/app/build.gradle').read()
           g=re.sub(r'versionCode \d+','versionCode '+str(100+${{ github.run_number }}),g,1)
           g=re.sub(r'versionName "[^"]*"','versionName "1.0.${{ github.run_number }}"',g,1)
-          g=g.replace('android {','android {\n    signingConfigs {\n        fixed {\n            storeFile file("dr.keystore")\n            storePassword "dailyruqyah"\n            keyAlias "dailyruqyah"\n            keyPassword "dailyruqyah"\n        }\n    }',1)
+          g=g.replace('android {','android {\n    signingConfigs {\n        fixed {\n            storeFile file("masnun.keystore")\n            storePassword "'+os.environ['MASNUN_KEY_PASSWORD']+'"\n            keyAlias "masnun"\n            keyPassword "'+os.environ['MASNUN_KEY_PASSWORD']+'"\n        }\n    }',1)
           g=g.replace('buildTypes {','buildTypes {\n        debug {\n            signingConfig signingConfigs.fixed\n        }',1)
           g=g.replace("apply plugin: 'com.android.application'","apply plugin: 'com.android.application'\napply plugin: 'kotlin-android'",1)
           g=g.replace('android {','android {\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_17\n        targetCompatibility JavaVersion.VERSION_17\n    }\n    kotlinOptions {\n        jvmTarget = "17"\n    }',1)
@@ -81,7 +84,7 @@ jobs:
                   <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info" />
               </receiver>
               <receiver android:name=".LocationReceiver" android:exported="false" />
-              <provider android:name=".ApkShareProvider" android:authorities="com.dailyruqyah.app.apkshare" android:exported="false" android:grantUriPermissions="true" />
+              <provider android:name=".ApkShareProvider" android:authorities="com.masnun.ruqyah.apkshare" android:exported="false" android:grantUriPermissions="true" />
           </application>'''
           m=m.replace('</application>',comp,1)
           open('android/app/src/main/AndroidManifest.xml','w').write(m)

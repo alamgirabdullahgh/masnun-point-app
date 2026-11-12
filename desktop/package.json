@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "devDependencies": { "electron": "31.7.7", "electron-builder": "24.13.3" },
   "build": {
-    "appId": "com.dailyruqyah.desktop",
+    "appId": "com.masnun.ruqyah.desktop",
     "productName": "মাসনুন রুকইয়াহ",
     "directories": { "output": "dist", "buildResources": "build" },
     "files": ["main.js", "app/**/*"],

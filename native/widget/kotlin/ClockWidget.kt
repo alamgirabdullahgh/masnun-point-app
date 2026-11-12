@@ -1,4 +1,4 @@
-package com.dailyruqyah.app
+package com.masnun.ruqyah
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -89,7 +89,7 @@ class ClockWidget : AppWidgetProvider() {
     companion object {
         const val ACTION_TICK = "com.rahcare.timewidget.TICK"
         const val ACTION_PICK = "com.rahcare.timewidget.PICK"
-        const val ACTION_LOCUPD = "com.dailyruqyah.app.LOCUPD"
+        const val ACTION_LOCUPD = "com.masnun.ruqyah.LOCUPD"
         private const val TICK_MS = 5 * 60 * 1000L // প্রগ্রেস বার নতুন করে আঁকার ব্যবধান
         private const val DUHA_AFTER_SUNRISE = 24 // ইশরাক শুরু (নিষিদ্ধ সময় শেষ): সূর্যোদয়ের ২৪ মিনিট পর (ইসলামিক ফাউন্ডেশনের স্থায়ী সময়সূচির নোট)
         private const val ISHRAQ_END_AFTER_SUNRISE = 60 // ইশরাকের সময় শেষ ধরা হয়েছে: সূর্যোদয়ের প্রায় ১ ঘণ্টা পর; এরপর সালাতুদ্দোহা (চাশত)

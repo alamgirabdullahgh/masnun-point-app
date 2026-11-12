@@ -1,4 +1,4 @@
-package com.dailyruqyah.app;
+package com.masnun.ruqyah;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

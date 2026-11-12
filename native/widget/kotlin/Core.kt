@@ -1,4 +1,4 @@
-package com.dailyruqyah.app
+package com.masnun.ruqyah
 
 import java.time.LocalDate
 import java.time.chrono.HijrahDate
