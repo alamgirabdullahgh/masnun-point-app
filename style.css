@@ -518,3 +518,16 @@ html.kb .dr-bnav,html.kb .dr-ufl{display:none!important}html.kb body{padding-bot
 .ad-card p{margin:0;font-size:12.5px;line-height:1.6;color:var(--text-sub)}
 .ad-b{align-self:flex-start;margin-top:auto;padding:7px 14px;border-radius:999px;background:var(--primary);color:#fff;font-size:13px;text-decoration:none}
 .ad-b.off{background:var(--border);color:var(--text-sub)}
+
+/* আরবি কুরআন (১৫ লাইন) */
+@font-face{font-family:"IndoPak Waqf Lazim";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/indopak-waqf-lazim.woff2) format("woff2")}
+.mq-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0}
+.mq-nav button{border:1px solid var(--bd,#cbd5d0);background:var(--card,#fff);color:inherit;border-radius:8px;padding:8px 14px;font:inherit;cursor:pointer}
+.mq-nav label{font-size:14px}.mq-nav input{width:64px;text-align:center;padding:6px;border:1px solid var(--bd,#cbd5d0);border-radius:6px;font:inherit;background:transparent;color:inherit}
+.mq-pg{display:flex;flex-direction:column;justify-content:space-between;max-width:560px;margin:0 auto;aspect-ratio:3/4.6;min-height:520px;padding:14px 12px;border:2px double #b08d3c;border-radius:6px;background:var(--card,#fffdf6);overflow:hidden}
+.mq-ln{flex:1 1 0;display:flex;align-items:center;justify-content:space-between;font-family:"IndoPak Waqf Lazim","Scheherazade New",Amiri,serif;font-size:1em;line-height:1;white-space:nowrap;direction:rtl;min-height:0}
+.mq-ln.mq-short{justify-content:flex-start;gap:.22em}
+.mq-ln.mq-bis{justify-content:center;gap:.22em}
+.mq-sur{flex:1 1 0;display:flex;align-items:center;justify-content:center;min-height:0}
+.mq-sur span{padding:2px 28px;border:1.5px solid #b08d3c;border-radius:4px;background:rgba(176,141,60,.12);font-weight:700;font-size:15px}
+.mq-foot{text-align:center;font-size:13px;opacity:.7;margin:8px 0}

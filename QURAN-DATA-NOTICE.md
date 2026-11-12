@@ -18,3 +18,9 @@ Root assignments are research data, not a fatwa/tafsir source; verify against cl
 
 - `quran-chunks/c/`: easy colloquial form of the Muhiuddin Khan translation above (sadhu words and spelling errors corrected in 19 verses);
   a derivative of a CC BY-SA 4.0 work, therefore shared under CC BY-SA 4.0 with the same attribution.
+
+## আরবি কুরআন (১৫ লাইন মুসহাফ)
+
+- `data/quran-mushaf15-N.json` (৬১০ পাতা, প্রতি পাতার লাইন-ভাগসহ): `tools/build-mushaf15.py` দিয়ে তৈরি, উৎস
+  [ShakesVision/quran-archive](https://github.com/ShakesVision/quran-archive) (`qurancom/comprehensive-15Lines`, Quran.com API mushaf=6)।
+- ফন্ট `fonts/indopak-waqf-lazim.woff2`: "IndoPak Nastaleeq Waqf Lazim" v4.2.1 (ShakesVision/quran রিপো থেকে)। প্রকাশের আগে ফন্ট ও ডেটার লাইসেন্স/অনুমতি নিজে যাচাই করুন।
