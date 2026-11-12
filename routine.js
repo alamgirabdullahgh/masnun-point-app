@@ -4,7 +4,7 @@
  var bn=function(n){return String(n).replace(/\d/g,function(d){return BD[d]})};
  var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
  var j=function(u){return fetch(new URL(u,location.href).href).then(function(r){if(!r.ok)throw 0;return r.json()})};
- function load(){return Promise.all([R||j("data/routine.json?v=1"),P||j("data/patient-guide.json?v=1"),AD||j("data/ads.json?v=1").catch(function(){return{items:[]}})]).then(function(x){R=x[0];P=x[1];AD=x[2]})}
+ function load(){return Promise.all([R||j("data/routine.json?v=2"),P||j("data/patient-guide.json?v=1"),AD||j("data/ads.json?v=1").catch(function(){return{items:[]}})]).then(function(x){R=x[0];P=x[1];AD=x[2]})}
  function refLabel(r){return "সূরা "+(SN[r[0]]||bn(r[0]))+" "+bn(r[0])+":"+bn(r[1])+(r[2]?"-"+bn(r[2]):"")}
  function item(x){
   var h='<div class="rt-it"><div class="am-tags"><span class="am-g">'+esc(x.g)+'</span></div><div class="rt-t">'+esc(x.t)+'</div>';
