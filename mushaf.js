@@ -45,7 +45,7 @@
    else{var sp=ck?ayspans(words(r.t),ck,pf,st):spans(words(r.t));h+='<div class="mq-r'+(st.pf?' mq-pfr':'')+'" dir="rtl" lang="ar">'+sp+'</div>'}}
   return '<div class="mq-hd" dir="rtl"><span lang="ar">الجزء '+ad(juz(n))+'</span><button type="button" class="mq-pn" data-pj="1" aria-label="পাতা নম্বর">'+bn(n)+'</button><span lang="ar">'+esc(SAR[s-1])+' '+ad(s)+'</span></div>'
    +'<button type="button" class="mq-bm'+(BM===n?' on':'')+'" data-bm="1" aria-label="বুকমার্ক"><svg viewBox="0 0 22 30" width="22" height="30"><path d="M2 1h18v27l-9-7-9 7z"/></svg></button>'
-   +'<div class="mq-fr">'+h+'</div><div class="mq-ft" lang="ar">منزل '+ad(manzil(s))+'</div>';
+   +'<div class="mq-fr">'+h+'</div><div class="mq-ft"><span lang="ar">منزل '+ad(manzil(s))+'</span><span class="mq-pj">পারা:'+bn(juz(n))+' পৃ:'+bn(n-JST[juz(n)-1]+1)+'</span></div>';
  }
  /* প্রতি পাতায় সবচেয়ে চওড়া লাইন ঠিক ফ্রেমে ধরে এমন ফন্ট-সাইজ; বাকি লাইন দু-পাশে সমান করে ছড়ানো (justify); ছোট লাইন (সূরার শেষ) মাঝখানে */
  function fit(sh){
@@ -102,10 +102,11 @@
  function prog(){
   RAF=0;if(!AU||!AK)return;
   if(!WW||WW.k!==AK||WW.p!==PG)wordsOf();
-  if(WW){var d=AU.duration,t=AU.currentTime,f=(d&&isFinite(d)&&d>0)?Math.min(1,t/d):0;
-   /* শুরুর/শেষের সামান্য নীরবতা বাদ দিয়ে হিসাব */
-   f=Math.min(1,Math.max(0,(f-.03)/.9));var x=f*WW.tot;
-   WW.el.forEach(function(e,i){var on=(i===0&&AU.currentTime>0)||x>(i?WW.cum[i-1]:0);e.classList.toggle("mq-on",on)})}
+  if(WW){var d=AU.duration,t=AU.currentTime,x=0;
+   if(d&&isFinite(d)&&d>0){var lead=Math.min(.32,d*.08),tail=Math.min(.22,d*.06),f=(t-lead)/Math.max(.2,d-lead-tail);f=Math.min(1,Math.max(0,f));
+    f=f*f*(3-2*f)*.35+f*.65;x=f*WW.tot}
+   WW.el.forEach(function(e,i){var lo=i?WW.cum[i-1]:0,p=Math.min(1,Math.max(0,(x-lo)/(WW.cum[i]-lo)));
+    var v=p<=0?0:p>=1?1:Math.round(p*100)/100;if(e.__p!==v){e.__p=v;e.style.setProperty("--p",v*100+"%");e.classList.toggle("mq-on",v>0)}})}
   if(!AU.paused)RAF=requestAnimationFrame(prog)}
  function hl(){var sh=box&&box.querySelector(".mq-cur");if(sh){[].forEach.call(sh.querySelectorAll(".mq-on"),function(x){x.classList.remove("mq-on")});WW=null;
   if(AK){wordsOf();if(AU&&!RAF)RAF=requestAnimationFrame(prog)}}
