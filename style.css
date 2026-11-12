@@ -517,3 +517,11 @@ html.kb .dr-bnav,html.kb .dr-ufl{display:none!important}html.kb body{padding-bot
 .mq-sheet .am-load{margin:auto;padding:20px;text-align:center;color:#555}
 .mq-foot{text-align:center;font-size:13px;opacity:.85;margin:8px 0}
 .mq-foot button{border:1px solid var(--bd,#cbd5d0);background:var(--card,#fff);color:inherit;border-radius:999px;padding:6px 14px;font:inherit;cursor:pointer}
+
+.mq-ab{display:flex;align-items:center;justify-content:center;gap:18px;margin:6px 0 0}
+.mq-ab button{min-width:46px;height:42px;border:1px solid var(--bd,#cbd5d0);background:var(--card,#fff);color:inherit;border-radius:999px;font:inherit;font-size:15px;cursor:pointer}
+.mq-ab .mq-pl{width:58px;height:58px;border-radius:50%;font-size:24px;border:2px solid #7d8c1c;color:#4a5a10}
+.mq-ab button.on{background:#e3e9a8;border-color:#7d8c1c}
+.mq-sheet .mq-pf{background:#8da01f;color:#fff;border-radius:3px}
+.mq-sheet .mq-pfr{background:#8da01f;color:#fff;font-size:1.12em;border-bottom-color:transparent}
+.mq-sheet .mq-on,.mq-sheet .mq-pf.mq-on{background:#f6df6b;color:#111;border-radius:3px}
