@@ -106,8 +106,11 @@ public class AlarmStore {
             int id = o.optInt("id");
             PendingIntent p = pi(c, id, PendingIntent.FLAG_UPDATE_CURRENT);
             try {
-                if (exact) am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, t, p);
-                else am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, t, p);
+                if (exact) {
+                    // ঘড়ির অ্যালার্মের মতো: Doze ও ব্যাটারি সেভার পেরিয়ে স্ক্রিন অফেও বাজে
+                    PendingIntent show = PendingIntent.getActivity(c, 5, new Intent(c, MainActivity.class), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                    am.setAlarmClock(new AlarmManager.AlarmClockInfo(t, show), p);
+                } else am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, t, p);
                 sched.put(id);
             } catch (Exception e) { }
         }

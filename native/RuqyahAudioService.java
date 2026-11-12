@@ -67,7 +67,7 @@ public class RuqyahAudioService extends Service {
         } catch (Exception e) { }
         try {
             AudioManager am = getSystemService(AudioManager.class);
-            am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+            am.requestAudioFocus(null, AudioManager.STREAM_ALARM, AudioManager.AUDIOFOCUS_GAIN);
         } catch (Exception e) { }
         playCurrent();
         return START_NOT_STICKY;
@@ -117,7 +117,7 @@ public class RuqyahAudioService extends Service {
         release();
         try {
             mp = new MediaPlayer();
-            mp.setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build());
+            mp.setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build());
             mp.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
             String src = c.get(cand);
             if (src.startsWith("/") && !new java.io.File(src).exists()) throw new java.io.FileNotFoundException(src);

@@ -17,6 +17,10 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context c, Intent i) {
         int id = i.getIntExtra("id", -1);
+        try { // সার্ভিস চালু হওয়ার আগে ফোন আবার ঘুমিয়ে না পড়ে
+            android.os.PowerManager.WakeLock w = c.getSystemService(android.os.PowerManager.class).newWakeLock(android.os.PowerManager.PARTIAL_WAKE_LOCK, "masnunruqyah:alarmrx");
+            w.acquire(30000);
+        } catch (Throwable e) { }
         AlarmStore.log(c, "অ্যালার্ম এসেছে (id " + id + ")");
         try {
             String direct = i.getStringExtra("alarmJson"); // পরীক্ষা-অ্যালার্ম

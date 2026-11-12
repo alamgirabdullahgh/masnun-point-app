@@ -79,7 +79,7 @@ public class AudioAlarmPlugin extends Plugin {
             android.app.PendingIntent p = android.app.PendingIntent.getBroadcast(getContext(), 99999, i, android.app.PendingIntent.FLAG_UPDATE_CURRENT | android.app.PendingIntent.FLAG_IMMUTABLE);
             android.app.AlarmManager am = getContext().getSystemService(android.app.AlarmManager.class);
             long t = System.currentTimeMillis() + secs * 1000L;
-            if (AlarmStore.canExact(getContext())) am.setExactAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, t, p);
+            if (AlarmStore.canExact(getContext())) am.setAlarmClock(new android.app.AlarmManager.AlarmClockInfo(t, p), p);
             else am.setAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, t, p);
             AlarmStore.log(getContext(), "পরীক্ষা-অ্যালার্ম বসানো হলো (" + secs + " সেকেন্ড পরে, exact=" + AlarmStore.canExact(getContext()) + ")");
             call.resolve();
