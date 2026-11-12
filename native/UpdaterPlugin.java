@@ -23,7 +23,7 @@ import java.net.URL;
 // অ্যাপের নিজের আপডেট: GitHub-এর "latest release" দেখে, APK নামিয়ে PackageInstaller দিয়ে ইনস্টল করে
 @CapacitorPlugin(name = "AppUpdater")
 public class UpdaterPlugin extends Plugin {
-    static final String REPO = "alamgirabdullahgh/daily-ruqyah";
+    static final String REPO = "alamgirabdullahgh/masnun-point-app";
     static final int BASE = 100;
     private volatile boolean busy = false;
 
@@ -59,7 +59,7 @@ public class UpdaterPlugin extends Plugin {
                 JSObject r = new JSObject();
                 r.put("tag", tag);
                 r.put("versionCode", BASE + n);
-                r.put("url", "https://github.com/" + REPO + "/releases/download/" + tag + "/Daily-Ruqyah.apk");
+                r.put("url", "https://github.com/" + REPO + "/releases/download/" + tag + "/Masnun-Ruqyah.apk");
                 call.resolve(r);
             } catch (Exception e) {
                 call.reject("check failed: " + e.getClass().getSimpleName());
@@ -69,7 +69,7 @@ public class UpdaterPlugin extends Plugin {
         }).start();
     }
 
-    // অ্যাপের APK "Daily Ruqyah.apk" নামে শেয়ার (ফাইলের নাম ApkShareProvider ঠিক করে)
+    // অ্যাপের APK "Masnun-Ruqyah.apk" নামে শেয়ার (ফাইলের নাম ApkShareProvider ঠিক করে)
     @PluginMethod
     public void share(PluginCall call) {
         try {
@@ -78,10 +78,10 @@ public class UpdaterPlugin extends Plugin {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("application/vnd.android.package-archive");
             i.putExtra(Intent.EXTRA_STREAM, u);
-            i.putExtra(Intent.EXTRA_SUBJECT, "Daily Ruqyah");
+            i.putExtra(Intent.EXTRA_SUBJECT, "মাসনুন রুকইয়াহ");
             i.setClipData(android.content.ClipData.newRawUri(ApkShareProvider.NAME, u));
             i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Intent ch = Intent.createChooser(i, "Daily Ruqyah শেয়ার করুন");
+            Intent ch = Intent.createChooser(i, "মাসনুন রুকইয়াহ শেয়ার করুন");
             ch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             c.startActivity(ch);
             call.resolve();

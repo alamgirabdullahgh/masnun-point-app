@@ -30,4 +30,4 @@ jobs:
         env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
         run: |
           TAG="windows-$(date +%Y%m%d-%H%M)"
-          gh release create "$TAG" desktop/dist/*.exe --title "Daily Ruqyah (Windows) $TAG" --notes "Windows ইনস্টলার"
+          gh release create "$TAG" desktop/dist/*.exe --title "মাসনুন রুকইয়াহ (Windows) $TAG" --notes "Windows ইনস্টলার"

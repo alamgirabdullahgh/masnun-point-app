@@ -11,7 +11,7 @@ const ROOT = path.join(__dirname, 'app');
 function createWindow() {
   const win = new BrowserWindow({
     width: 1100, height: 800, minWidth: 380, minHeight: 600,
-    title: 'Daily Ruqyah', backgroundColor: '#0e3b2e', autoHideMenuBar: true,
+    title: 'মাসনুন রুকইয়াহ', backgroundColor: '#0e3b2e', autoHideMenuBar: true,
     icon: path.join(__dirname, 'build', 'icon.png'),
     webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true }
   });

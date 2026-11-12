@@ -66,7 +66,7 @@ public class MainActivity extends BridgeActivity {
                     ContentValues v = new ContentValues();
                     v.put(MediaStore.Downloads.DISPLAY_NAME, name);
                     v.put(MediaStore.Downloads.MIME_TYPE, mime);
-                    v.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/DailyRuqyah");
+                    v.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/MasnunRuqyah");
                     Uri u = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
                     o = getContentResolver().openOutputStream(u);
                     uris.put(id, u);
@@ -92,11 +92,11 @@ public class MainActivity extends BridgeActivity {
                 if (o != null) { o.flush(); o.close(); }
                 String w = where.remove(id);
                 uris.remove(id);
-                toast(w == null ? "✅ ডাউনলোড হয়েছে — Downloads/DailyRuqyah ফোল্ডারে" : "✅ সেভ হয়েছে: " + w);
+                toast(w == null ? "✅ ডাউনলোড হয়েছে — Downloads/MasnunRuqyah ফোল্ডারে" : "✅ সেভ হয়েছে: " + w);
             } catch (Exception e) { toast("সেভ শেষ করা যায়নি: " + e.getMessage()); }
         }
 
-        /** শেয়ার: ফাইল সেভ শেষ করে (Downloads/DailyRuqyah-এ একটা কপি থাকে) Android-এর শেয়ার-শিট খোলে */
+        /** শেয়ার: ফাইল সেভ শেষ করে (Downloads/MasnunRuqyah-এ একটা কপি থাকে) Android-এর শেয়ার-শিট খোলে */
         @JavascriptInterface public void endShare(String id, String mime) {
             try {
                 OutputStream o = os.remove(id);

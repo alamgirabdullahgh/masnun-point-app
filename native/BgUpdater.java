@@ -51,7 +51,7 @@ public class BgUpdater {
             Info i = new Info();
             i.tag = loc.substring(loc.lastIndexOf('/') + 1);
             i.v = BASE + Integer.parseInt(i.tag.substring(i.tag.lastIndexOf('.') + 1));
-            i.url = "https://github.com/" + REPO + "/releases/download/" + i.tag + "/Daily-Ruqyah.apk";
+            i.url = "https://github.com/" + REPO + "/releases/download/" + i.tag + "/Masnun-Ruqyah.apk";
             return i;
         } finally { cn.disconnect(); }
     }
@@ -161,13 +161,13 @@ public class BgUpdater {
     }
 
     static void notice(Context c) {
-        notify(c, 31, "update", "Daily Ruqyah আপডেট", NotificationManager.IMPORTANCE_DEFAULT,
-                "Daily Ruqyah-এর নতুন সংস্করণ এসেছে", "চাপুন — অ্যাপ খুলে আপডেট করুন", openApp(c));
+        notify(c, 31, "update", "মাসনুন রুকইয়াহ আপডেট", NotificationManager.IMPORTANCE_DEFAULT,
+                "মাসনুন রুকইয়াহ-এর নতুন সংস্করণ এসেছে", "চাপুন — অ্যাপ খুলে আপডেট করুন", openApp(c));
     }
 
     static void confirmNotice(Context c, Intent ui) {
-        notify(c, 32, "update", "Daily Ruqyah আপডেট", NotificationManager.IMPORTANCE_DEFAULT,
-                "Daily Ruqyah-এর নতুন সংস্করণ তৈরি", "চাপুন — ইনস্টল নিশ্চিত করুন", ui);
+        notify(c, 32, "update", "মাসনুন রুকইয়াহ আপডেট", NotificationManager.IMPORTANCE_DEFAULT,
+                "মাসনুন রুকইয়াহ-এর নতুন সংস্করণ তৈরি", "চাপুন — ইনস্টল নিশ্চিত করুন", ui);
     }
 
     static void clearNotice(Context c) {

@@ -12,9 +12,9 @@ import android.provider.OpenableColumns;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-// অ্যাপের নিজের APK "Daily Ruqyah.apk" নামে শেয়ার করতে দেয়: শেয়ার-শিটে ও যাকে পাঠানো হয় তার ফোনে এই নামই দেখায়
+// অ্যাপের নিজের APK "Masnun-Ruqyah.apk" নামে শেয়ার করতে দেয়: শেয়ার-শিটে ও যাকে পাঠানো হয় তার ফোনে এই নামই দেখায়
 public class ApkShareProvider extends ContentProvider {
-    public static final String NAME = "Daily Ruqyah.apk";
+    public static final String NAME = "Masnun-Ruqyah.apk";
 
     public static Uri uri(Context c) {
         return new Uri.Builder().scheme("content").authority(c.getPackageName() + ".apkshare").appendPath(NAME).build();

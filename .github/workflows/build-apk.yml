@@ -93,6 +93,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk Daily-Ruqyah.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk Masnun-Ruqyah.apk
           gh release delete latest --yes --cleanup-tag 2>/dev/null || true
-          gh release create "v1.0.${{ github.run_number }}" Daily-Ruqyah.apk --title "Daily Ruqyah v1.0.${{ github.run_number }}" --notes "ডাউনলোড করে ফোনে ইনস্টল করুন। অ্যাপের ভেতর থেকেও আপডেট করা যায়।" --latest
+          gh release create "v1.0.${{ github.run_number }}" Masnun-Ruqyah.apk --title "মাসনুন রুকইয়াহ v1.0.${{ github.run_number }}" --notes "ডাউনলোড করে ফোনে ইনস্টল করুন। অ্যাপের ভেতর থেকেও আপডেট করা যায়।" --latest

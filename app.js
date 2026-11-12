@@ -437,7 +437,7 @@ async function ayatPdf(list,title,say){
  const put=(o,h)=>{if(y+h>BOT){pages.push([]);y=M}o.y=y;pages[pages.length-1].push(o);y+=h};
  // শিরোনাম (প্রথম পেজ)
  let dt="";try{dt=new Date().toLocaleDateString("bn-BD",{year:"numeric",month:"long",day:"numeric"})}catch(e){}
- put({t:"Daily Ruqyah",font:f(700,40,BNF),c:"#0a5240",x:M,al:"left",dir:"ltr"},60);
+ put({t:"মাসনুন রুকইয়াহ",font:f(700,40,BNF),c:"#0a5240",x:M,al:"left",dir:"ltr"},60);
  wrap(title,f(700,34,BNF),CW,false).forEach(l=>put({t:l,font:f(700,34,BNF),c:"#111",x:M,al:"left",dir:"ltr"},50));
  put({t:"মোট "+bn2(list.length)+"টি আয়াত"+(dt?" · "+dt:""),font:f(400,22,BNF),c:"#666",x:M,al:"left",dir:"ltr"},40);
  put({line:1,c:"#0a5240",w:3},30);
@@ -461,7 +461,7 @@ async function ayatPdf(list,title,say){
    g.font=o.font;g.fillStyle=o.c;g.direction=o.dir;g.textAlign=o.al;
    const fs=parseInt(o.font.match(/(\d+)px/)[1]);g.fillText(o.t,o.x,o.y+Math.round(fs*(o.dir==="rtl"?1.25:1.05)))}
   g.direction="ltr";g.fillStyle="#d8e2dd";g.fillRect(M,H-M-FOOT+18,CW,1);
-  g.font=f(400,20,BNF);g.fillStyle="#777";g.textAlign="left";g.fillText("Daily Ruqyah",M,H-M-FOOT+52);
+  g.font=f(400,20,BNF);g.fillStyle="#777";g.textAlign="left";g.fillText("মাসনুন রুকইয়াহ",M,H-M-FOOT+52);
   g.textAlign="right";g.fillText("পৃষ্ঠা "+bn2(p+1)+" / "+bn2(N),W-M,H-M-FOOT+52);
   const bl=await new Promise(r=>cv.toBlob(r,"image/jpeg",0.85));
   imgs.push(new Uint8Array(await bl.arrayBuffer()));cv.width=cv.height=0;
@@ -844,7 +844,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
     by.forEach((l,k)=>{m+="\n• "+k+"\n   "+l.join("، ")});
     if(TSEL.size){m+="\n\n⏱ সমস্যা বাড়ে: "+[...TSEL].join(", ");TM.forEach(([n,r])=>{if(TSEL.has(n))m+="\n   "+n+" — আয়াত: "+r.map(refTxt).join("، ")});m+="\n(এটি সমস্যা-বাড়ার সময়ের ইঙ্গিত; নিশ্চিত রোগনির্ণয় নয়)"}
     if(DSEL){const r=DU.find(x=>x[0]===DSEL)[1];m+="\n\n⏳ সমস্যা চলছে: "+DSEL+"\n   আয়াত (সময়-এককের উল্লেখ): "+r.map(refTxt).join("، ")}
-    m+="\n\n— Daily Ruqyah";
+    m+="\n\n— মাসনুন রুকইয়াহ";
     const a=document.createElement("a");a.href="https://wa.me/"+n+"?text="+encodeURIComponent(m);a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove()});
    send.style.margin="0";bar.append(cnt,send);H.appendChild(bar);
    const pick=(c,k,g)=>{const id=c.name+"|"+k.s+":"+k.a+":"+k.from,lb=els("label","display:inline-flex;align-items:center;gap:6px;margin:0 0 0 auto;padding:4px 10px;border:1px dashed var(--accent);border-radius:999px;font-size:12.5px;color:var(--primary);cursor:pointer;white-space:nowrap"),cb=document.createElement("input");
@@ -970,7 +970,7 @@ init();drShell();
 function drUpdater(){
  const ver=$("drVer"),shr=$("drShare"),fl=$("drUfl"),btn=$("drUbtn"),ph=$("drUph"),pt=$("drUpt");
  const C=window.Capacitor,P=C&&C.Plugins&&C.Plugins.AppUpdater,native=!!(C&&C.isNativePlatform&&C.isNativePlatform()&&P);
- const NAME="Daily Ruqyah",WEB=location.href.split("#")[0];
+ const NAME="মাসনুন রুকইয়াহ",WEB=location.href.split("#")[0];
  ver.textContent=NAME;
  shr.onclick=async()=>{
   if(native){try{await P.share();return}catch(e){}}

@@ -1,17 +1,17 @@
 {
   "name": "daily-ruqyah-desktop",
   "version": "1.0.0",
-  "description": "Daily Ruqyah — Windows",
+  "description": "মাসনুন রুকইয়াহ — Windows",
   "main": "main.js",
-  "author": "Daily Ruqyah",
+  "author": "মাসনুন রুকইয়াহ",
   "license": "UNLICENSED",
   "devDependencies": { "electron": "31.7.7", "electron-builder": "24.13.3" },
   "build": {
     "appId": "com.dailyruqyah.desktop",
-    "productName": "Daily Ruqyah",
+    "productName": "মাসনুন রুকইয়াহ",
     "directories": { "output": "dist", "buildResources": "build" },
     "files": ["main.js", "app/**/*"],
     "win": { "target": [{ "target": "nsis", "arch": ["x64"] }], "icon": "build/icon.png" },
-    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "artifactName": "Daily-Ruqyah-Setup-${version}.${ext}" }
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "artifactName": "Masnun-Ruqyah-Setup-${version}.${ext}" }
   }
 }
