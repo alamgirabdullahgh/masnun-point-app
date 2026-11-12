@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Daily Ruqyah">
-<link rel="stylesheet" href="style.css?v=26">
+<link rel="stylesheet" href="style.css?v=27">
 </head>
 <body>
 <header class="dr-bar">
@@ -34,11 +34,14 @@
  <a class="dr-nav" href="#read/arbn" data-nav="read/arbn"><i class="ar">عب</i><span>আরবি ও বাংলা অনুবাদসহ</span></a>
  <div class="dr-side-sec">রুকইয়াহ অডিও ও উইজেট</div>
  <a class="dr-nav" href="#alarm" data-nav="alarm"><i>⏰</i><span>রুকইয়াহ অডিও অ্যালার্ম</span></a>
+ <div class="dr-side-sec">রুকইয়াহ আমল</div>
+ <a class="dr-nav" href="#routine" data-nav="routine"><i>🗓</i><span>দৈনিক রুটিন ও রোগীর করণীয়</span></a>
 <div class="dr-vbar"><b id="drVer">Daily Ruqyah</b><button class="dr-share" id="drShare" type="button">Share</button></div>
 </nav>
 <nav class="dr-bnav" aria-label="নেভিগেশন"><a class="dr-bn" href="#topics" data-nav="topics"><i>📚</i><span>বিষয়ভিত্তিক আয়াত</span></a><a class="dr-bn" href="#home" data-nav="home"><i>🏠</i><span>হোম</span></a><a class="dr-bn" href="#diag" data-nav="diag"><i>🩺</i><span>ডায়াগনোসিস</span></a></nav>
 <div class="dr-ufl" id="drUfl" hidden><button class="dr-ubtn" id="drUbtn" type="button"><span class="ph" id="drUph">Update</span><span class="pt" id="drUpt"></span></button></div>
 <main class="dr-main">
+<div class="rs-box" id="drRoutine" hidden></div>
 <div class="rs-box" id="drHome" hidden></div>
 <div class="rs-box" id="drSym" hidden>
 <div id="za"><h2>Symptom Diagnosis (গবেষণা সংস্করণ)</h2><div class="zm">⚕ <b>গুরুত্বপূর্ণ:</b> এই টুলের যেকোনো প্যাটার্ন-মিল কোনো নিশ্চিত রোগনির্ণয় নয়। প্রতিটি কেসে, বিশেষত মাসিক/জরায়ু, বুক-হৃদযন্ত্র, স্নায়বিক (অবশ/খিঁচুনি/অজ্ঞান) সংক্রান্ত উপসর্গে — সংশ্লিষ্ট বিশেষজ্ঞ ডাক্তারের মাধ্যমে মেডিক্যাল পরীক্ষা সমান্তরালভাবে করাতে হবে। রুকইয়াহর প্রতিক্রিয়া মেডিক্যাল টেস্টের বিকল্প নয়।</div><div id="zd"></div><div id="zt"></div><div style="margin-top:10px"><h3>প্রতিটি কেসের জন্য মেডিক্যাল স্ক্রিনিং রেকর্ড</h3><div class="zf">মেডিক্যাল টেস্ট করানো হয়েছে কি? ফলাফল কী?<br><textarea id="zi" rows="3" placeholder="যেমন: গাইনি পরীক্ষা করানো হয়েছে, রিপোর্ট নরমাল / থাইরয়েড টেস্ট বাকি আছে ইত্যাদি"></textarea><br><button id="zb">সংরক্ষণ করুন</button> <span id="zu" class="zk"></span></div></div></div>
@@ -56,7 +59,8 @@
 </main>
 <script src="widget.js?v=10"></script>
 <script src="symptom.js?v=1"></script>
-<script src="app.js?v=32"></script>
+<script src="routine.js?v=1"></script>
+<script src="app.js?v=33"></script>
 <script src="alarm.js?v=3"></script>
 <script src="boot.js?v=6"></script>
 <script src="data/hadith-norm.js?v=2"></script>

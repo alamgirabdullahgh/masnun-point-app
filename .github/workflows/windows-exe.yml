@@ -14,7 +14,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p desktop/app
-          cp index.html style.css app.js alarm.js symptom.js widget.js boot.js sw.js manifest.webmanifest desktop/app/
+          cp index.html style.css app.js alarm.js routine.js symptom.js widget.js boot.js sw.js manifest.webmanifest desktop/app/
           cp -r icons fonts desktop/app/
           mkdir -p desktop/app/data
           for f in data/*; do

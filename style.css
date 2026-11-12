@@ -498,3 +498,23 @@ html.kb .dr-bnav,html.kb .dr-ufl{display:none!important}html.kb body{padding-bot
 .rs-top .rs-rt{grid-column:1/-1;text-align:center;font-size:12px;line-height:1.25;white-space:nowrap}
 .rs-top .rs-num{width:38px;max-width:38px;min-height:28px;font-size:13px;border-radius:8px}
 .rs-top .rs-mb{flex:1 1 0;min-width:0;margin:0!important;padding:5px 6px;font-size:11.5px;font-weight:600;line-height:1.3;border-radius:12px;text-align:center}
+
+/* রুকইয়াহ রুটিন + বিজ্ঞাপন-স্লাইড (routine.js) */
+.rt-sel{display:flex;flex-direction:column;gap:8px;margin:0 0 10px}
+.rt-sel select{display:block;width:100%;margin-top:4px;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--card-bg);color:var(--text-main);font:inherit}
+.rt-lv{display:flex;gap:8px}.rt-ld{font-size:12.5px;color:var(--text-sub)}
+.rt-slot{background:var(--card-bg);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:12px 14px;margin:0 0 12px}
+.rt-slot h3{margin:2px 0 8px;font-size:16.5px;color:var(--primary-dark)}
+.rt-time{font-size:11.5px;font-weight:700;color:var(--warning)}
+.rt-it{border-top:1px dashed var(--border-light);padding:8px 0}.rt-it:first-of-type{border-top:0}
+.rt-t{font-size:14.5px;line-height:1.7}
+.rt-ul{margin:6px 0 0;padding-left:20px;line-height:1.8;font-size:14.5px}
+.ad-wrap{margin:16px 0 8px}.ad-lbl{font-size:11.5px;color:var(--text-sub);margin:0 2px 6px}
+.ad-strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 8px;scrollbar-width:none}
+.ad-strip::-webkit-scrollbar{display:none}
+.ad-card{flex:0 0 72%;max-width:260px;scroll-snap-align:start;background:var(--card-bg);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:12px;display:flex;flex-direction:column;gap:6px}
+.ad-card img{width:100%;height:110px;object-fit:cover;border-radius:10px}
+.ad-ic{height:80px;display:flex;align-items:center;justify-content:center;font-size:40px;background:var(--primary-light);border-radius:10px}
+.ad-card p{margin:0;font-size:12.5px;line-height:1.6;color:var(--text-sub)}
+.ad-b{align-self:flex-start;margin-top:auto;padding:7px 14px;border-radius:999px;background:var(--primary);color:#fff;font-size:13px;text-decoration:none}
+.ad-b.off{background:var(--border);color:var(--text-sub)}
