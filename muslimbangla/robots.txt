@@ -1,0 +1,10 @@
+User-agent: *
+      Allow: /
+      Disallow: /admin/
+      Disallow: /api/
+      Disallow: /_next/
+      Disallow: /private/
+      Disallow: /dashboard/
+      Disallow: /user/
+
+      Sitemap: https://muslimbangla.com/sitemap.xml
