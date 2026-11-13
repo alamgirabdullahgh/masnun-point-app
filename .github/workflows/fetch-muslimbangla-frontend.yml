@@ -1,0 +1,30 @@
+name: Fetch Muslim Bangla frontend (import for redesign)
+on:
+  workflow_dispatch:
+  push:
+    branches: [muslimbangla-frontend-import]
+    paths: ['.github/workflows/fetch-muslimbangla-frontend.yml']
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download pages + CSS/JS/fonts
+        run: |
+          mkdir -p import/muslimbangla && cd import/muslimbangla
+          wget --recursive --level=2 --page-requisites --adjust-extension --convert-links \
+               --no-parent --span-hosts --domains=muslimbangla.com,www.muslimbangla.com,fonts.googleapis.com,fonts.gstatic.com \
+               --reject 'mp3,mp4,pdf,zip,apk,webm,wav' --wait=1 --random-wait \
+               --user-agent="Mozilla/5.0" --timeout=20 --tries=2 \
+               https://muslimbangla.com/ || true
+          find . -type f | head -200
+          du -sh .
+      - name: Commit to import branch
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add import
+          git commit -m "Import: muslimbangla.com frontend snapshot (HTML/CSS/JS)" || echo "nothing to commit"
+          git push origin HEAD:muslimbangla-frontend-import
