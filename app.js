@@ -818,10 +818,22 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
   if(!CF.host)window.scrollTo({top:rs.getBoundingClientRect().top+scrollY-60,behavior:"smooth"})};
  const DISEASE={file:"quran-disease.json?v="+DV+"x3",title:"💊 শারীরিক রোগ ও আরোগ্যের আয়াত",sq:"শারীরিক রোগ",nm:"আয়াত",badge:["সরাসরি আছে","অঙ্গ অনুযায়ী কাছের আয়াত"],intro:"প্রথমে ঠিক করা হয়েছে রোগটি শরীরের কোন কোন অঙ্গ বা বিষয়ের সাথে সম্পর্কিত; তারপর প্রতিটির জন্য সবচেয়ে কাছের একটি আয়াত (শুধু প্রাসঙ্গিক অংশ)। প্রতিটির নিচে “মিল” লেখা আছে — আয়াতে সরাসরি রোগ/অঙ্গের শব্দ আছে, নাকি শুধু অর্থ বা শব্দের মিল। কুরআনে রোগের নাম (যেমন অর্শ/বাওয়াসির) নেই, তাই অঙ্গ ও লক্ষণের শব্দ ধরে কাছের আয়াত নেওয়া হয়েছে; কোনোটি আয়াতে সরাসরি রোগের কথা নয়। প্রতিটি অঙ্গের নিচে ‘চিকিৎসা: এই রোগের সব আয়াত’ বোতামে ওই অঙ্গের সব আয়াত ও মার্জ অডিও। খসড়া তালিকা: ব্যবহারের আগে আলেম বা অভিজ্ঞদের পর্যালোচনা প্রয়োজন।"};
 
- /* ───── হোম: বড় বাটনের গ্রিড (৪ কলাম) ───── */
+ /* ───── যাকাত ক্যালকুলেটর (নিজস্ব হিসাব, বাইরের ডেটা নেই) ───── */
+{let zb=false;window.__drZakat=()=>{if(zb)return;zb=true;const Z=$("drZakat");if(!Z)return;
+ const F=[["cash","নগদ টাকা ও ব্যাংকে জমা"],["gold","স্বর্ণের বর্তমান বাজারমূল্য"],["silver","রূপার বর্তমান বাজারমূল্য"],["biz","ব্যবসার পণ্যের মূল্য"],["recv","ফেরত পাওয়ার নিশ্চিত পাওনা"],["debt","বাদ যাবে: ঋণ/বকেয়া দেনা"]];
+ const nz=s=>(+String(s).replace(/[০-৯]/g,d=>"০১২৩৪৫৬৭৮৯".indexOf(d)).replace(/[^\d.]/g,""))||0;
+ let h='<h2 class="am-h">🧮 যাকাত ক্যালকুলেটর</h2><p class="am-intro">সব অঙ্ক টাকায় লিখুন। নিসাব হলো ৫২.৫ ভরি রূপার বর্তমান মূল্য; বাজারদর দেখে নিজে বসান। সম্পদের নিট মূল্য নিসাবের সমান বা বেশি হলে ২.৫% যাকাত।</p>';
+ F.forEach(f=>{h+='<label class="zk-r"><span>'+f[1]+'</span><input id="zk_'+f[0]+'" type="text" inputmode="decimal" placeholder="০"></label>'});
+ h+='<label class="zk-r"><span>নিসাব (৫২.৫ ভরি রূপার মূল্য)</span><input id="zk_nisab" type="text" inputmode="decimal" placeholder="০"></label><div class="zk-o" id="zkOut">হিসাব এখানে দেখাবে</div><p class="am-intro">⚕ এটি সাধারণ হিসাব। জটিল ক্ষেত্রে নির্ভরযোগ্য আলেমের পরামর্শ নিন।</p>';
+ Z.innerHTML=h;const bn=n=>bn2(Math.round(n));
+ const calc=()=>{const g=k=>nz(($("zk_"+k)||{}).value);const net=g("cash")+g("gold")+g("silver")+g("biz")+g("recv")-g("debt"),ni=g("nisab"),o=$("zkOut");
+  if(!ni){o.textContent="আগে নিসাবের মূল্য লিখুন";return}
+  o.innerHTML="নিট সম্পদ: <b>"+bn(Math.max(net,0))+" ৳</b><br>"+(net>=ni?"যাকাত ফরয: <b>"+bn(net*0.025)+" ৳</b> (২.৫%)":"নিসাবের কম, তাই যাকাত ফরয নয়")};
+ Z.querySelectorAll("input").forEach(i=>i.oninput=calc)}}
+/* ───── হোম: বড় বাটনের গ্রিড (৪ কলাম) ───── */
 {let gb=false;const T=[["🛡️","রুকইয়াহ","#search"],["🩸","হিজামা","soon"],["🩺","রোগ নির্ণয়","#diag"],["📚","বিষয়ভিত্তিক আয়াত","#topics"],
  ["📖","আরবি কুরআন","#mushaf"],["🌐","বাংলা অনুবাদ","#read/arbn"],["🔤","শব্দে শব্দে","#read/word"],["⏰","অডিও অ্যালার্ম","#alarm"],
- ["🗓️","দৈনিক রুটিন","#routine"],["📝","রোগীর করণীয়","#routine/patient"],["📲","উইজেট","#timewidget"],["📤","শেয়ার","share"]];
+ ["🗓️","দৈনিক রুটিন ও আযকার","#routine"],["📝","রোগীর করণীয়","#routine/patient"],["📜","হাদীস সার্চ","#search"],["🧮","যাকাত ক্যালকুলেটর","#zakat"]];
  window.__drGrid=()=>{if(gb)return;gb=true;const G=$("drGrid");if(!G)return;G.innerHTML="";
   T.forEach(([ic,lb,t])=>{const a=document.createElement("a");a.className="dr-tile";a.href=t[0]==="#"?t:"#home";
    a.innerHTML="<i>"+ic+"</i><span>"+lb+"</span>";
@@ -961,10 +973,11 @@ function drShell(){
  let lastH="home";
  const route=()=>{open(false);const h=(location.hash||"#home").replace(/^#/,""),p=h.split("/");
   document.querySelectorAll("audio").forEach(a=>{try{a.pause()}catch(e){}});
-  const al=$("drAlarm");if(al)al.hidden=true;const hm=$("drHome");if(hm)hm.hidden=true;const gd=$("drGrid");if(gd)gd.hidden=true;const am=$("drAmol");if(am)am.hidden=true;const rt=$("drRoutine");if(rt)rt.hidden=true;const mf=$("drMushaf");if(mf)mf.hidden=true;
+  const al=$("drAlarm");if(al)al.hidden=true;const hm=$("drHome");if(hm)hm.hidden=true;const gd=$("drGrid");if(gd)gd.hidden=true;const zk=$("drZakat");if(zk)zk.hidden=true;const am=$("drAmol");if(am)am.hidden=true;const rt=$("drRoutine");if(rt)rt.hidden=true;const mf=$("drMushaf");if(mf)mf.hidden=true;
   if(p[0]==="timewidget"){window.DRALARM&&DRALARM.openWidget();location.hash="#"+lastH;return}
   let key="search";
   if(p[0]==="home"&&gd){key="home";box.hidden=true;rd.hidden=true;gd.hidden=false;window.__drGrid&&window.__drGrid();window.scrollTo(0,0)}
+   else if(p[0]==="zakat"&&zk){key="zakat";box.hidden=true;rd.hidden=true;zk.hidden=false;window.__drZakat&&window.__drZakat();window.scrollTo(0,0)}
    else if(p[0]==="diag"&&hm){key="diag";box.hidden=true;rd.hidden=true;hm.hidden=false;window.__drHome&&window.__drHome();window.scrollTo(0,0)}
   else if(p[0]==="mushaf"&&mf){key="mushaf";box.hidden=true;rd.hidden=true;mf.hidden=false;window.__drMushaf&&window.__drMushaf(p[1]);window.scrollTo(0,0)}
   else if(p[0]==="routine"&&rt){key="routine";box.hidden=true;rd.hidden=true;rt.hidden=false;window.__drRoutine&&window.__drRoutine(p[1]);window.scrollTo(0,0)}

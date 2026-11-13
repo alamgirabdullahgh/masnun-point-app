@@ -564,3 +564,6 @@ body.mq-fs .dr-bnav,body.mq-fs .dr-ufl{display:none!important}
 .dr-tile:active{transform:scale(.96);background:#e3efe8}
 .dr-tile i{font-style:normal;font-size:38px;line-height:1}
 .dr-tile span{font-size:13.5px;font-weight:800;line-height:1.25;word-break:break-word}
+.zk-r{display:block;margin:10px 0}.zk-r span{display:block;font-size:14px;font-weight:700;color:var(--primary);margin-bottom:4px}
+.zk-r input{width:100%;box-sizing:border-box;padding:12px;border:1px solid var(--border-light);border-radius:14px;font-size:17px;background:var(--card-bg)}
+.zk-o{margin:14px 0;padding:14px;border-radius:16px;background:var(--card-bg);border:1px solid var(--border-light);font-size:16px;line-height:1.7;text-align:center}
