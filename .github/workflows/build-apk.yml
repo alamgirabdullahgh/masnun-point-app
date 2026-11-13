@@ -18,24 +18,7 @@ jobs:
       - name: Prepare web files
         run: |
           mkdir www
-          # মুসলিম বাংলার কপি মূল অ্যাপ (www/), আমার আগের অ্যাপ পাশে (www/mine/)
-          cp -r muslimbangla/. www/
-          mkdir www/mine
-          cp -r index.html app.js boot.js widget.js alarm.js routine.js mushaf.js style.css sw.js manifest.webmanifest icons fonts data www/mine/
-          # ছবির লিংক: /_next/image?url=... (ফোনের WebView-তে কোয়েরি কেটে যায়) → সরাসরি ফাইলের পথ
-          python3 - <<'PY'
-          import re,os,urllib.parse as u
-          pat=re.compile(r'/_next/image\?url=(%2F[^&"\'\s]+?)&(?:amp;)?w=\d+&(?:amp;)?q=\d+')
-          for root,_,fs in os.walk('www'):
-              if root.startswith('www/mine'): continue
-              for f in fs:
-                  if f.endswith(('.html','.js','.css')):
-                      fp=os.path.join(root,f)
-                      t=open(fp,encoding='utf-8',errors='ignore').read()
-                      n=pat.sub(lambda m:u.unquote(m.group(1)),t)
-                      if n!=t: open(fp,'w',encoding='utf-8').write(n)
-          PY
-          sed -i 's|</body>|<a href="mine/index.html" style="position:fixed;right:12px;bottom:12px;z-index:99999;background:#0a7a4b;color:#fff;padding:10px 14px;border-radius:24px;font:14px sans-serif;text-decoration:none">আমার অ্যাপ</a></body>|' www/index.html
+          cp -r index.html app.js boot.js widget.js alarm.js routine.js mushaf.js style.css sw.js manifest.webmanifest icons fonts data www/
       - name: Create Android project
         run: |
           npm init -y >/dev/null
