@@ -556,3 +556,11 @@ body.mq-fs .dr-bnav,body.mq-fs .dr-ufl{display:none!important}
 .dr-backrow[hidden]{display:none}
 .dr-backbtn{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--border);background:var(--card-bg);color:var(--primary);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.08);-webkit-tap-highlight-color:transparent}
 .dr-backbtn:active{background:color-mix(in srgb,var(--primary) 14%,var(--card-bg))}
+
+/* হোম গ্রিড: বড় বাটন, ৪ কলাম */
+.dr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;padding:6px 12px 90px}
+.dr-grid[hidden]{display:none}
+.dr-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:112px;padding:10px 4px;border:1px solid var(--border-light);border-radius:20px;background:var(--card-bg);color:var(--primary);text-decoration:none;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);-webkit-tap-highlight-color:transparent}
+.dr-tile:active{transform:scale(.96);background:#e3efe8}
+.dr-tile i{font-style:normal;font-size:38px;line-height:1}
+.dr-tile span{font-size:13.5px;font-weight:800;line-height:1.25;word-break:break-word}
