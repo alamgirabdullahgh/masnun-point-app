@@ -35,7 +35,7 @@ jobs:
                       n=pat.sub(lambda m:u.unquote(m.group(1)),t)
                       if n!=t: open(fp,'w',encoding='utf-8').write(n)
           PY
-          sed -i 's#</body>#<a href="mine/index.html" style="position:fixed;right:12px;bottom:12px;z-index:99999;background:#0a7a4b;color:#fff;padding:10px 14px;border-radius:24px;font:14px sans-serif;text-decoration:none">আমার অ্যাপ</a></body>#' www/index.html
+          sed -i 's|</body>|<a href="mine/index.html" style="position:fixed;right:12px;bottom:12px;z-index:99999;background:#0a7a4b;color:#fff;padding:10px 14px;border-radius:24px;font:14px sans-serif;text-decoration:none">আমার অ্যাপ</a></body>|' www/index.html
       - name: Create Android project
         run: |
           npm init -y >/dev/null
