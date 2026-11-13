@@ -1,0 +1,80 @@
+name: Fetch MuslimBangla frontend (reference copy)
+# মুসলিম বাংলার কয়েকটা নমুনা পাতা ও তাদের CSS/JS/ফন্ট mb-src/-এ নামায় (প্রতি অনুরোধে ১ সেকেন্ড বিরতি)।
+on:
+  push:
+    branches: [mb-frontend-src]
+    paths: ['.github/workflows/fetch-mb-frontend.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Download pages and assets
+        run: |
+          node - <<'JS'
+          const fs=require('fs'),path=require('path');
+          const BASE='https://muslimbangla.com';
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+          const seen=new Set(); const log=[];
+          async function get(u,bin){
+            await sleep(1000);
+            const r=await fetch(u,{headers:{'user-agent':'masnun-ruqyah-reference/1.0'}});
+            log.push(r.status+' '+u);
+            if(!r.ok) return null;
+            return bin?Buffer.from(await r.arrayBuffer()):await r.text();
+          }
+          function save(u,data){
+            const x=new URL(u); let p=x.pathname; if(p.endsWith('/')||!path.extname(p)) p=path.join(p,'index.html');
+            const f=path.join('mb-src',x.host,p); fs.mkdirSync(path.dirname(f),{recursive:true}); fs.writeFileSync(f,data);
+          }
+          const assets=new Set();
+          function collect(html,pageUrl){
+            for(const m of html.matchAll(/(?:href|src)=["']([^"']+)["']/g)){
+              const u=new URL(m[1],pageUrl);
+              if(/\.(css|js|woff2?|ttf|svg|webmanifest|json)(\?|$)/i.test(u.pathname)||/fonts\.googleapis|fonts\.gstatic/.test(u.host)) assets.add(u.href);
+            }
+          }
+          (async()=>{
+            const pages=[BASE+'/', BASE+'/hadith-book/16/chapters'];
+            const home=await get(BASE+'/'); 
+            const chap=await get(BASE+'/hadith-book/16/chapters');
+            const pg=[[BASE+'/',home],[BASE+'/hadith-book/16/chapters',chap]];
+            if(chap){
+              const m=/\/hadith-book\/16\/chapter\/\d+/.exec(chap);
+              if(m){ const u=BASE+m[0]; pg.push([u,await get(u)]); }
+            }
+            if(home){
+              const links=[...new Set([...home.matchAll(/href=["'](\/[a-z0-9\-_\/]*)["']/gi)].map(m=>m[1]))].filter(l=>l.length>1).slice(0,4);
+              for(const l of links){ pg.push([BASE+l,await get(BASE+l)]); }
+            }
+            for(const [u,h] of pg){ if(!h) continue; save(u,h); collect(h,u); }
+            // CSS-এর ভেতরের ফন্ট/ছবিও
+            for(const a of [...assets]){
+              if(seen.has(a)) continue; seen.add(a);
+              const isCss=/\.css(\?|$)/i.test(a);
+              const d=await get(a,!isCss);
+              if(d==null) continue;
+              if(new URL(a).host.includes('muslimbangla')||/fonts\./.test(new URL(a).host)) save(a,d);
+              if(isCss){
+                for(const m of d.matchAll(/url\(["']?([^)"']+)["']?\)/g)){
+                  if(m[1].startsWith('data:')) continue;
+                  const u=new URL(m[1],a).href; if(!seen.has(u)){seen.add(u); const b=await get(u,true); if(b) save(u,b);}
+                }
+              }
+            }
+            fs.writeFileSync('mb-src/fetch-log.txt',log.join('\n'));
+          })();
+          JS
+          du -sh mb-src; find mb-src -type f | head -60
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add mb-src
+          git commit -m "muslimbangla frontend reference copy" || echo none
+          git push origin HEAD:mb-frontend-src
