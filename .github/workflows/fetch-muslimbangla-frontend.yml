@@ -14,9 +14,9 @@ jobs:
       - name: Download pages + CSS/JS/fonts
         run: |
           mkdir -p import/muslimbangla && cd import/muslimbangla
-          wget --recursive --level=2 --page-requisites --adjust-extension --convert-links \
+          timeout 240 wget --recursive --level=1 --quota=40m --page-requisites --adjust-extension --convert-links \
                --no-parent --span-hosts --domains=muslimbangla.com,www.muslimbangla.com,fonts.googleapis.com,fonts.gstatic.com \
-               --reject 'mp3,mp4,pdf,zip,apk,webm,wav' --wait=1 --random-wait \
+               --reject 'mp3,mp4,pdf,zip,apk,webm,wav' --wait=0.3 \
                --user-agent="Mozilla/5.0" --timeout=20 --tries=2 \
                https://muslimbangla.com/ || true
           find . -type f | head -200
