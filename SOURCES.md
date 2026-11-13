@@ -1,38 +1,5 @@
-# উৎস ফাইল — যেসব অ্যাপ/সাইটের সমন্বয়ে মাসনুন রোকেয়া তৈরি হবে
+# উৎস
 
-এই ফাইলটা শুধু তালিকা রাখার জন্য। এর কোনো লিংক অ্যাপের ভেতরে বসানো হয়নি।
-নতুন উৎস পেলে নিচে একই ছাঁচে যোগ করুন।
-
-## ১. الرقية الشرعية الشامـلة (আর-রুকইয়াতুশ শারইয়্যাহ আশ-শামিলা)
-
-- Google Play: https://play.google.com/store/apps/details?id=com.mfk4apps.roquiaoverall
-- প্যাকেজ আইডি: `com.mfk4apps.roquiaoverall`
-- ডেভেলপার: mfk4apps (محمد فؤاد كامل عصيمى), মিশর
-- ডেভেলপারের ইমেইল: mfk4apps@gmail.com
-- প্রাইভেসি পলিসি: https://sites.google.com/view/mfk4apps/privacy-policy-mfk4apps
-- অফিসিয়াল ওয়েবসাইট: পাওয়া যায়নি। Play পেজে "Website" হিসেবে যে ঠিকানা (https://w2f3f774.app-ads-txt.com) দেওয়া আছে, সেটা app-ads.txt যাচাইয়ের জন্য, আসল সাইট নয়। তাই এটা উৎস হিসেবে ধরা হয়নি।
-- বিষয়বস্তু (Play পেজ অনুযায়ী): বদনজর, হিংসা, জাদু ও স্পর্শের নানা অবস্থার জন্য ৩৬টি লিখিত পাতা; শিক্ষামূলক ভিডিও; ২০টি চিকিৎসা-প্রোগ্রাম; কুরআন ও তাফসীর; সকাল-সন্ধ্যার যিকির; অডিও।
-- ভাষা: আরবি
-- দেখা হয়েছে: ২০২৬-১১-১৩ (Play পেজে ৫ লাখ+ ডাউনলোড, রেটিং ৪.৭, সর্বশেষ আপডেট ৩ নভেম্বর ২০২৬)
-
-## ২. Muslim Bangla — Quran Hadith Dua
-
-- Google Play: https://play.google.com/store/apps/details?id=com.tos.namajtime
-- প্যাকেজ আইডি: `com.tos.namajtime`
-- ডেভেলপার: TopOfStack Software, মোহাম্মদপুর, ঢাকা, বাংলাদেশ
-- অফিসিয়াল ওয়েবসাইট (মূল প্ল্যাটফর্ম): https://muslimbangla.com/
-- সাপোর্ট: https://muslimbangla.com/support
-- সাপোর্ট ইমেইল: muslimbangla.app@gmail.com
-- প্রাইভেসি পলিসি: http://cdn.topofstacksoftware.com/apps/privacy/muslimbangla.html
-- একই ডেভেলপারের অন্য সাইট (অ্যাপের নিজস্ব উত্তরে দেওয়া):
-  - যাকাত: https://muslimbangla.org/list
-  - বিবাহ: https://muslimakd.com/
-  - পণ্য: https://muslimponno.com/
-  - ফেসবুক ইউজার গ্রুপ: https://fb.com/groups/muslim.bangla.users
-- বিষয়বস্তু (Play পেজ অনুযায়ী): নামাজের সময় ও আজান, কুরআন (বাংলা অনুবাদ), হাদিস, দোয়া, যাকাত, তসবিহ, কিবলা, হজ্জ-উমরাহ গাইড, ইসলামিক ক্যালেন্ডার, আল্লাহর ৯৯ নাম ইত্যাদি।
-- ভাষা: বাংলা ও ইংরেজি
-- দেখা হয়েছে: ২০২৬-১১-১৩ (Play পেজে ৫ মিলিয়ন+ ডাউনলোড, রেটিং ৪.৯, সর্বশেষ আপডেট ৮ নভেম্বর ২০২৬)
-- নোট: এই রিপোর `.github/workflows/scrape-muslimbangla*.yml`-এ muslimbangla.com নিয়ে আগে থেকেই কাজ আছে। এই ফাইল সেই কাজের বিকল্প নয়, শুধু উৎসের তালিকা।
-
----
-লাইসেন্স/অনুমতি: এই অ্যাপগুলোর বিষয়বস্তু ও অডিও তাদের নিজ নিজ ডেভেলপারের। এখান থেকে কিছু নেওয়ার আগে তাদের অনুমতি বা লাইসেন্স যাচাই করে নিতে হবে।
+- https://play.google.com/store/apps/details?id=com.mfk4apps.roquiaoverall
+- https://play.google.com/store/apps/details?id=com.tos.namajtime
+  - ওয়েবসাইট: https://muslimbangla.com/
