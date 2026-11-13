@@ -1,0 +1,13 @@
+User-agent: *
+      Allow: /
+      Disallow: /api/
+      Disallow: /_next/
+      Disallow: /dashboard/
+      Disallow: /recruiter/
+      Disallow: /auth/
+      Disallow: /invite/
+      Disallow: /applicant-profile-form
+      Disallow: /applicant-profile-form-success
+      Disallow: /job-post-form
+
+      Sitemap: https://jobs.muslimbangla.com/sitemap.xml
