@@ -845,7 +845,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
   const SL=[["🤲","আজকের আমল","সকাল-সন্ধ্যার আযকার","#routine"],["🩺","রুকইয়াহ","রোগ নির্ণয় ও আয়াত","#diag"],["🧮","যাকাত","ক্যালকুলেটরে হিসাব করুন","#zakat"]];
   bn.innerHTML='<div class="hm-sl">'+SL.map((x,i)=>'<a class="hm-sli'+(i?"":" act")+'" href="'+x[3]+'"><i>'+x[0]+'</i><div><small>'+x[1]+'</small><b>'+x[2]+'</b></div></a>').join("")+'</div><div class="hm-dots">'+SL.map((_,i)=>'<u class="'+(i?"":"act")+'"></u>').join("")+'</div>';
   G.appendChild(bn);let si=0;{const rb=document.createElement("button");rb.className="hm-rf";rb.type="button";rb.textContent="↻";rb.onclick=()=>{si=(si+2)%3;bn.dispatchEvent(new Event("nx"))};bn.appendChild(rb);bn.addEventListener("nx",()=>{const L=bn.querySelectorAll(".hm-sli"),D=bn.querySelectorAll(".hm-dots u");si=(si+1)%L.length;L.forEach((x,i)=>x.classList.toggle("act",i===si));D.forEach((x,i)=>x.classList.toggle("act",i===si))})}setInterval(()=>{const L=bn.querySelectorAll(".hm-sli"),D=bn.querySelectorAll(".hm-dots u");if(!L.length||bn.offsetParent===null)return;si=(si+1)%L.length;L.forEach((x,i)=>x.classList.toggle("act",i===si));D.forEach((x,i)=>x.classList.toggle("act",i===si))},4000);
-  S.forEach(([ttl,col,T],si2)=>{const hd=document.createElement("div");hd.className="hm-sec";hd.id="drSec"+si2;hd.innerHTML='<b style="background:'+col+'"></b><span>'+ttl+'</span>'+(si2===0?'<a class="hm-sq" href="#search" aria-label="সার্চ">🔍</a>':"");G.appendChild(hd);
+  S.forEach(([ttl,col,T],si2)=>{const hd=document.createElement("div");hd.className="hm-sec";hd.id="drSec"+si2;hd.innerHTML='<b style="background:'+col+'"></b><span>'+ttl+'</span>'+(si2===0?'<a class="hm-sq" href="#search" aria-label="সার্চ"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.600" stroke-linecap="round" stroke-linejoin="round" style="color:#fff"><circle cx="11" cy="11" r="6.500"/><path d="M16 16l4 4"/></svg></a>':"");G.appendChild(hd);
    const gr=document.createElement("div");gr.className="hm-tiles";G.appendChild(gr);
    T.forEach(([ic,lb,t])=>{const a=document.createElement("a");a.className="hm-tile";a.innerHTML="<i>"+((window.HM_ICONS&&window.HM_ICONS[lb])||ic)+"</i><span>"+lb+"</span>";
     if(t==="soon"){a.href="#home";a.onclick=ev=>{ev.preventDefault();alert(lb+" অংশটি শীঘ্রই যুক্ত হবে, ইনশাআল্লাহ।")}}
@@ -858,7 +858,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
 
 /* ───── হোমের উপরের চিপ: প্রোফাইল, তারিখ, লোকেশন ───── */
 {const M=["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
- const d=()=>{const n=new Date(),el=$("drDt");if(el)el.textContent="📅 "+M[n.getMonth()]+" "+bn2(n.getDate())};d();setInterval(d,60000);
+ const d=()=>{const n=new Date(),el=$("drDt");if(el)el.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4M8 14h2M12 14h2M16 14h0M8 17h2M12 17h2"/></svg>'+M[n.getMonth()]+" "+bn2(n.getDate())};d();setInterval(d,60000);
  const pf=$("drPf");if(pf)pf.onclick=()=>{const m=$("drMenu");if(m)m.click()};
  const W=$("drWidget"),lt=$("drLcT"),lc=$("drLc");
  const sync=()=>{const b=W&&W.querySelector(".drw-loc");if(b&&lt&&b.textContent.trim())lt.textContent=b.textContent.trim()};
@@ -873,7 +873,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
  const tm=s=>{const m=/([০-৯0-9]{1,2}):([০-৯0-9]{2})/.exec(s||"");return m?[+dn(m[1]),+dn(m[2])]:null};
  const tx=s=>{const m=/([০-৯0-9]{1,2}:[০-৯0-9]{2})/.exec(s||"");return m?m[1]:""};
  const mins=e=>{if(!e)return null;const n=new Date(),nm=n.getHours()*60+n.getMinutes();let best=1e9;[e[0]%12,e[0]%12+12].forEach(hh=>{let d=hh*60+e[1]-nm;if(d<=0)d+=1440;if(d<best)best=d});return best};
- const build=()=>{raf=0;const w=W&&W.querySelector(".drw");if(!w||!H)return;
+ const MOON=c=>'<svg viewBox="0 0 24 24" width="1em" height="1em" style="vertical-align:-.12em"><path d="M20 14.500A8.500 8.500 0 1 1 9.500 4a7 7 0 0 0 10.500 10.500z" fill="'+c+'"/></svg>';const build=()=>{raf=0;const w=W&&W.querySelector(".drw");if(!w||!H)return;
   const q=x=>w.querySelector(x),qa=x=>Array.from(w.querySelectorAll(x));
   const sun=qa(".drw-sun"),cells=qa(".drw-p > div"),bs=qa(".drw-b > span"),ds=qa(".drw-d span");
   let ci=cells.findIndex(x=>x.classList.contains("on"));const nm=i=>(cells[i]&&cells[i].querySelector("i")?cells[i].querySelector("i").textContent.trim():"");
@@ -884,8 +884,10 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
   const mm=mins(tm(en)),lt=mm==null?"":(mm<60?bn2(mm)+" মিনিট বাকি":bn2(Math.floor(mm/60))+" ঘণ্টা "+bn2(mm%60)+" মিনিট বাকি");
   const now=new Date(),hj=(ds[0]?ds[0].textContent:"").replace("হিজরি","হি.").trim(),bg=(ds[1]?ds[1].textContent:"").trim(),bm=bg.split(" ")[1]||"";
   const all=cells.map(x=>'<div><i>'+(x.querySelector("i")?x.querySelector("i").textContent:"")+'</i><b>'+(x.querySelector("b")?x.querySelector("b").textContent:"")+'</b></div>').join("");
-  H.innerHTML='<div class="hr-d"><b>'+hj+' '+AW[now.getDay()]+' 🌙</b><small>'+BW[now.getDay()]+', '+bg+(SE[bm]?', '+SE[bm]:'')+'</small></div>'+
-  '<div class="hr-p"><div class="hr-arc"><span class="hr-m">🕌</span><span class="hr-c">🌙 '+dh+'</span><em class="hr-l">🌅 '+sr+'</em><em class="hr-r">🌇 '+ss+'</em><div class="hr-lr"><b>'+cur+' '+st+' মি.</b><b>'+nxt+' '+en+' মি.</b></div></div>'+
+  const cst=ci>=0?tx(cells[ci].textContent):st,nst=ci<0?"":(ci===0?sr:tx(cells[(ci+1)%5].textContent));
+  const mn=(()=>{const mg=tm(cells[3]&&cells[3].textContent),fj=tm(cells[0]&&cells[0].textContent);if(!mg||!fj)return dh;const A=((mg[0]%12)+12)*60+mg[1],Bm=(fj[0]%12)*60+fj[1]+1440,m=Math.round((A+Bm)/2)%1440;let H12=Math.floor(m/60)%12||12;return bn2(H12)+":"+bn2(m%60).padStart(2,"০")})();
+  H.innerHTML='<div class="hr-d"><b>'+hj+' '+AW[now.getDay()]+' '+MOON('#1f4d3a')+'</b><small>'+BW[now.getDay()]+', '+bg+(SE[bm]?', '+SE[bm]:'')+'</small></div>'+
+  '<div class="hr-p"><div class="hr-arc"><svg class="hr-sky" viewBox="0 0 360 60" preserveAspectRatio="none"><path d="M0 60V50h40V36l4-10 4 10v14h20v-8a14 14 0 0 1 28 0v8h20V30l3-12 3 12v20h30v-12a30 30 0 0 1 60 0v12h30V30l3-12 3 12v20h20v-8a14 14 0 0 1 28 0v8h20V36l4-10 4 10v14h40v10z" fill="#e6e9ed"/></svg><span class="hr-c">'+MOON('#4a5651')+' '+mn+'</span><div class="hr-lr"><b>'+cur+' '+cst+' মি.</b><u></u><b>'+nxt+' '+nst+' মি.</b></div><em class="hr-l"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-.12em"><path d="M3 18h18M7 18a5 5 0 0 1 10 0M12 6v3M5 10l2 2M19 10l-2 2"/></svg> '+ss+'</em><em class="hr-r"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-.12em"><path d="M3 18h18M7 18a5 5 0 0 1 10 0M12 6v3M5 10l2 2M19 10l-2 2"/></svg> '+sr+'</em></div>'+
   '<div class="hr-in"><div class="hr-n"><b>'+cur+'</b><span>'+st+' - '+en+'</span></div><div class="hr-bar"><u style="width:'+pct+'"></u></div><div class="hr-s"><span><i class="hr-dot"></i> চলমান</span><span>'+lt+'</span></div></div><div class="hr-all" hidden>'+all+'</div></div>';
   const p=H.querySelector(".hr-p");if(p)p.onclick=()=>{const x=H.querySelector(".hr-all");if(x)x.hidden=!x.hidden}};
  if(W){new MutationObserver(()=>{if(!raf)raf=requestAnimationFrame(build)}).observe(W,{childList:true,subtree:true,characterData:true});build();setInterval(build,30000)}
