@@ -837,10 +837,16 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
    ["📝","রোগীর করণীয়","#routine/patient"],["⏰","অডিও অ্যালার্ম","#alarm"],["🗓️","দৈনিক রুটিন","#routine"],["🤲","সকাল-সন্ধ্যার আযকার","#routine"]]],
   ["ইলম ও আমল","#16a34a",[["📖","কুরআন","#mushaf"],["📜","হাদীস","#search"],["🕌","নামাযের সময়","#top"],["🎧","তিলাওয়াত","soon"],
    ["📚","কিতাব","soon"],["✍️","প্রবন্ধ","soon"],["🔤","কুরআন শিক্ষা","#read/word"],["🤲","দু'আ","#routine"]]],
-  ["সেবা","#f59e0b",[["💡","তালীমে কুইজ","soon"],["✅","আমল ট্র্যাকার","#routine"],["📞","দ্বীনি জিজ্ঞাসা","soon"],["🧮","যাকাত ফিতরা","#zakat"],["🕋","হজ্জ ও উমরা","soon"]]],
+  ["সেবা","#f59e0b",[["💡","তালীমে কুইজ","soon"],["✅","আমল ট্র্যাকার","#routine"],["📞","দ্বীনি জিজ্ঞাসা","soon"],["💍","বিবাহ","soon"],
+   ["📰","চাকরি","soon"],["🧮","যাকাত ফিতরা","#zakat"],["🪙","সাদাকাহ","soon"],["🛒","কেনাকাটা","soon"],
+   ["🕋","হজ্জ ও উমরা","soon"],["🩸","রক্তদান","soon"],["🕌","আমার মসজিদ","soon"],["🎧","সাপোর্ট","soon"]]],
   ["বিবিধ","#9333ea",[["📿","তাসবীহ্","#tasbih"],["🎙️","বয়ান","soon"],["📍","মসজিদ খুঁজি","https://www.google.com/maps/search/mosque"],["🧭","কিবলা","soon"],
-   ["🕌","নামায শিক্ষা","soon"],["✨","আসমাউল হুসনা","soon"],["🌙","রোযা","soon"],["☪️","সুন্নাহ","soon"],["🏷️","ইসলামিক নাম","soon"],["📅","ক্যালেন্ডার","soon"],["🗓️","গুরুত্বপূর্ণ দিন","soon"]]]];
+   ["🕌","নামায শিক্ষা","soon"],["✨","আসমাউল হুসনা","soon"],["📡","লাইভ","soon"],["🌙","রোযা","soon"],["☪️","সুন্নাহ","soon"],["🏷️","ইসলামিক নাম","soon"],["📅","ক্যালেন্ডার","soon"],["🗓️","গুরুত্বপূর্ণ দিন","soon"],["🔖","বুকমার্ক","soon"],["🔲","অন্যান্য","soon"]]]];
  window.__drGrid=()=>{if(gb)return;gb=true;const G=$("drGrid");if(!G)return;G.innerHTML="";
+  const bn=document.createElement("div");bn.className="dr-ban";
+  const SL=[["🤲","আজকের আমল","সকাল-সন্ধ্যার আযকার","#routine"],["🩺","রুকইয়াহ","রোগ নির্ণয় ও আয়াত","#diag"],["🧮","যাকাত","ক্যালকুলেটরে হিসাব করুন","#zakat"]];
+  bn.innerHTML='<div class="dr-sl">'+SL.map((x,i)=>'<a class="dr-sli'+(i?"":" on")+'" href="'+x[3]+'"><i>'+x[0]+'</i><div><small>'+x[1]+'</small><b>'+x[2]+'</b></div></a>').join("")+'</div><div class="dr-dots">'+SL.map((_,i)=>'<u class="'+(i?"":"on")+'"></u>').join("")+'</div>';
+  G.appendChild(bn);let si=0;setInterval(()=>{const L=bn.querySelectorAll(".dr-sli"),D=bn.querySelectorAll(".dr-dots u");if(!L.length||bn.offsetParent===null)return;si=(si+1)%L.length;L.forEach((x,i)=>x.classList.toggle("on",i===si));D.forEach((x,i)=>x.classList.toggle("on",i===si))},4000);
   S.forEach(([ttl,col,T])=>{const hd=document.createElement("div");hd.className="dr-sec";hd.innerHTML='<b style="background:'+col+'"></b><span>'+ttl+'</span>';G.appendChild(hd);
    const gr=document.createElement("div");gr.className="dr-tiles";G.appendChild(gr);
    T.forEach(([ic,lb,t])=>{const a=document.createElement("a");a.className="dr-tile";a.innerHTML="<i>"+ic+"</i><span>"+lb+"</span>";
@@ -848,7 +854,18 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
     else if(t==="#top"){a.href="#home";a.onclick=ev=>{ev.preventDefault();window.scrollTo({top:0,behavior:"smooth"})}}
     else if(t[0]==="h"){a.href=t;a.target="_blank";a.rel="noopener"}
     else a.href=t;
-    gr.appendChild(a)})})}}
+    gr.appendChild(a)})});
+  const dn=document.createElement("div");dn.className="dr-don";dn.innerHTML='<span class="dr-pill">💚 সাদাকায়ে জারিয়াহ</span><h3>মাসনুন পয়েন্টের সাথী হোন</h3><p>আপনার সাদাকাহর মাধ্যমে<br>মাসনুন পয়েন্টের অগ্রযাত্রার সাথী হন।</p><button type="button">ডোনেশন করুন →</button><i>🤲</i>';
+  dn.querySelector("button").onclick=()=>alert("ডোনেশন অংশটি শীঘ্রই যুক্ত হবে, ইনশাআল্লাহ।");G.appendChild(dn)}}
+
+/* ───── হোমের উপরের চিপ: প্রোফাইল, তারিখ, লোকেশন ───── */
+{const M=["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+ const d=()=>{const n=new Date(),el=$("drDt");if(el)el.textContent="📅 "+M[n.getMonth()]+" "+bn2(n.getDate())};d();setInterval(d,60000);
+ const pf=$("drPf");if(pf)pf.onclick=()=>{const m=$("drMenu");if(m)m.click()};
+ const W=$("drWidget"),lt=$("drLcT"),lc=$("drLc");
+ const sync=()=>{const b=W&&W.querySelector(".drw-loc");if(b&&lt&&b.textContent.trim())lt.textContent=b.textContent.trim()};
+ if(W){new MutationObserver(sync).observe(W,{childList:true,subtree:true});sync()}
+ if(lc)lc.onclick=()=>{const b=W&&W.querySelector(".drw-loc");if(b)b.click()}}
 /* ───── তাসবীহ ───── */
 {let tb=false;window.__drTasbih=()=>{if(tb)return;tb=true;const Z=$("drTasbih");if(!Z)return;let n=0,goal=33;
  Z.innerHTML='<h2 class="am-h">📿 তাসবীহ্</h2><div class="ts-g"><button data-g="33">৩৩</button><button data-g="99">৯৯</button><button data-g="100">১০০</button><button data-g="0">∞</button></div><button class="ts-b" id="tsB">০</button><button class="ts-r" id="tsR">↺ রিসেট</button>';
@@ -1001,7 +1018,7 @@ function drShell(){
   else if(p[0]==="alarm"&&al){key="alarm";box.hidden=true;rd.hidden=true;al.hidden=false;window.DRALARM&&DRALARM.show();window.scrollTo(0,0)}
   else if(p[0]==="read"&&RMODES.some(m=>m[0]===p[1])){key="read/"+p[1];const s=+p[2]||0;box.hidden=true;rd.hidden=false;renderReader(p[1],s>=1&&s<=114?s:0);window.scrollTo(0,0)}
   else{rd.hidden=true;box.hidden=false;RG++;if(p[0]==="topics"){key="topics";SHOWT&&SHOWT(true);window.scrollTo(0,0)}else if(prev.startsWith("read/")||prev===""||prev==="home"||prev==="alarm"||prev==="routine"||prev==="mushaf")window.scrollTo(0,0)}
-  prev=key;lastH=h;{const bk=$("drBackRow");if(bk)bk.hidden=key==="home";window.__drNav=(window.__drNav||0)+1}{const sh=key==="home"?"":"none";["drWidget","drWBar"].forEach(i=>{const x=$(i);if(x)x.style.display=sh})}navs.forEach(a=>a.classList.toggle("on",a.dataset.nav===key))};
+  prev=key;lastH=h;{const bk=$("drBackRow");if(bk)bk.hidden=key==="home";window.__drNav=(window.__drNav||0)+1}{const sh=key==="home"?"":"none";["drTop","drWidget","drWBar"].forEach(i=>{const x=$(i);if(x)x.style.display=sh})}navs.forEach(a=>a.classList.toggle("on",a.dataset.nav===key))};
  {const bk=$("drBack");if(bk)bk.onclick=()=>{if((window.__drNav||0)>1)history.back();else location.hash="#home"}}
  navs.forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const h=a.getAttribute("href");if(location.hash===h)route();else location.hash=h;open(false)}));
  addEventListener("hashchange",route);
