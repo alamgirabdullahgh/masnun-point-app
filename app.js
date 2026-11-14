@@ -401,7 +401,7 @@ function topicTools(t){const d=els("div","display:flex;flex-wrap:wrap;gap:6px;ma
 async function openTopic(t){window.__bq="";GEN++;CURT=t;SELV.clear();selChange();const out=$("rsOut"),info=$("rsInfo");out.innerHTML="";info.textContent="";window.__sq=t.name;
  CUT.clear();Object.keys(t.cuts||{}).forEach(k=>{const v=t.cuts[k];if(Array.isArray(v)&&v.length===2)CUT.set(k,v)});
  if(!t.refs.length){info.textContent="“"+t.name+"” বিষয়ে এখনো কোনো আয়াত নেই। সার্চ করে আয়াত বাছাই করে ‘বিষয়ে যোগ’ করুন।";info.appendChild(topicTools(t));return}
- SB.set(new Set(t.refs));info.textContent="📚 বিষয়: “"+t.name+"” — "+bn2(t.refs.length)+"টি আয়াত (আপনার সংরক্ষিত তালিকা)";
+ SB.set(new Set(t.refs));info.textContent="";
  allCopy(info,[{refs:t.refs}],t.refs.map(r=>r.split(":").map(Number)));info.appendChild(topicTools(t));verses(out,t.refs.map(r=>r+":0"),"",0)}
 function exportTopics(){const b=new Blob([JSON.stringify({v:1,topics:TS.list},null,1)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="research-topics-backup.json";document.body.appendChild(a);a.click();a.remove()}
 async function importTopics(file){try{const d=TS.clean(JSON.parse(await file.text()));let n=0;d.forEach(t=>{const r=TS.addRefs(t.name,t.refs);Object.assign(r.t.cuts,t.cuts);n+=r.added});await TS.save();alert(bn2(d.length)+"টি বিষয় ফেরানো হয়েছে ("+bn2(n)+"টি আয়াত যোগ হয়েছে)");SHOWT&&SHOWT(true)}catch(e){alert("ফাইলটি পড়া যায়নি — এটি এই পেজ থেকে নামানো ব্যাকআপ ফাইল তো?")}}
@@ -704,7 +704,7 @@ async function runMulti(parts,out,info,intro,ordered){
  SB.set(all);
  let ORD=null;
  if(ordered){const seen=new Set();ORD=[];G.forEach(g=>{const u=new Set();g.items.forEach(it=>fl(it).forEach(f=>f.refs.forEach(r=>u.add(key(r)))));[...u].filter(k=>!seen.has(k)).map(k=>k.split(":").map(Number)).sort((x,y)=>x[0]-y[0]||x[1]-y[1]).forEach(x=>{seen.add(x[0]+":"+x[1]);ORD.push(x)})})}
- info.textContent="সর্বমোট "+bn2(o)+"টি ফলাফল"+(o>all.size?" ("+bn2(all.size)+"টি আয়াত)":"")+" · "+G.map(g=>"“"+g.t+"” "+(g.u?bn2(g.u)+"টি আয়াত":"পাওয়া যায়নি")).join(" · ");
+ info.textContent="";
  
  allCopy(info,G.flatMap(g=>g.items.flatMap(it=>lst(it,ex(it)))),ORD);
  let bud=60;
@@ -724,7 +724,7 @@ async function run(topic){window.__bq="";GEN++;CURT=null;if(topic&&!topic.terms)
  if(!q&&/[\u0980-\u09FF]/.test(bq)){if(bq.length<2){info.textContent="কমপক্ষে ২টি অক্ষর লিখুন";return}
   await loadRoots();const rb=searchBn(bq);if(!rb.length){info.textContent="এই বাংলা অর্থে কিছু পাওয়া যায়নি।";let sg=[];try{sg=await bnSuggest(bq)}catch(e){}
    if(sg.length){info.append(" কাছাকাছি শব্দ: ");sg.forEach(w=>{const b=els("button","margin:2px 3px;border:1px solid var(--border-light);background:var(--card-bg);color:var(--primary);border-radius:999px;padding:2px 12px;font-size:14px;cursor:pointer",w);b.type="button";b.onclick=()=>{$("rsQ").value=w;$("rsGo").click()};info.appendChild(b)})}else info.append(" অন্য শব্দ লিখে দেখুন (যেমন: কিতাব, জ্ঞান, দয়া)");return}
-  const tv=(()=>{const u=new Set();let o=0;rb.forEach(it=>[...lst(it,!1)].sort((a,b)=>b.refs.length-a.refs.length).forEach(f=>f.refs.forEach(r=>{o++;u.add(r.split(":").slice(0,2).join(":"))})));return{o,u:u.size,s:u}})();SB.set(tv.s);info.textContent="সর্বমোট "+bn2(tv.o)+"টি ফলাফল"+(tv.o>tv.u?" ("+bn2(tv.u)+"টি আয়াত) · ":" · ")+"বাংলা অর্থে "+bn2(rb.length)+"টি রুট পাওয়া গেছে";
+  const tv=(()=>{const u=new Set();let o=0;rb.forEach(it=>[...lst(it,!1)].sort((a,b)=>b.refs.length-a.refs.length).forEach(f=>f.refs.forEach(r=>{o++;u.add(r.split(":").slice(0,2).join(":"))})));return{o,u:u.size,s:u}})();SB.set(tv.s);info.textContent="";
   {const cnt=f=>{const u=new Set();rb.forEach(it=>f(it).forEach(x=>x.refs.forEach(r=>u.add(r.split(":").slice(0,2).join(":")))));return u.size};
    const n1=cnt(it=>it.mf),n2=cnt(it=>it.r.forms),row=el("div","rs-seg");
    [[false,"“"+bq+"” অর্থের আয়াত ("+bn2(n1)+")"],[true,"রুটগুলোর সব আয়াত ("+bn2(n2)+")"]].forEach(([v,t])=>{const b=el("button","rs-seg-b"+(ALLF===v?" on":""),t);b.type="button";b.onclick=()=>{if(ALLF===v)return;ALLF=v;run().catch(e=>console.error(e))};row.appendChild(b)});
@@ -735,7 +735,7 @@ async function run(topic){window.__bq="";GEN++;CURT=null;if(topic&&!topic.terms)
  if(q.length<2){info.textContent="কমপক্ষে ২টি হরফ লিখুন";return}
  await loadRoots();const res=search(q);
  if(!res.length){info.textContent="কিছু পাওয়া যায়নি — হরফ বদলে বা কম লিখে দেখুন";return}
- const LIM=Infinity;const tv=(()=>{const u=new Set();let o=0;res.slice(0,LIM).forEach(it=>[...lst(it,it.sc===100)].sort((a,b)=>b.refs.length-a.refs.length).forEach(f=>f.refs.forEach(r=>{o++;u.add(r.split(":").slice(0,2).join(":"))})));return{o,u:u.size,s:u}})();SB.set(tv.s);info.textContent="সর্বমোট "+bn2(tv.o)+"টি ফলাফল"+(tv.o>tv.u?" ("+bn2(tv.u)+"টি আয়াত) · ":" · ")+bn2(res.length)+"টি রুট পাওয়া গেছে"+(res[0].loose?" (হুবহু মেলেনি, কাছাকাছি বানান ধরে খোঁজা হয়েছে)":"")+(res.length>LIM?" (প্রথম "+bn2(LIM)+"টি দেখানো হচ্ছে; আরও হরফ লিখে সংকীর্ণ করুন)":"");allCopy(info,res.slice(0,LIM).flatMap(it=>lst(it,it.sc===100)));
+ const LIM=Infinity;const tv=(()=>{const u=new Set();let o=0;res.slice(0,LIM).forEach(it=>[...lst(it,it.sc===100)].sort((a,b)=>b.refs.length-a.refs.length).forEach(f=>f.refs.forEach(r=>{o++;u.add(r.split(":").slice(0,2).join(":"))})));return{o,u:u.size,s:u}})();SB.set(tv.s);info.textContent="";allCopy(info,res.slice(0,LIM).flatMap(it=>lst(it,it.sc===100)));
  {let bud=60;res.slice(0,LIM).forEach((it,i)=>{const c=card(it,it.sc===100);out.appendChild(c);if(bud>0){c.querySelector(".rs-rh").click();bud-=Math.min(vset(lst(it,it.sc===100)).o,24)}})}}
 function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
  const setDir=()=>{q.placeholder=mode==="bn"?"সার্চ করুন":"সার্চ করুন"};
@@ -769,7 +769,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
   const hd=el("div","rs-rh2","“"+[...p].join(" ")+"” দিয়ে শুরু "+bn2(l.length)+"টি রুট — একটি বেছে নিন");rs.appendChild(hd);
   l.slice().sort((a,b)=>a.rn<b.rn?-1:a.rn>b.rn?1:0).forEach(r=>{const row=el("div","rs-ri"),b=el("b",null,[...r.rn].join(" ")),c=el("span",null,bn2(r.n)+" বার");row.append(b,c);row.onclick=()=>{q.value=r.rn;rs.classList.remove("on");go();window.scrollTo({top:rs.getBoundingClientRect().top+scrollY-60,behavior:"smooth"})};rs.appendChild(row)})};
  const go=()=>(ALLF=false,run()).catch(e=>{console.error(e);$("rsInfo").textContent="ডেটা লোড করা যায়নি — ইন্টারনেট দেখে আবার চেষ্টা করুন"});
- const goTopic=t=>(ALLF=false,run(t)).catch(e=>{console.error(e);$("rsInfo").textContent="ডেটা লোড করা যায়নি — ইন্টারনেট দেখে আবার চেষ্টা করুন"});
+ const goTopic=t=>(ALLF=false,$("rsBox").classList.add("dr-tonly"),run(t)).catch(e=>{console.error(e);$("rsInfo").textContent="ডেটা লোড করা যায়নি — ইন্টারনেট দেখে আবার চেষ্টা করুন"});
  window.__drTreat=()=>{const t=TOPICS.find(x=>x.name==="বদনজর · জাদু · জিন (চিকিৎসা)");if(!t)return;q.value=t.name;setDir();rs.classList.remove("on");goTopic(t)};
  const showTopics=async force=>{if(!force&&rs.classList.contains("on")&&rs.dataset.k==="topics"){rs.classList.remove("on");return}
   pad.classList.remove("on");rs.innerHTML="";rs.dataset.k="topics";rs.classList.add("bn","on");$("rsOut").innerHTML="";$("rsInfo").textContent="";
@@ -948,7 +948,7 @@ function drShell(){
  setFs(+lsGet("drFs","26")||26);
  const side=$("drSide"),scrim=$("drScrim"),menu=$("drMenu"),box=$("rsBox"),rd=$("drReader");
  const open=on=>{side.classList.toggle("on",on);scrim.classList.toggle("on",on);document.body.classList.toggle("dr-lock",on);side.setAttribute("aria-hidden",on?"false":"true");menu.setAttribute("aria-expanded",on?"true":"false")};
- menu.onclick=()=>open(true);{const ac=$("drAcc");if(ac)ac.onclick=()=>{let t=document.querySelector(".dr-toast");if(!t){t=document.createElement("div");t.className="dr-toast";document.body.appendChild(t)}t.textContent="অ্যাকাউন্ট সুবিধা শীঘ্রই আসছে";clearTimeout(window.__drTo);window.__drTo=setTimeout(()=>{t.remove()},2200)}}$("drClose").onclick=scrim.onclick=()=>open(false);
+ menu.onclick=()=>open(true);{const sb=document.querySelector(".dr-sbtn");if(sb)sb.addEventListener("click",()=>{const rb=$("rsBox");if(rb&&rb.classList.contains("dr-tonly")){rb.classList.remove("dr-tonly");const ro=$("rsOut"),ri=$("rsInfo"),rq=$("rsQ");if(ro)ro.innerHTML="";if(ri)ri.textContent="";if(rq)rq.value="";window.scrollTo(0,0)}})}{const ac=$("drAcc");if(ac)ac.onclick=()=>{let t=document.querySelector(".dr-toast");if(!t){t=document.createElement("div");t.className="dr-toast";document.body.appendChild(t)}t.textContent="অ্যাকাউন্ট সুবিধা শীঘ্রই আসছে";clearTimeout(window.__drTo);window.__drTo=setTimeout(()=>{t.remove()},2200)}}$("drClose").onclick=scrim.onclick=()=>open(false);
  document.addEventListener("keydown",e=>{if(e.key==="Escape")open(false)});
  const navs=[...document.querySelectorAll(".dr-nav,.dr-bn,.dr-sbtn")];
  let prev="";
@@ -985,6 +985,7 @@ function drShell(){
  }
  let lastH="home";
  const route=()=>{open(false);const h=(location.hash||"#home").replace(/^#/,""),p=h.split("/");
+  {const rb=$("rsBox");if(rb){if(p[0]==="amol")rb.classList.add("dr-tonly");else if(rb.classList.contains("dr-tonly")){rb.classList.remove("dr-tonly");const ro=$("rsOut"),ri=$("rsInfo"),rq=$("rsQ");if(ro)ro.innerHTML="";if(ri)ri.textContent="";if(rq)rq.value=""}}}
   document.querySelectorAll("audio").forEach(a=>{try{a.pause()}catch(e){}});
   const al=$("drAlarm");if(al)al.hidden=true;const hm=$("drHome");if(hm)hm.hidden=true;const mh=$("mpHome");if(mh)mh.hidden=true;const am=$("drAmol");if(am)am.hidden=true;const rt=$("drRoutine");if(rt)rt.hidden=true;const tl=$("drTools");if(tl)tl.hidden=true;const mf=$("drMushaf");if(mf)mf.hidden=true;
   if(p[0]==="timewidget"){window.DRALARM&&DRALARM.openWidget();location.hash="#"+lastH;return}
