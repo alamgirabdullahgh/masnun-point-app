@@ -392,7 +392,7 @@ async function topicAddPanel(host){
   const r=TS.addRefs(name,selList().map(x=>x[0]+":"+x[1]));go.disabled=true;msg.textContent="সংরক্ষণ হচ্ছে…";const cloud=await TS.save();go.disabled=false;
   msg.textContent=(r.isNew?"নতুন বিষয় “"+name+"” তৈরি হয়েছে। ":"")+bn2(r.added)+"টি আয়াত “"+name+"” বিষয়ে যোগ হয়েছে (মোট "+bn2(r.t.refs.length)+"টি)"+" (এই ফোনেই সংরক্ষিত)"});
  w.append(inp,dl,go,msg);host.appendChild(w);inp.focus()}
-function topicTools(t){const d=els("div","display:flex;flex-wrap:wrap;gap:6px;margin-top:6px");
+function topicTools(t){const d=els("div","display:flex;flex-wrap:wrap;gap:6px;margin-top:6px");d.className="rs-tt";
  d.append(
   mkBtn("🗑 বাছাই করা আয়াত বিষয় থেকে বাদ দিন",async()=>{const l=[...SELV].filter(k=>t.refs.includes(k));if(!l.length)return alert("আগে যে আয়াত বাদ দেবেন তার নিচের “বাছাই” বক্সে টিক দিন");
    t.refs=t.refs.filter(k=>!l.includes(k));l.forEach(k=>{SELV.delete(k);delete t.cuts[k];CUT.delete(k)});selChange();await TS.save();openTopic(t)}),
@@ -400,7 +400,7 @@ function topicTools(t){const d=els("div","display:flex;flex-wrap:wrap;gap:6px;ma
   mkBtn("❌ বিষয়টি মুছুন",async()=>{if(!confirm("“"+t.name+"” বিষয়টি (এর "+bn2(t.refs.length)+"টি আয়াতের তালিকাসহ) মুছে ফেলবেন? আয়াত নিজে মুছবে না, শুধু এই তালিকাটা।"))return;TS.list=TS.list.filter(x=>x!==t);await TS.save();$("rsOut").innerHTML="";$("rsInfo").textContent="";CURT=null;SHOWT&&SHOWT(true)}));return d}
 async function openTopic(t){window.__bq="";GEN++;CURT=t;SELV.clear();selChange();const out=$("rsOut"),info=$("rsInfo");out.innerHTML="";info.textContent="";window.__sq=t.name;
  CUT.clear();Object.keys(t.cuts||{}).forEach(k=>{const v=t.cuts[k];if(Array.isArray(v)&&v.length===2)CUT.set(k,v)});
- if(!t.refs.length){info.textContent="“"+t.name+"” বিষয়ে এখনো কোনো আয়াত নেই। সার্চ করে আয়াত বাছাই করে ‘বিষয়ে যোগ’ করুন।";info.appendChild(topicTools(t));return}
+ if(!t.refs.length){info.textContent="“"+t.name+"” বিষয়ে এখনো কোনো আয়াত নেই।"+($("rsBox").classList.contains("dr-tonly")?"":" সার্চ করে আয়াত বাছাই করে ‘বিষয়ে যোগ’ করুন।");info.appendChild(topicTools(t));return}
  SB.set(new Set(t.refs));info.textContent="";
  allCopy(info,[{refs:t.refs}],t.refs.map(r=>r.split(":").map(Number)));info.appendChild(topicTools(t));verses(out,t.refs.map(r=>r+":0"),"",0)}
 function exportTopics(){const b=new Blob([JSON.stringify({v:1,topics:TS.list},null,1)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="research-topics-backup.json";document.body.appendChild(a);a.click();a.remove()}
@@ -481,7 +481,7 @@ function audioBar(info,all,cb,title){if(!all.length)return;const box=els("div","
  selUp.push(()=>{b2.textContent="🔊 বাছাই করা আয়াত মার্জ ("+bn2(SELV.size)+")"});
  
   
-  const b3=el("button","rs-wb","📚 বাছাই করা আয়াত বিষয়ে যোগ ("+bn2(SELV.size)+")"),pn=el("div"),ed=el("div");b3.type="button";b3.className="rs-wb rs-act";
+  const b3=el("button","rs-wb","📚 বাছাই করা আয়াত বিষয়ে যোগ ("+bn2(SELV.size)+")"),pn=el("div"),ed=el("div");b3.type="button";b3.className="rs-wb rs-act rs-tadd";
   b3.onclick=()=>topicAddPanel(pn);
   selUp.push(()=>{b3.textContent="📚 বাছাই করা আয়াত বিষয়ে যোগ ("+bn2(SELV.size)+")"});
     const grp=(t,cls,ex,...k)=>{const g=el("div","rs-grp"),r=el("div","rs-gr"+(cls?" "+cls:""));g.append(el("div","rs-gh",t));r.append(...k);g.appendChild(r);if(ex)g.append(...ex);return g};

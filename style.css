@@ -632,4 +632,4 @@ button.mp-b{font-family:inherit;cursor:pointer}
 .dr-bn[data-nav="home"] i{display:flex;align-items:center;justify-content:center;height:21px;line-height:1;overflow:visible}
 
 /* ট্রিটমেন্ট/বিষয়ের পাতা: সার্চ বক্স, কীবোর্ড ও বিষয়-বোতাম নেই; সার্চ আইকনে চাপলেই শুধু সার্চ দেখায় */
-#rsBox.dr-tonly .rs-bar,#rsBox.dr-tonly #rsTp,#rsBox.dr-tonly .rs-pad{display:none!important}
+#rsBox.dr-tonly .rs-bar,#rsBox.dr-tonly #rsTp,#rsBox.dr-tonly .rs-pad,#rsBox.dr-tonly .rs-tt,#rsBox.dr-tonly .rs-tadd{display:none!important}
