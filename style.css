@@ -626,10 +626,7 @@ button.mp-b{font-family:inherit;cursor:pointer}
 
 .dr-toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;background:rgba(8,23,58,.95);color:#f6e9c4;padding:10px 18px;border-radius:14px;font-size:14px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.3);max-width:86vw;text-align:center}
 
-/* নিজস্ব আইকন সেট (নেভি + সোনালি) */
+/* শুধু নিচের নেভিগেশনের হোম আইকন নতুন (লাইন-আইকন); বাকি সব বাটন/হেডিংয়ে আগের ইমোজি আইকন */
 .mi{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;display:block}
 .mi .a{stroke:var(--accent)}
-.mp-b i{display:flex;align-items:center;justify-content:center;height:30px}
-.dr-bn i{display:flex;align-items:center;justify-content:center;height:24px}
-.mp-h{display:flex;align-items:center;gap:8px}
-.mp-hi{display:inline-flex;flex:none}
+.dr-bn[data-nav="home"] i{display:flex;align-items:center;justify-content:center;height:21px;line-height:1;overflow:visible}
