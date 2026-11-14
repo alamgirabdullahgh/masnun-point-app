@@ -72,7 +72,7 @@
   var sc=ST[cd.id];
   if(sc&&sc.treat){
    var ox=cd.items.map(function(r){return card(itemOf(r))}).join("");
-   box.innerHTML='<button type="button" class="am-back" data-to="a">← সব রোগ/সমস্যা</button><h2 class="am-h"><i>'+cd.icon+'</i> '+esc(cd.title)+'</h2><div class="am-lk">'+(sc.resp?'<a href="#diag/'+(cd.items[0][0].indexOf("b2")===0?"jadu":"jin")+'">রেসপন্স</a>':'')+'</div><h3 class="am-sh">ট্রিটমেন্ট</h3>'+stepsHtml(sc.treat)+(sc.refs&&sc.refs.length?refsHtml(sc.refs):'')+(sc.mud?'<details class="am-orig"><summary>মুদাব্বিরের (চিকিৎসকের) জন্য নির্দেশ — রোগীর প্রয়োজন নেই</summary>'+stepsHtml(sc.mud)+'</details>':'')+'<details class="am-orig"><summary>বইয়ের মূল লেখা (অপরিবর্তিত)</summary>'+ox+'</details>';
+   box.innerHTML='<button type="button" class="am-back" data-to="a">← সব রোগ/সমস্যা</button><h2 class="am-h"><i>'+cd.icon+'</i> '+esc(cd.title)+'</h2><h3 class="am-sh">ট্রিটমেন্ট</h3>'+stepsHtml(sc.treat)+(sc.refs&&sc.refs.length?refsHtml(sc.refs):'')+(sc.mud?'<details class="am-orig"><summary>মুদাব্বিরের (চিকিৎসকের) জন্য নির্দেশ — রোগীর প্রয়োজন নেই</summary>'+stepsHtml(sc.mud)+'</details>':'')+'<details class="am-orig"><summary>বইয়ের মূল লেখা (অপরিবর্তিত)</summary>'+ox+'</details>';
    return;
   }
   if(cd.items.length===1&&ITEM<0)ITEM=0;
@@ -90,23 +90,7 @@
   var e=b.querySelector(".am-empty");if(!n&&q){if(!e){e=document.createElement("div");e.className="am-empty";e.textContent="এই ট্যাবে কিছু পাওয়া যায়নি। অন্য ট্যাবে দেখুন।";b.appendChild(e)}}else if(e)e.remove();
  }
 
- /* ডায়াগনোসিস পাতায় রোগ অনুযায়ী লক্ষণ/রেসপন্স: kind = "sym" | "resp"; g = "jadu" | "jin" | "" */
- window.__drAmolSec=function(kind,host,g){
-  if(!host)return;
-  load().then(function(){
-   var cs=DATA.conds.filter(function(c){var sc=ST[c.id];if(!sc||!sc[kind])return false;if(!g)return true;var ids=c.items.map(function(r){return r[0].indexOf("b2")===0?"jadu":"jin"});return ids.indexOf(g)>=0});
-   if(!cs.length){host.innerHTML="";return}
-   host.innerHTML='<h3 class="am-sh">রোগ/সমস্যা অনুযায়ী '+(kind==="sym"?"লক্ষণ":"রেসপন্স")+'</h3>'+cs.map(function(c){return'<details class="am-sd"><summary><i>'+c.icon+'</i> '+esc(c.title)+'</summary>'+stepsHtml(ST[c.id][kind])+'<a class="am-go" href="#amol/'+c.id+'">এই রোগের ট্রিটমেন্ট →</a></details>'}).join("");
-  }).catch(function(){});
- };
- function secMount(){
-  var m=/^#diag(?:\/([a-z]+))?/.exec(location.hash||"");if(!m)return;
-  var kind="resp",g=m[1]==="jadu"||m[1]==="jin"?m[1]:"",page=document.getElementById("drHome");if(!page)return;
-  var id="amSec_resp",h=document.getElementById(id);
-  if(!h){h=document.createElement("div");h.id=id;h.className="am-sec2";var t=page.querySelector("#drHomeT,h2");if(t&&t.parentNode===page)t.insertAdjacentElement("afterend",h);else page.insertBefore(h,page.firstChild)}
-  window.__drAmolSec(kind,h,g);
- }
- window.addEventListener("hashchange",function(){setTimeout(secMount,250)});setTimeout(secMount,600);
+ /* v151: ডায়াগনোসিস পাতায় রোগ-অনুযায়ী তালিকা মাসনুনে নেই (ওটা Daily Ruqyah-এর নিজস্ব) */
  function init(){
   box=document.getElementById("drAmol");if(!box||box.__w)return;box.__w=1;
   box.addEventListener("click",function(e){var nz=e.target.closest&&e.target.closest(".am-nazar");if(nz){e.preventDefault();location.hash="#search";setTimeout(function(){window.__drOpenTopic&&window.__drOpenTopic("বদনজর")},90);return}var cb=e.target.closest&&e.target.closest(".am-cond");if(cb){if(cb.dataset.k){COND=cb.dataset.k;ITEM=-1}else ITEM=+cb.dataset.i;draw();window.scrollTo(0,0);return}var bk=e.target.closest&&e.target.closest(".am-back");if(bk){if(bk.dataset.to==="a")COND="";ITEM=-1;draw();window.scrollTo(0,0)}});
