@@ -831,15 +831,31 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
   o.innerHTML="নিট সম্পদ: <b>"+bn(Math.max(net,0))+" ৳</b><br>"+(net>=ni?"যাকাত ফরয: <b>"+bn(net*0.025)+" ৳</b> (২.৫%)":"নিসাবের কম, তাই যাকাত ফরয নয়")};
  Z.querySelectorAll("input").forEach(i=>i.oninput=calc)}}
 /* ───── হোম: বড় বাটনের গ্রিড (৪ কলাম) ───── */
-{let gb=false;const T=[["🛡️","রুকইয়াহ","#search"],["🩸","হিজামা","soon"],["🩺","রোগ নির্ণয়","#diag"],["📚","বিষয়ভিত্তিক আয়াত","#topics"],
- ["📖","আরবি কুরআন","#mushaf"],["🌐","বাংলা অনুবাদ","#read/arbn"],["🔤","শব্দে শব্দে","#read/word"],["⏰","অডিও অ্যালার্ম","#alarm"],
- ["🗓️","দৈনিক রুটিন ও আযকার","#routine"],["📝","রোগীর করণীয়","#routine/patient"],["📜","হাদীস সার্চ","#search"],["🧮","যাকাত ক্যালকুলেটর","#zakat"]];
+{let gb=false;
+ /* [আইকন, নাম, লিংক]  লিংক: #পাতা | soon | https://… */
+ const S=[["রুকইয়াহ ও চিকিৎসা","#0f766e",[["🛡️","রুকইয়াহ","#search"],["🩸","হিজামা","soon"],["🩺","রোগ নির্ণয়","#diag"],["📚","বিষয়ভিত্তিক আয়াত","#topics"],
+   ["📝","রোগীর করণীয়","#routine/patient"],["⏰","অডিও অ্যালার্ম","#alarm"],["🗓️","দৈনিক রুটিন","#routine"],["🤲","সকাল-সন্ধ্যার আযকার","#routine"]]],
+  ["ইলম ও আমল","#16a34a",[["📖","কুরআন","#mushaf"],["📜","হাদীস","#search"],["🕌","নামাযের সময়","#top"],["🎧","তিলাওয়াত","soon"],
+   ["📚","কিতাব","soon"],["✍️","প্রবন্ধ","soon"],["🔤","কুরআন শিক্ষা","#read/word"],["🤲","দু'আ","#routine"]]],
+  ["সেবা","#f59e0b",[["💡","তালীমে কুইজ","soon"],["✅","আমল ট্র্যাকার","#routine"],["📞","দ্বীনি জিজ্ঞাসা","soon"],["🧮","যাকাত ফিতরা","#zakat"],["🕋","হজ্জ ও উমরা","soon"]]],
+  ["বিবিধ","#9333ea",[["📿","তাসবীহ্","#tasbih"],["🎙️","বয়ান","soon"],["📍","মসজিদ খুঁজি","https://www.google.com/maps/search/mosque"],["🧭","কিবলা","soon"],
+   ["🕌","নামায শিক্ষা","soon"],["✨","আসমাউল হুসনা","soon"],["🌙","রোযা","soon"],["☪️","সুন্নাহ","soon"],["🏷️","ইসলামিক নাম","soon"],["📅","ক্যালেন্ডার","soon"],["🗓️","গুরুত্বপূর্ণ দিন","soon"]]]];
  window.__drGrid=()=>{if(gb)return;gb=true;const G=$("drGrid");if(!G)return;G.innerHTML="";
-  T.forEach(([ic,lb,t])=>{const a=document.createElement("a");a.className="dr-tile";a.href=t[0]==="#"?t:"#home";
-   a.innerHTML="<i>"+ic+"</i><span>"+lb+"</span>";
-   if(t==="soon")a.onclick=e=>{e.preventDefault();alert("হিজামা অংশটি শীঘ্রই যুক্ত হবে, ইনশাআল্লাহ।")};
-   else if(t==="share")a.onclick=e=>{e.preventDefault();const s=$("drShare");if(s)s.click()};
-   G.appendChild(a)})}}
+  S.forEach(([ttl,col,T])=>{const hd=document.createElement("div");hd.className="dr-sec";hd.innerHTML='<b style="background:'+col+'"></b><span>'+ttl+'</span>';G.appendChild(hd);
+   const gr=document.createElement("div");gr.className="dr-tiles";G.appendChild(gr);
+   T.forEach(([ic,lb,t])=>{const a=document.createElement("a");a.className="dr-tile";a.innerHTML="<i>"+ic+"</i><span>"+lb+"</span>";
+    if(t==="soon"){a.href="#home";a.onclick=ev=>{ev.preventDefault();alert(lb+" অংশটি শীঘ্রই যুক্ত হবে, ইনশাআল্লাহ।")}}
+    else if(t==="#top"){a.href="#home";a.onclick=ev=>{ev.preventDefault();window.scrollTo({top:0,behavior:"smooth"})}}
+    else if(t[0]==="h"){a.href=t;a.target="_blank";a.rel="noopener"}
+    else a.href=t;
+    gr.appendChild(a)})})}}
+/* ───── তাসবীহ ───── */
+{let tb=false;window.__drTasbih=()=>{if(tb)return;tb=true;const Z=$("drTasbih");if(!Z)return;let n=0,goal=33;
+ Z.innerHTML='<h2 class="am-h">📿 তাসবীহ্</h2><div class="ts-g"><button data-g="33">৩৩</button><button data-g="99">৯৯</button><button data-g="100">১০০</button><button data-g="0">∞</button></div><button class="ts-b" id="tsB">০</button><button class="ts-r" id="tsR">↺ রিসেট</button>';
+ const b=$("tsB"),upd=()=>{b.textContent=bn2(n)+(goal?" / "+bn2(goal):"")};
+ b.onclick=()=>{n++;if(navigator.vibrate)navigator.vibrate(goal&&n%goal===0?[80,60,80]:15);upd()};
+ $("tsR").onclick=()=>{n=0;upd()};
+ Z.querySelectorAll(".ts-g button").forEach(x=>x.onclick=()=>{goal=+x.dataset.g;n=0;upd()});upd()}}
 /* ───── হোম: রোগীর তথ্য + পুরো রোগ নির্ণয় একসাথে; প্রতিটি আয়াতের পাশে টিক; নিচে WhatsApp-এ পাঠানো ───── */
  {let built=false;const SEL=new Map();
   window.__drHome=()=>{if(built)return;built=true;const H=$("drHome");if(!H)return;
@@ -973,10 +989,11 @@ function drShell(){
  let lastH="home";
  const route=()=>{open(false);const h=(location.hash||"#home").replace(/^#/,""),p=h.split("/");
   document.querySelectorAll("audio").forEach(a=>{try{a.pause()}catch(e){}});
-  const al=$("drAlarm");if(al)al.hidden=true;const hm=$("drHome");if(hm)hm.hidden=true;const gd=$("drGrid");if(gd)gd.hidden=true;const zk=$("drZakat");if(zk)zk.hidden=true;const am=$("drAmol");if(am)am.hidden=true;const rt=$("drRoutine");if(rt)rt.hidden=true;const mf=$("drMushaf");if(mf)mf.hidden=true;
+  const al=$("drAlarm");if(al)al.hidden=true;const hm=$("drHome");if(hm)hm.hidden=true;const gd=$("drGrid");if(gd)gd.hidden=true;const zk=$("drZakat");if(zk)zk.hidden=true;const tsb=$("drTasbih");if(tsb)tsb.hidden=true;const am=$("drAmol");if(am)am.hidden=true;const rt=$("drRoutine");if(rt)rt.hidden=true;const mf=$("drMushaf");if(mf)mf.hidden=true;
   if(p[0]==="timewidget"){window.DRALARM&&DRALARM.openWidget();location.hash="#"+lastH;return}
   let key="search";
   if(p[0]==="home"&&gd){key="home";box.hidden=true;rd.hidden=true;gd.hidden=false;window.__drGrid&&window.__drGrid();window.scrollTo(0,0)}
+   else if(p[0]==="tasbih"&&tsb){key="tasbih";box.hidden=true;rd.hidden=true;tsb.hidden=false;window.__drTasbih&&window.__drTasbih();window.scrollTo(0,0)}
    else if(p[0]==="zakat"&&zk){key="zakat";box.hidden=true;rd.hidden=true;zk.hidden=false;window.__drZakat&&window.__drZakat();window.scrollTo(0,0)}
    else if(p[0]==="diag"&&hm){key="diag";box.hidden=true;rd.hidden=true;hm.hidden=false;window.__drHome&&window.__drHome();window.scrollTo(0,0)}
   else if(p[0]==="mushaf"&&mf){key="mushaf";box.hidden=true;rd.hidden=true;mf.hidden=false;window.__drMushaf&&window.__drMushaf(p[1]);window.scrollTo(0,0)}
