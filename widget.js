@@ -196,14 +196,14 @@
     ".drw-d{margin-top:2px;font-size:12px;color:#3B4A55;white-space:nowrap}" +
     ".drw-p{display:flex;margin:5px -4px 0}" +
     ".drw-c{flex:1;text-align:center;padding:5px 0 4px;border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent}" +
-    ".drw-c.on{background:#CFE6D9}" +
+    ".drw-c.on{background:#d0d6e5}" +
     ".drw-c i{display:block;font-style:normal;font-size:11px;color:#3B4A55}" +
     ".drw-c b{display:block;font-size:14px;font-weight:800;margin-top:1px}" +
     ".drw-b{display:flex;align-items:center;gap:8px;margin-top:3px;font-size:11px;color:#3B4A55}" +
     ".drw-b span{white-space:nowrap}" +
     ".drw-bar{flex:1;height:4px;border-radius:2px;background:#C9D3DA;overflow:hidden}" +
-    ".drw-bar u{display:block;height:100%;background:#1E8E62;border-radius:2px;text-decoration:none}" +
-    "@media (prefers-color-scheme:dark){.drw{background:#16211c;color:#e8f0ea}.drw-sun,.drw-time span,.drw-loc,.drw-upd,.drw-d,.drw-c i,.drw-b{color:#b3c9bb}.drw-c.on{background:#1f4a39}.drw-bar{background:#2a4034}}";
+    ".drw-bar u{display:block;height:100%;background:#21418b;border-radius:2px;text-decoration:none}" +
+    "@media (prefers-color-scheme:dark){.drw{background:#161921;color:#e8eaf0}.drw-sun,.drw-time span,.drw-loc,.drw-upd,.drw-d,.drw-c i,.drw-b{color:#b4bac8}.drw-c.on{background:#202c49}.drw-bar{background:#2b313f}}";
 
   var SUNRISE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2v2.6M5 5.6l1.8 1.8M19 5.6l-1.8 1.8M2.4 11.5H5M19 11.5h2.6" stroke="#FFB300" stroke-width="1.7" stroke-linecap="round" fill="none"/><circle cx="12" cy="13" r="5.5" fill="#FFC21A"/><path d="M2 15.5q2.5-2.2 5 0t5 0t5 0t5 0V22H2z" fill="#1E88E5"/><path d="M2 15.5q2.5-2.2 5 0t5 0t5 0t5 0" stroke="#8FD0FF" stroke-width="1" fill="none"/><path d="M9 18.3h6M10.5 20.5h3" stroke="#FFD97A" stroke-width="1.3" stroke-linecap="round"/></svg>';
   var SUNSET = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2v2.6M5 5.6l1.8 1.8M19 5.6l-1.8 1.8M2.4 11.5H5M19 11.5h2.6" stroke="#FF7043" stroke-width="1.7" stroke-linecap="round" fill="none"/><circle cx="12" cy="13" r="5.5" fill="#FF6D3A"/><path d="M2 15.5q2.5-2.2 5 0t5 0t5 0t5 0V22H2z" fill="#1E88E5"/><path d="M2 15.5q2.5-2.2 5 0t5 0t5 0t5 0" stroke="#8FD0FF" stroke-width="1" fill="none"/><path d="M9 18.3h6M10.5 20.5h3" stroke="#FFB59A" stroke-width="1.3" stroke-linecap="round"/></svg>';

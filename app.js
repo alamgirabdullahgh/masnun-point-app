@@ -437,19 +437,19 @@ async function ayatPdf(list,title,say){
  const put=(o,h)=>{if(y+h>BOT){pages.push([]);y=M}o.y=y;pages[pages.length-1].push(o);y+=h};
  // শিরোনাম (প্রথম পেজ)
  let dt="";try{dt=new Date().toLocaleDateString("bn-BD",{year:"numeric",month:"long",day:"numeric"})}catch(e){}
- put({t:"Masnun Ruqyah",font:f(700,40,BNF),c:"#0a5240",x:M,al:"left",dir:"ltr"},60);
+ put({t:"Masnun Ruqyah",font:f(700,40,BNF),c:"#0c2050",x:M,al:"left",dir:"ltr"},60);
  wrap(title,f(700,34,BNF),CW,false).forEach(l=>put({t:l,font:f(700,34,BNF),c:"#111",x:M,al:"left",dir:"ltr"},50));
  put({t:"মোট "+bn2(list.length)+"টি আয়াত"+(dt?" · "+dt:""),font:f(400,22,BNF),c:"#666",x:M,al:"left",dir:"ltr"},40);
- put({line:1,c:"#0a5240",w:3},30);
+ put({line:1,c:"#0c2050",w:3},30);
  for(let i=0;i<list.length;i++){
   const[s,a]=list[i],A=((await chunk("a",s))||[])[a-1],B=((await chunk(TR,s))||[])[a-1];if(A==null)continue;
   const al=wrap(A,f(400,38,AR),CW,true),bl=wrap(B||"",f(400,26,BNF),CW,false);
   const ref="সূরা "+(typeof SBN!=="undefined"?SBN[s-1]:SN[s-1])+" — "+bn2(s)+":"+bn2(a),hh=44+al.length*76+(bl.length?10+bl.length*42:0)+40;
   if(hh<=BOT-M&&y+hh>BOT){pages.push([]);y=M}
-  put({t:ref,font:f(700,24,BNF),c:"#0a5240",x:M,al:"left",dir:"ltr"},44);
+  put({t:ref,font:f(700,24,BNF),c:"#0c2050",x:M,al:"left",dir:"ltr"},44);
   al.forEach(l=>put({t:l,font:f(400,38,AR),c:"#111",x:W-M,al:"right",dir:"rtl"},76));
   if(bl.length){y+=10;bl.forEach(l=>put({t:l,font:f(400,26,BNF),c:"#333",x:M,al:"left",dir:"ltr"},42))}
-  put({line:1,c:"#d8e2dd",w:1},40);
+  put({line:1,c:"#d8dbe2",w:1},40);
   if(i%10===9){say("⏳ সাজানো হচ্ছে… "+bn2(i+1)+"/"+bn2(list.length));await new Promise(r=>setTimeout(r))}}
  const N=pages.length,imgs=[];
  for(let p=0;p<N;p++){
@@ -460,7 +460,7 @@ async function ayatPdf(list,title,say){
    if(o.line){g.fillStyle=o.c;g.fillRect(M,o.y+o.w,CW,o.w);continue}
    g.font=o.font;g.fillStyle=o.c;g.direction=o.dir;g.textAlign=o.al;
    const fs=parseInt(o.font.match(/(\d+)px/)[1]);g.fillText(o.t,o.x,o.y+Math.round(fs*(o.dir==="rtl"?1.25:1.05)))}
-  g.direction="ltr";g.fillStyle="#d8e2dd";g.fillRect(M,H-M-FOOT+18,CW,1);
+  g.direction="ltr";g.fillStyle="#d8dbe2";g.fillRect(M,H-M-FOOT+18,CW,1);
   g.font=f(400,20,BNF);g.fillStyle="#777";g.textAlign="left";g.fillText("Masnun Ruqyah",M,H-M-FOOT+52);
   g.textAlign="right";g.fillText("পৃষ্ঠা "+bn2(p+1)+" / "+bn2(N),W-M,H-M-FOOT+52);
   const bl=await new Promise(r=>cv.toBlob(r,"image/jpeg",0.85));
@@ -949,13 +949,12 @@ function drShell(){
  const navs=[...document.querySelectorAll(".dr-nav,.dr-bn,.dr-sbtn")];
  let prev="";
 
- /* ===== নতুন হোম: ৪টি হেডিং (রুকইয়াহ · হিজামা · অন্যান্য · শিক্ষা), প্রতিটির নিচে বড় বাটন ===== */
+ /* ===== নতুন হোম: ৩টি হেডিং (রুকইয়াহ · হিজামা · অন্যান্য), প্রতিটির নিচে বড় বাটন ===== */
  {let built=false;
   const SECS=[
    ["ruq","🩺","রুকইয়াহ",3,[["📋","সিম্পটম ডায়াগনোসিস","#diag"],["💬","রেসপন্স ডায়াগনোসিস",null],["💊","ট্রিটমেন্ট",null]]],
    ["hij","🩸","হিজামা",2,[["📋","সিম্পটম ডায়াগনোসিস",null],["💊","ট্রিটমেন্ট",null]]],
-   ["oth","🧩","অন্যান্য",3,[["🧍","ব্যক্তি কেন্দ্রিক আচরণ",null],["🤝","সামাজিক আচরণ",null],["🏛","রাষ্ট্রীয় আচরণ",null]]],
-   ["edu","🎓","শিক্ষা",2,[["📖","কোরআন শিক্ষা","#mushaf"],["📜","হাদিস শিক্ষা",null],["🕋","রুকিয়া শিক্ষা",null],["🩸","হিজামা শিক্ষা",null]]]
+   ["oth","🧩","অন্যান্য",3,[["🧍","ব্যক্তি কেন্দ্রিক আচরণ",null],["🤝","সামাজিক আচরণ",null],["🏛","রাষ্ট্রীয় আচরণ",null]]]
   ];
   window.__drMain=()=>{if(built)return;built=true;const H=$("mpHome");if(!H)return;H.innerHTML="";
    SECS.forEach(([id,ic,t,cols,items])=>{
@@ -964,7 +963,7 @@ function drShell(){
     const g=el("div","mp-g");g.style.gridTemplateColumns="repeat("+cols+",minmax(0,1fr))";
     items.forEach(([i,l,h])=>{
      const b=el(h?"a":"span","mp-b"+(h?"":" mp-soon"));if(h)b.href=h;
-     b.appendChild(el("i",null,i));b.appendChild(el("b",null,l));if(!h)b.appendChild(el("small",null,"শীঘ্রই আসছে"));
+     b.appendChild(el("i",null,i));b.appendChild(el("b",null,l));
      g.appendChild(b)});
     sec.appendChild(g);H.appendChild(sec)});
   };
