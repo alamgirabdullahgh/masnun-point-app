@@ -37,6 +37,9 @@ jobs:
           # টাইম উইজেট (Kotlin) ও তার লেআউট/ছবি/রং অ্যাপের ভেতরে
           cp native/widget/kotlin/*.kt $D/
           cp -r native/widget/res/. android/app/src/main/res/
+          # নতুন অ্যাপ আইকন: ক্যাপাসিটরের ডিফল্ট আইকন (adaptive সহ) সরিয়ে আমাদের লোগো বসানো
+          rm -rf android/app/src/main/res/mipmap-anydpi-v26
+          cp -r native/launcher/. android/app/src/main/res/
           # উইজেট Java-তে নয়, Kotlin-এ লেখা: Kotlin চালু ও minSdk ২৬ (java.time-এর জন্য)
           sed -i "s/minSdkVersion = 22/minSdkVersion = 26/" android/variables.gradle
           python3 - <<'PY'

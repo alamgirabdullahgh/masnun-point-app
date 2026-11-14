@@ -948,7 +948,7 @@ function drShell(){
  setFs(+lsGet("drFs","26")||26);
  const side=$("drSide"),scrim=$("drScrim"),menu=$("drMenu"),box=$("rsBox"),rd=$("drReader");
  const open=on=>{side.classList.toggle("on",on);scrim.classList.toggle("on",on);document.body.classList.toggle("dr-lock",on);side.setAttribute("aria-hidden",on?"false":"true");menu.setAttribute("aria-expanded",on?"true":"false")};
- menu.onclick=()=>open(true);$("drClose").onclick=scrim.onclick=()=>open(false);
+ menu.onclick=()=>open(true);{const ac=$("drAcc");if(ac)ac.onclick=()=>{let t=document.querySelector(".dr-toast");if(!t){t=document.createElement("div");t.className="dr-toast";document.body.appendChild(t)}t.textContent="অ্যাকাউন্ট সুবিধা শীঘ্রই আসছে";clearTimeout(window.__drTo);window.__drTo=setTimeout(()=>{t.remove()},2200)}}$("drClose").onclick=scrim.onclick=()=>open(false);
  document.addEventListener("keydown",e=>{if(e.key==="Escape")open(false)});
  const navs=[...document.querySelectorAll(".dr-nav,.dr-bn,.dr-sbtn")];
  let prev="";

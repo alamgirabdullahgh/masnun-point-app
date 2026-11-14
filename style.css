@@ -21,7 +21,7 @@ button,input,select{font-family:inherit}
 .dr-bar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:6px;height:calc(var(--bar-h) + env(safe-area-inset-top));padding:env(safe-area-inset-top) 8px 0;background:linear-gradient(135deg,#06122d 0%,#0c2050 60%,#0f2964 100%);color:#fff;box-shadow:0 1px 0 rgba(216,178,90,.55),0 8px 22px -10px rgba(6,18,45,.55)}
 .dr-menu{flex:none;width:44px;height:44px;border:0;border-radius:14px;background:rgba(255,255,255,.08);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s}
 .dr-menu:active{background:rgba(255,255,255,.2)}
-.dr-brand{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;min-width:0}
+.dr-brand{flex:1;display:flex;align-items:center;justify-content:flex-start;gap:10px;min-width:0;padding-left:4px}
 .dr-brand img{width:30px;height:30px;border-radius:9px;box-shadow:0 0 0 1.5px rgba(216,178,90,.7)}
 .dr-brand span{font-family:var(--font-display);font-size:20px;letter-spacing:.07em;font-weight:700;color:#f6e9c4;white-space:nowrap;text-shadow:0 1px 0 rgba(0,0,0,.25)}
 .dr-bar-sp{flex:none;width:44px}
@@ -574,7 +574,7 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 .dr-timecard .drw{background:transparent!important;margin:0 auto;padding:4px 6px 2px;border-radius:0}
 
 /* মাসনুন: বার্গার আইকন সরানো (জায়গা রেখে, যাতে নাম মাঝখানে থাকে); কুরআন বাছাই; অন্যান্য ৪ বাটন */
-#drMenu{visibility:hidden;pointer-events:none}
+#drMenu{display:none}
 button.mp-b{font-family:inherit;cursor:pointer}
 #mp-misc .mp-b b{font-size:12.5px}
 /* v150: আমল/চিকিৎসা পাতা (Daily Ruqyah থেকে) */
@@ -623,3 +623,5 @@ button.mp-b{font-family:inherit;cursor:pointer}
 .tl-tsvg{position:absolute;inset:0;width:100%;height:100%}.tl-tbg{fill:none;stroke:color-mix(in srgb,var(--primary) 16%,transparent);stroke-width:12}.tl-tfg{fill:none;stroke:var(--primary);stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .15s}
 .tl-cnt{position:absolute;left:0;right:0;top:50%;transform:translateY(-58%);font-size:68px;font-weight:800;line-height:1}.tl-tg{position:absolute;left:0;right:0;bottom:26%;font-size:13px;color:var(--text-muted)}
 .tl-meta{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--text-muted);margin:0 6px 8px}
+
+.dr-toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;background:rgba(8,23,58,.95);color:#f6e9c4;padding:10px 18px;border-radius:14px;font-size:14px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.3);max-width:86vw;text-align:center}
