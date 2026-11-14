@@ -847,7 +847,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
   G.appendChild(bn);let si=0;{const rb=document.createElement("button");rb.className="hm-rf";rb.type="button";rb.textContent="↻";rb.onclick=()=>{si=(si+2)%3;bn.dispatchEvent(new Event("nx"))};bn.appendChild(rb);bn.addEventListener("nx",()=>{const L=bn.querySelectorAll(".hm-sli"),D=bn.querySelectorAll(".hm-dots u");si=(si+1)%L.length;L.forEach((x,i)=>x.classList.toggle("act",i===si));D.forEach((x,i)=>x.classList.toggle("act",i===si))})}setInterval(()=>{const L=bn.querySelectorAll(".hm-sli"),D=bn.querySelectorAll(".hm-dots u");if(!L.length||bn.offsetParent===null)return;si=(si+1)%L.length;L.forEach((x,i)=>x.classList.toggle("act",i===si));D.forEach((x,i)=>x.classList.toggle("act",i===si))},4000);
   S.forEach(([ttl,col,T],si2)=>{const hd=document.createElement("div");hd.className="hm-sec";hd.id="drSec"+si2;hd.innerHTML='<b style="background:'+col+'"></b><span>'+ttl+'</span>'+(si2===0?'<a class="hm-sq" href="#search" aria-label="সার্চ">🔍</a>':"");G.appendChild(hd);
    const gr=document.createElement("div");gr.className="hm-tiles";G.appendChild(gr);
-   T.forEach(([ic,lb,t])=>{const a=document.createElement("a");a.className="hm-tile";a.innerHTML="<i>"+ic+"</i><span>"+lb+"</span>";
+   T.forEach(([ic,lb,t])=>{const a=document.createElement("a");a.className="hm-tile";a.innerHTML="<i>"+((window.HM_ICONS&&window.HM_ICONS[lb])||ic)+"</i><span>"+lb+"</span>";
     if(t==="soon"){a.href="#home";a.onclick=ev=>{ev.preventDefault();alert(lb+" অংশটি শীঘ্রই যুক্ত হবে, ইনশাআল্লাহ।")}}
     else if(t==="#top"){a.href="#home";a.onclick=ev=>{ev.preventDefault();window.scrollTo({top:0,behavior:"smooth"})}}
     else if(t[0]==="h"){a.href=t;a.target="_blank";a.rel="noopener"}
