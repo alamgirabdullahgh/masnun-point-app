@@ -954,9 +954,10 @@ function drShell(){
   const SECS=[
    ["ruq","🩺","রুকইয়াহ",3,[["📋","সিম্পটম ডায়াগনোসিস","#diag"],["💬","রেসপন্স ডায়াগনোসিস",null],["💊","ট্রিটমেন্ট",null]]],
    ["hij","🩸","হিজামা",2,[["📋","সিম্পটম ডায়াগনোসিস",null],["💊","ট্রিটমেন্ট",null]]],
-   ["oth","🧩","অন্যান্য",3,[["🧍","ব্যক্তি কেন্দ্রিক আচরণ",null],["🤝","সামাজিক আচরণ",null],["🏛","রাষ্ট্রীয় আচরণ",null]]]
+   ["oth","📜","আচরণবিধি",3,[["🧍","ব্যক্তি কেন্দ্রিক আচরণ",null],["🤝","সামাজিক আচরণ",null],["🏛","রাষ্ট্রীয় আচরণ",null]]],
+    ["misc","🧩","অন্যান্য",3,[["📖","কুরআন","#mushaf"],["🧭","কিবলা",null],["📿","তাসবীহ",null]]]
   ];
-  window.__drMain=()=>{if(built)return;built=true;const H=$("mpHome");if(!H)return;H.innerHTML="";
+  window.__drMain=()=>{if(built)return;built=true;const H=$("mpHome");if(!H)return;H.innerHTML="";const tc=$("drTimeCard");if(tc)H.appendChild(tc);
    SECS.forEach(([id,ic,t,cols,items])=>{
     const sec=el("section","mp-sec");sec.id="mp-"+id;
     sec.appendChild(el("h2","mp-h",ic+" "+t));
@@ -982,7 +983,7 @@ function drShell(){
   else if(p[0]==="alarm"&&al){key="alarm";box.hidden=true;rd.hidden=true;al.hidden=false;window.DRALARM&&DRALARM.show();window.scrollTo(0,0)}
   else if(p[0]==="read"&&RMODES.some(m=>m[0]===p[1])){key="read/"+p[1];const s=+p[2]||0;box.hidden=true;rd.hidden=false;renderReader(p[1],s>=1&&s<=114?s:0);window.scrollTo(0,0)}
   else{rd.hidden=true;box.hidden=false;RG++;if(p[0]==="topics"){key="topics";SHOWT&&SHOWT(true);window.scrollTo(0,0)}else if(prev.startsWith("read/")||prev===""||prev==="home"||prev==="alarm"||prev==="routine"||prev==="mushaf")window.scrollTo(0,0)}
-  prev=key;lastH=h;{const bk=$("drBackRow");if(bk)bk.hidden=key==="home";window.__drNav=(window.__drNav||0)+1}{const sh=key==="home"?"":"none";["drWidget","drWBar"].forEach(i=>{const x=$(i);if(x)x.style.display=sh})}navs.forEach(a=>a.classList.toggle("on",a.dataset.nav===key))};
+  prev=key;lastH=h;{const bk=$("drBackRow");if(bk)bk.hidden=key==="home";window.__drNav=(window.__drNav||0)+1}{const sh=key==="home"?"":"none";["drTimeCard"].forEach(i=>{const x=$(i);if(x)x.style.display=sh})}navs.forEach(a=>a.classList.toggle("on",a.dataset.nav===key))};
  {const bk=$("drBack");if(bk)bk.onclick=()=>{if((window.__drNav||0)>1)history.back();else location.hash="#home"}}
  navs.forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const sc=a.dataset.sec;if(sc){open(false);if((location.hash||"#home")!=="#home"){location.hash="#home";setTimeout(()=>window.__drSec&&window.__drSec(sc),160)}else window.__drSec&&window.__drSec(sc);return}const h=a.getAttribute("href");if(location.hash===h)route();else location.hash=h;open(false)}));
  addEventListener("hashchange",route);

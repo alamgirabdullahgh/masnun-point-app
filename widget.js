@@ -375,7 +375,9 @@
   }
   function auto() {
     var el = document.getElementById("drWidget");
-    if (NW && NW.card) nativeCard(el); else mount(el);
+    if (NW && NW.card) { try { NW.card({ visible: false, x: 0, y: 0, w: 300 }).catch(function () { }); } catch (e) { } if (NW.locate) { try { NW.locate({ ask: true }).catch(function () { }); } catch (e) { } }
+    }
+    mount(el);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", auto); else auto();
 })();
