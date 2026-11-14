@@ -863,7 +863,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
  const W=$("drWidget"),lt=$("drLcT"),lc=$("drLc");
  const sync=()=>{const b=W&&W.querySelector(".drw-loc");if(b&&lt&&b.textContent.trim())lt.textContent=b.textContent.trim()};
  if(W){new MutationObserver(sync).observe(W,{childList:true,subtree:true});sync()}
- if(lc)lc.onclick=()=>{const b=W&&W.querySelector(".drw-loc");if(b)b.click()}}
+ if(lc)lc.onclick=()=>{const u=W&&W.querySelector(".drw-upd");if(u){if(lt)lt.textContent="খোঁজা হচ্ছে…";u.click()}else{const b=W&&W.querySelector(".drw-loc");if(b)b.click()}}}
 
 /* ───── হোমের হিরো কার্ড (ছবির নকশা) ও ৫ আইকনের নিচের বার ───── */
 {const BDG="০১২৩৪৫৬৭৮৯",dn=s=>String(s).replace(/[০-৯]/g,d=>BDG.indexOf(d));
