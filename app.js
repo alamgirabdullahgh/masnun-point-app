@@ -833,9 +833,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
 /* ───── হোম: বড় বাটনের গ্রিড (৪ কলাম) ───── */
 {let gb=false;
  /* [আইকন, নাম, লিংক]  লিংক: #পাতা | soon | https://… */
- const S=[["রুকইয়াহ ও চিকিৎসা","#0f766e",[["🛡️","রুকইয়াহ","#search"],["🩸","হিজামা","soon"],["🩺","রোগ নির্ণয়","#diag"],["📚","বিষয়ভিত্তিক আয়াত","#topics"],
-   ["📝","রোগীর করণীয়","#routine/patient"],["⏰","অডিও অ্যালার্ম","#alarm"],["🗓️","দৈনিক রুটিন","#routine"],["🤲","সকাল-সন্ধ্যার আযকার","#routine"]]],
-  ["ইলম ও আমল","#16a34a",[["📖","কুরআন","#mushaf"],["📜","হাদীস","#search"],["🕌","নামাযের সময়","#top"],["🎧","তিলাওয়াত","soon"],
+ const S=[["ইলম ও আমল","#16a34a",[["📖","কুরআন","#mushaf"],["📜","হাদীস","#search"],["🕌","নামাযের সময়","#top"],["🎧","তিলাওয়াত","soon"],
    ["📚","কিতাব","soon"],["✍️","প্রবন্ধ","soon"],["🔤","কুরআন শিক্ষা","#read/word"],["🤲","দু'আ","#routine"]]],
   ["সেবা","#f59e0b",[["💡","তালীমে কুইজ","soon"],["✅","আমল ট্র্যাকার","#routine"],["📞","দ্বীনি জিজ্ঞাসা","soon"],["💍","বিবাহ","soon"],
    ["📰","চাকরি","soon"],["🧮","যাকাত ফিতরা","#zakat"],["🪙","সাদাকাহ","soon"],["🛒","কেনাকাটা","soon"],
@@ -843,19 +841,19 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
   ["বিবিধ","#9333ea",[["📿","তাসবীহ্","#tasbih"],["🎙️","বয়ান","soon"],["📍","মসজিদ খুঁজি","https://www.google.com/maps/search/mosque"],["🧭","কিবলা","soon"],
    ["🕌","নামায শিক্ষা","soon"],["✨","আসমাউল হুসনা","soon"],["📡","লাইভ","soon"],["🌙","রোযা","soon"],["☪️","সুন্নাহ","soon"],["🏷️","ইসলামিক নাম","soon"],["📅","ক্যালেন্ডার","soon"],["🗓️","গুরুত্বপূর্ণ দিন","soon"],["🔖","বুকমার্ক","soon"],["🔲","অন্যান্য","soon"]]]];
  window.__drGrid=()=>{if(gb)return;gb=true;const G=$("drGrid");if(!G)return;G.innerHTML="";
-  const bn=document.createElement("div");bn.className="dr-ban";
+  const bn=document.createElement("div");bn.className="hm-ban";
   const SL=[["🤲","আজকের আমল","সকাল-সন্ধ্যার আযকার","#routine"],["🩺","রুকইয়াহ","রোগ নির্ণয় ও আয়াত","#diag"],["🧮","যাকাত","ক্যালকুলেটরে হিসাব করুন","#zakat"]];
-  bn.innerHTML='<div class="dr-sl">'+SL.map((x,i)=>'<a class="dr-sli'+(i?"":" on")+'" href="'+x[3]+'"><i>'+x[0]+'</i><div><small>'+x[1]+'</small><b>'+x[2]+'</b></div></a>').join("")+'</div><div class="dr-dots">'+SL.map((_,i)=>'<u class="'+(i?"":"on")+'"></u>').join("")+'</div>';
-  G.appendChild(bn);let si=0;setInterval(()=>{const L=bn.querySelectorAll(".dr-sli"),D=bn.querySelectorAll(".dr-dots u");if(!L.length||bn.offsetParent===null)return;si=(si+1)%L.length;L.forEach((x,i)=>x.classList.toggle("on",i===si));D.forEach((x,i)=>x.classList.toggle("on",i===si))},4000);
-  S.forEach(([ttl,col,T])=>{const hd=document.createElement("div");hd.className="dr-sec";hd.innerHTML='<b style="background:'+col+'"></b><span>'+ttl+'</span>';G.appendChild(hd);
-   const gr=document.createElement("div");gr.className="dr-tiles";G.appendChild(gr);
-   T.forEach(([ic,lb,t])=>{const a=document.createElement("a");a.className="dr-tile";a.innerHTML="<i>"+ic+"</i><span>"+lb+"</span>";
+  bn.innerHTML='<div class="hm-sl">'+SL.map((x,i)=>'<a class="hm-sli'+(i?"":" act")+'" href="'+x[3]+'"><i>'+x[0]+'</i><div><small>'+x[1]+'</small><b>'+x[2]+'</b></div></a>').join("")+'</div><div class="hm-dots">'+SL.map((_,i)=>'<u class="'+(i?"":"act")+'"></u>').join("")+'</div>';
+  G.appendChild(bn);let si=0;{const rb=document.createElement("button");rb.className="hm-rf";rb.type="button";rb.textContent="↻";rb.onclick=()=>{si=(si+2)%3;bn.dispatchEvent(new Event("nx"))};bn.appendChild(rb);bn.addEventListener("nx",()=>{const L=bn.querySelectorAll(".hm-sli"),D=bn.querySelectorAll(".hm-dots u");si=(si+1)%L.length;L.forEach((x,i)=>x.classList.toggle("act",i===si));D.forEach((x,i)=>x.classList.toggle("act",i===si))})}setInterval(()=>{const L=bn.querySelectorAll(".hm-sli"),D=bn.querySelectorAll(".hm-dots u");if(!L.length||bn.offsetParent===null)return;si=(si+1)%L.length;L.forEach((x,i)=>x.classList.toggle("act",i===si));D.forEach((x,i)=>x.classList.toggle("act",i===si))},4000);
+  S.forEach(([ttl,col,T],si2)=>{const hd=document.createElement("div");hd.className="hm-sec";hd.id="drSec"+si2;hd.innerHTML='<b style="background:'+col+'"></b><span>'+ttl+'</span>'+(si2===0?'<a class="hm-sq" href="#search" aria-label="সার্চ">🔍</a>':"");G.appendChild(hd);
+   const gr=document.createElement("div");gr.className="hm-tiles";G.appendChild(gr);
+   T.forEach(([ic,lb,t])=>{const a=document.createElement("a");a.className="hm-tile";a.innerHTML="<i>"+ic+"</i><span>"+lb+"</span>";
     if(t==="soon"){a.href="#home";a.onclick=ev=>{ev.preventDefault();alert(lb+" অংশটি শীঘ্রই যুক্ত হবে, ইনশাআল্লাহ।")}}
     else if(t==="#top"){a.href="#home";a.onclick=ev=>{ev.preventDefault();window.scrollTo({top:0,behavior:"smooth"})}}
     else if(t[0]==="h"){a.href=t;a.target="_blank";a.rel="noopener"}
     else a.href=t;
     gr.appendChild(a)})});
-  const dn=document.createElement("div");dn.className="dr-don";dn.innerHTML='<span class="dr-pill">💚 সাদাকায়ে জারিয়াহ</span><h3>মাসনুন পয়েন্টের সাথী হোন</h3><p>আপনার সাদাকাহর মাধ্যমে<br>মাসনুন পয়েন্টের অগ্রযাত্রার সাথী হন।</p><button type="button">ডোনেশন করুন →</button><i>🤲</i>';
+  const dn=document.createElement("div");dn.className="hm-don";dn.innerHTML='<span class="hm-pill">💚 সাদাকায়ে জারিয়াহ</span><h3>মাসনুন পয়েন্টের সাথী হোন</h3><p>আপনার সাদাকাহর মাধ্যমে<br>মাসনুন পয়েন্টের অগ্রযাত্রার সাথী হন।</p><button type="button">ডোনেশন করুন →</button><i>🤲</i>';
   dn.querySelector("button").onclick=()=>alert("ডোনেশন অংশটি শীঘ্রই যুক্ত হবে, ইনশাআল্লাহ।");G.appendChild(dn)}}
 
 /* ───── হোমের উপরের চিপ: প্রোফাইল, তারিখ, লোকেশন ───── */
@@ -866,6 +864,40 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
  const sync=()=>{const b=W&&W.querySelector(".drw-loc");if(b&&lt&&b.textContent.trim())lt.textContent=b.textContent.trim()};
  if(W){new MutationObserver(sync).observe(W,{childList:true,subtree:true});sync()}
  if(lc)lc.onclick=()=>{const b=W&&W.querySelector(".drw-loc");if(b)b.click()}}
+
+/* ───── হোমের হিরো কার্ড (ছবির নকশা) ও ৫ আইকনের নিচের বার ───── */
+{const BDG="০১২৩৪৫৬৭৮৯",dn=s=>String(s).replace(/[০-৯]/g,d=>BDG.indexOf(d));
+ const AW=["ইয়াওমুল আহাদ","ইয়াওমুল ইসনাইন","ইয়াওমুস সুলাসা","ইয়াওমুল আরবিআ","ইয়াওমুল খামীস","ইয়াওমুল জুমুআ","ইয়াওমুস সাবত"],BW=["রবিবার","সোমবার","মঙ্গলবার","বুধবার","বৃহস্পতিবার","শুক্রবার","শনিবার"];
+ const SE={"বৈশাখ":"গ্রীষ্মকাল","জ্যৈষ্ঠ":"গ্রীষ্মকাল","আষাঢ়":"বর্ষাকাল","শ্রাবণ":"বর্ষাকাল","ভাদ্র":"শরৎকাল","আশ্বিন":"শরৎকাল","কার্তিক":"হেমন্তকাল","অগ্রহায়ণ":"হেমন্তকাল","পৌষ":"শীতকাল","মাঘ":"শীতকাল","ফাল্গুন":"বসন্তকাল","চৈত্র":"বসন্তকাল"};
+ const H=$("drHero"),W=$("drWidget");let raf=0;
+ const tm=s=>{const m=/([০-৯0-9]{1,2}):([০-৯0-9]{2})/.exec(s||"");return m?[+dn(m[1]),+dn(m[2])]:null};
+ const tx=s=>{const m=/([০-৯0-9]{1,2}:[০-৯0-9]{2})/.exec(s||"");return m?m[1]:""};
+ const mins=e=>{if(!e)return null;const n=new Date(),nm=n.getHours()*60+n.getMinutes();let best=1e9;[e[0]%12,e[0]%12+12].forEach(hh=>{let d=hh*60+e[1]-nm;if(d<=0)d+=1440;if(d<best)best=d});return best};
+ const build=()=>{raf=0;const w=W&&W.querySelector(".drw");if(!w||!H)return;
+  const q=x=>w.querySelector(x),qa=x=>Array.from(w.querySelectorAll(x));
+  const sun=qa(".drw-sun"),cells=qa(".drw-p > div"),bs=qa(".drw-b > span"),ds=qa(".drw-d span");
+  let ci=cells.findIndex(x=>x.classList.contains("on"));const nm=i=>(cells[i]&&cells[i].querySelector("i")?cells[i].querySelector("i").textContent.trim():"");
+  const cur=ci>=0?nm(ci):"ওয়াক্ত",st=tx(bs[0]&&bs[0].textContent),en=tx(bs[1]&&bs[1].textContent);
+  const nxt=ci<0?"":(ci===0?"সূর্যোদয়":nm((ci+1)%5)),sr=tx(sun[0]&&sun[0].textContent),ss=tx(sun[1]&&sun[1].textContent);
+  const dh=cells[1]?tx(cells[1].textContent):"";
+  const pct=(q(".drw-bar u")||{style:{}}).style.width||"0%";
+  const mm=mins(tm(en)),lt=mm==null?"":(mm<60?bn2(mm)+" মিনিট বাকি":bn2(Math.floor(mm/60))+" ঘণ্টা "+bn2(mm%60)+" মিনিট বাকি");
+  const now=new Date(),hj=(ds[0]?ds[0].textContent:"").replace("হিজরি","হি.").trim(),bg=(ds[1]?ds[1].textContent:"").trim(),bm=bg.split(" ")[1]||"";
+  const all=cells.map(x=>'<div><i>'+(x.querySelector("i")?x.querySelector("i").textContent:"")+'</i><b>'+(x.querySelector("b")?x.querySelector("b").textContent:"")+'</b></div>').join("");
+  H.innerHTML='<div class="hr-d"><b>'+hj+' '+AW[now.getDay()]+' 🌙</b><small>'+BW[now.getDay()]+', '+bg+(SE[bm]?', '+SE[bm]:'')+'</small></div>'+
+  '<div class="hr-p"><div class="hr-arc"><span class="hr-m">🕌</span><span class="hr-c">🌙 '+dh+'</span><em class="hr-l">🌅 '+sr+'</em><em class="hr-r">🌇 '+ss+'</em><div class="hr-lr"><b>'+cur+' '+st+' মি.</b><b>'+nxt+' '+en+' মি.</b></div></div>'+
+  '<div class="hr-in"><div class="hr-n"><b>'+cur+'</b><span>'+st+' - '+en+'</span></div><div class="hr-bar"><u style="width:'+pct+'"></u></div><div class="hr-s"><span><i class="hr-dot"></i> চলমান</span><span>'+lt+'</span></div></div><div class="hr-all" hidden>'+all+'</div></div>';
+  const p=H.querySelector(".hr-p");if(p)p.onclick=()=>{const x=H.querySelector(".hr-all");if(x)x.hidden=!x.hidden}};
+ if(W){new MutationObserver(()=>{if(!raf)raf=requestAnimationFrame(build)}).observe(W,{childList:true,subtree:true,characterData:true});build();setInterval(build,30000)}
+ /* ৫ আইকনের বার: স্ক্রল-স্পাই */
+ const nv=Array.from(document.querySelectorAll(".dr-hnav [data-hn]")),hid=["drSec0","drSec1","drSec2"];
+ const go=k=>{if(k==="0")window.scrollTo({top:0,behavior:"smooth"});else if(k==="1"||k==="2"){const e=$(hid[+k]);if(e)window.scrollTo({top:e.getBoundingClientRect().top+scrollY-70,behavior:"smooth"})}else if(k==="3")alert("নোটিফিকেশন অংশটি শীঘ্রই যুক্ত হবে, ইনশাআল্লাহ।");else{const m=$("drMenu");if(m)m.click()}};
+ nv.forEach(b=>b.onclick=()=>go(b.dataset.hn));
+ const spy=()=>{if(!document.body.classList.contains("dr-home"))return;let k="0";const y=innerHeight*.45;
+  [["1",hid[1]],["2",hid[2]]].forEach(([n,id])=>{const e=$(id);if(e&&e.getBoundingClientRect().top<y)k=n});
+  const e0=$(hid[0]);if(k==="0"&&e0&&e0.getBoundingClientRect().top<-20)k="0";
+  nv.forEach(b=>b.classList.toggle("on",b.dataset.hn===k))};
+ addEventListener("scroll",spy,{passive:true});spy()}
 /* ───── তাসবীহ ───── */
 {let tb=false;window.__drTasbih=()=>{if(tb)return;tb=true;const Z=$("drTasbih");if(!Z)return;let n=0,goal=33;
  Z.innerHTML='<h2 class="am-h">📿 তাসবীহ্</h2><div class="ts-g"><button data-g="33">৩৩</button><button data-g="99">৯৯</button><button data-g="100">১০০</button><button data-g="0">∞</button></div><button class="ts-b" id="tsB">০</button><button class="ts-r" id="tsR">↺ রিসেট</button>';
@@ -1018,7 +1050,7 @@ function drShell(){
   else if(p[0]==="alarm"&&al){key="alarm";box.hidden=true;rd.hidden=true;al.hidden=false;window.DRALARM&&DRALARM.show();window.scrollTo(0,0)}
   else if(p[0]==="read"&&RMODES.some(m=>m[0]===p[1])){key="read/"+p[1];const s=+p[2]||0;box.hidden=true;rd.hidden=false;renderReader(p[1],s>=1&&s<=114?s:0);window.scrollTo(0,0)}
   else{rd.hidden=true;box.hidden=false;RG++;if(p[0]==="topics"){key="topics";SHOWT&&SHOWT(true);window.scrollTo(0,0)}else if(prev.startsWith("read/")||prev===""||prev==="home"||prev==="alarm"||prev==="routine"||prev==="mushaf")window.scrollTo(0,0)}
-  prev=key;lastH=h;{const bk=$("drBackRow");if(bk)bk.hidden=key==="home";window.__drNav=(window.__drNav||0)+1}{const sh=key==="home"?"":"none";["drTop","drWidget","drWBar"].forEach(i=>{const x=$(i);if(x)x.style.display=sh})}navs.forEach(a=>a.classList.toggle("on",a.dataset.nav===key))};
+  prev=key;lastH=h;{const bk=$("drBackRow");if(bk)bk.hidden=key==="home";window.__drNav=(window.__drNav||0)+1}{document.body.classList.toggle("dr-home",key==="home");const sh=key==="home"?"":"none";["drTop","drHero","drWidget","drWBar"].forEach(i=>{const x=$(i);if(x)x.style.display=sh})}navs.forEach(a=>a.classList.toggle("on",a.dataset.nav===key))};
  {const bk=$("drBack");if(bk)bk.onclick=()=>{if((window.__drNav||0)>1)history.back();else location.hash="#home"}}
  navs.forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const h=a.getAttribute("href");if(location.hash===h)route();else location.hash=h;open(false)}));
  addEventListener("hashchange",route);
