@@ -833,13 +833,13 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
 /* ───── হোম: বড় বাটনের গ্রিড (৪ কলাম) ───── */
 {let gb=false;
  /* [আইকন, নাম, লিংক]  লিংক: #পাতা | soon | https://… */
- const S=[["ইলম ও আমল","#16a34a",[["📖","কুরআন","#mushaf"],["📜","হাদীস","#search"],["🕌","নামাযের সময়","#top"],["🎧","তিলাওয়াত","soon"],
+ const S=[["ইলম ও আমল","#16a34a",[["📖","কুরআন","#mushaf"],["📜","হাদীস","#search"],["🕌","নামাযের সময়","#top"],["🎧","তিলাওয়াত","#mushaf"],
    ["📚","কিতাব","soon"],["✍️","প্রবন্ধ","soon"],["🔤","কুরআন শিক্ষা","#read/word"],["🤲","দু'আ","#routine"]]],
   ["সেবা","#f59e0b",[["💡","তালীমে কুইজ","soon"],["✅","আমল ট্র্যাকার","#routine"],["📞","দ্বীনি জিজ্ঞাসা","soon"],["💍","বিবাহ","soon"],
    ["📰","চাকরি","soon"],["🧮","যাকাত ফিতরা","#zakat"],["🪙","সাদাকাহ","soon"],["🛒","কেনাকাটা","soon"],
    ["🕋","হজ্জ ও উমরা","soon"],["🩸","রক্তদান","soon"],["🕌","আমার মসজিদ","soon"],["🎧","সাপোর্ট","soon"]]],
   ["বিবিধ","#9333ea",[["📿","তাসবীহ্","#tasbih"],["🎙️","বয়ান","soon"],["📍","মসজিদ খুঁজি","https://www.google.com/maps/search/mosque"],["🧭","কিবলা","soon"],
-   ["🕌","নামায শিক্ষা","soon"],["✨","আসমাউল হুসনা","soon"],["📡","লাইভ","soon"],["🌙","রোযা","soon"],["☪️","সুন্নাহ","soon"],["🏷️","ইসলামিক নাম","soon"],["📅","ক্যালেন্ডার","soon"],["🗓️","গুরুত্বপূর্ণ দিন","soon"],["🔖","বুকমার্ক","soon"],["🔲","অন্যান্য","soon"]]]];
+   ["🕌","নামায শিক্ষা","soon"],["✨","আসমাউল হুসনা","soon"],["📡","লাইভ","soon"],["🌙","রোযা","soon"],["☪️","সুন্নাহ","soon"],["🏷️","ইসলামিক নাম","soon"],["📅","ক্যালেন্ডার","soon"],["🗓️","গুরুত্বপূর্ণ দিন","soon"],["🔖","বুকমার্ক","#mushaf"],["🔲","অন্যান্য","#menu"]]]];
  window.__drGrid=()=>{if(gb)return;gb=true;const G=$("drGrid");if(!G)return;G.innerHTML="";
   const bn=document.createElement("div");bn.className="hm-ban";
   const SL=[["🤲","আজকের আমল","সকাল-সন্ধ্যার আযকার","#routine"],["🩺","রুকইয়াহ","রোগ নির্ণয় ও আয়াত","#diag"],["🧮","যাকাত","ক্যালকুলেটরে হিসাব করুন","#zakat"]];
@@ -849,6 +849,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
    const gr=document.createElement("div");gr.className="hm-tiles";G.appendChild(gr);
    T.forEach(([ic,lb,t])=>{const a=document.createElement("a");a.className="hm-tile";a.innerHTML="<i>"+((window.HM_ICONS&&window.HM_ICONS[lb])||ic)+"</i><span>"+lb+"</span>";
     if(t==="soon"){a.href="#home";a.onclick=ev=>{ev.preventDefault();alert(lb+" অংশটি শীঘ্রই যুক্ত হবে, ইনশাআল্লাহ।")}}
+    else if(t==="#menu"){a.href="#home";a.onclick=ev=>{ev.preventDefault();const m=$("drMenu");if(m)m.click()}}
     else if(t==="#top"){a.href="#home";a.onclick=ev=>{ev.preventDefault();window.scrollTo({top:0,behavior:"smooth"})}}
     else if(t[0]==="h"){a.href=t;a.target="_blank";a.rel="noopener"}
     else a.href=t;
@@ -893,7 +894,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
  if(W){new MutationObserver(()=>{if(!raf)raf=requestAnimationFrame(build)}).observe(W,{childList:true,subtree:true,characterData:true});build();setInterval(build,30000)}
  /* ৫ আইকনের বার: স্ক্রল-স্পাই */
  const nv=Array.from(document.querySelectorAll(".dr-hnav [data-hn]")),hid=["drSec0","drSec1","drSec2"];
- const go=k=>{if(k==="0")window.scrollTo({top:0,behavior:"smooth"});else if(k==="1"||k==="2"){const e=$(hid[+k]);if(e)window.scrollTo({top:e.getBoundingClientRect().top+scrollY-70,behavior:"smooth"})}else if(k==="3")alert("নোটিফিকেশন অংশটি শীঘ্রই যুক্ত হবে, ইনশাআল্লাহ।");else{const m=$("drMenu");if(m)m.click()}};
+ const go=k=>{if(k==="0")window.scrollTo({top:0,behavior:"smooth"});else if(k==="1"||k==="2"){const e=$(hid[+k]);if(e)window.scrollTo({top:e.getBoundingClientRect().top+scrollY-70,behavior:"smooth"})}else if(k==="3")location.hash="#alarm";else{const m=$("drMenu");if(m)m.click()}};
  nv.forEach(b=>b.onclick=()=>go(b.dataset.hn));
  const spy=()=>{if(!document.body.classList.contains("dr-home"))return;let k="0";const y=innerHeight*.45;
   [["1",hid[1]],["2",hid[2]]].forEach(([n,id])=>{const e=$(id);if(e&&e.getBoundingClientRect().top<y)k=n});
