@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Masnun Ruqyah">
-<link rel="stylesheet" href="style.css?v=36">
+<link rel="stylesheet" href="style.css?v=145">
 </head>
 <body>
 <header class="dr-bar">
@@ -21,8 +21,6 @@
  <a class="dr-menu dr-sbtn" href="#search" data-nav="search" aria-label="সার্চ"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.2 15.2L20 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></a>
 </header>
 <div class="dr-backrow" id="drBackRow" hidden><button class="dr-backbtn" id="drBack" type="button" aria-label="আগের পাতায় ফিরুন"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
-<div class="hm-top" id="drTop"><button class="hm-chip dr-pf" id="drPf" type="button" aria-label="প্রোফাইল"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 21c1-5 4-7 8-7s7 2 8 7z" fill="currentColor"/></svg></button><span class="hm-chip" id="drDt"></span><button class="hm-chip dr-lc" id="drLc" type="button"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 21s7-6 7-12a7 7 0 0 0-14 0c0 6 7 12 7 12z"/><circle cx="12" cy="9" r="2.500"/></svg><b id="drLcT">লোকেশন</b><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M6 9l6 6 6-6"/></svg></button></div>
-<div id="drHero" class="hr"></div>
 <div id="drWidget" style="padding:0 12px"></div>
 <div class="dr-wbar" id="drWBar" hidden><button id="drWSet" type="button">📲 হোম স্ক্রিনে বসান</button></div>
 <div class="dr-scrim" id="drScrim"></div>
@@ -33,12 +31,6 @@
   <button class="dr-x" id="drClose" type="button" aria-label="বন্ধ করুন">✕</button>
  </div>
  <div class="dr-off" id="drOff"><div class="off-t">অফলাইন অডিও: যাচাই হচ্ছে…</div><div class="off-b"><i class="off-f"></i></div></div>
- <div class="dr-side-sec">রুকইয়াহ ও চিকিৎসা</div>
- <a class="dr-nav" href="#search" data-nav="search"><i>🛡️</i><span>রুকইয়াহ আয়াত সার্চ</span></a>
- <a class="dr-nav" href="#diag" data-nav="diag"><i>🩺</i><span>রোগ নির্ণয়</span></a>
- <a class="dr-nav" href="#topics" data-nav="topics"><i>📚</i><span>বিষয়ভিত্তিক আয়াত</span></a>
- <a class="dr-nav" href="#zakat" data-nav="zakat"><i>🧮</i><span>যাকাত ক্যালকুলেটর</span></a>
- <a class="dr-nav" href="#tasbih" data-nav="tasbih"><i>📿</i><span>তাসবীহ্</span></a>
  <div class="dr-side-sec">সম্পূর্ণ কুরআন পড়ুন</div>
  <a class="dr-nav" href="#mushaf" data-nav="mushaf"><i class="ar">قرآن</i><span>আরবি কুরআন (১৫ লাইন)</span></a>
  <a class="dr-nav" href="#read/arbn" data-nav="read/arbn"><i class="ar">عب</i><span>আরবি ও বাংলা অনুবাদসহ</span></a>
@@ -48,15 +40,11 @@
  <a class="dr-nav" href="#routine" data-nav="routine"><i>🗓</i><span>দৈনিক রুটিন ও রোগীর করণীয়</span></a>
 <div class="dr-vbar"><b id="drVer">Masnun Ruqyah</b><button class="dr-share" id="drShare" type="button">Share</button></div>
 </nav>
-<nav class="dr-bnav" aria-label="নেভিগেশন"><a class="dr-bn" href="#topics" data-nav="topics"><i>📚</i><span>বিষয়ভিত্তিক আয়াত</span></a><a class="dr-bn" href="#home" data-nav="home"><i>🏠</i><span>হোম</span></a><a class="dr-bn" href="#diag" data-nav="diag"><i>🩺</i><span>রোগ নির্ণয়</span></a></nav>
-<nav class="dr-hnav" aria-label="হোম নেভিগেশন"><button type="button" data-hn="0" aria-label="ইলম ও আমল"><span><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13C17 4 14 4.500 12 6z"/><path d="M12 6v13"/></svg></span></button><button type="button" data-hn="1" aria-label="সেবা"><span><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></span></button><button type="button" data-hn="2" aria-label="বিবিধ"><span><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M17 13l3.500 3.500L17 20l-3.500-3.500z"/></svg></span></button><button type="button" data-hn="3" aria-label="নোটিফিকেশন"><span><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.500 2h-15L6 16z"/><path d="M10 21h4"/></svg></span></button><button type="button" data-hn="4" aria-label="প্রোফাইল"><span><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="12" cy="10" r="2.800"/><path d="M7 18c1-3 3-4 5-4s4 1 5 4"/></svg></span></button></nav>
+<nav class="dr-bnav" aria-label="নেভিগেশন"><a class="dr-bn" href="#topics" data-nav="topics"><i>📚</i><span>বিষয়ভিত্তিক আয়াত</span></a><a class="dr-bn" href="#home" data-nav="home"><i>🏠</i><span>হোম</span></a></nav>
 <div class="dr-ufl" id="drUfl" hidden><button class="dr-ubtn" id="drUbtn" type="button"><span class="ph" id="drUph">Update</span><span class="pt" id="drUpt"></span></button></div>
 <main class="dr-main">
 <div class="rs-box" id="drRoutine" hidden></div>
 <div class="rs-box" id="drMushaf" hidden></div>
-<div class="dr-grid" id="drGrid" hidden></div>
-<div class="rs-box" id="drZakat" hidden></div>
-<div class="rs-box" id="drTasbih" hidden></div>
 <div class="rs-box" id="drHome" hidden></div>
 <div class="rs-box" id="rsBox" hidden>
  <div class="dr-inst" id="drInst"></div>
@@ -72,8 +60,7 @@
 <script src="widget.js?v=10"></script>
 <script src="routine.js?v=2"></script>
 <script src="mushaf.js?v=7"></script>
-<script src="icons.js?v=2"></script>
-<script src="app.js?v=38"></script>
+<script src="app.js?v=145"></script>
 <script src="alarm.js?v=4"></script>
 <script src="boot.js?v=6"></script>
 <script src="data/hadith-norm.js?v=2"></script>
