@@ -972,6 +972,14 @@ function drShell(){
      g.appendChild(b)});
     sec.appendChild(g);
     H.appendChild(sec)});
+    /* যোগাযোগ: হোয়াটসঅ্যাপ ৩টি + ফেসবুক ৩টি (লিংক/নাম্বার পরে বসবে — CONTACTS-এর তৃতীয় ঘরে দিলেই কার্ড চালু হবে) */
+    {const WA='<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path fill="#25D366" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2z"/><path fill="#fff" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z"/></svg>';
+     const FB='<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1877F2"/><path fill="#fff" d="M13.4 21v-7.6h2.5l.4-3h-2.9V8.6c0-.9.3-1.4 1.5-1.4h1.5V4.5c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2.2H8v3h2.5V21z"/></svg>';
+     const CONTACTS=[[WA,"হোয়াটসঅ্যাপ ১",""],[WA,"হোয়াটসঅ্যাপ ২",""],[WA,"হোয়াটসঅ্যাপ ৩",""],[FB,"ফেসবুক ১",""],[FB,"ফেসবুক ২",""],[FB,"ফেসবুক ৩",""]];
+     const cs=el("section","mp-sec");cs.id="mp-contact";cs.appendChild(el("h2","mp-h","📞 যোগাযোগ"));
+     const cg=el("div","mp-g");cg.style.gridTemplateColumns="repeat(3,minmax(0,1fr))";
+     CONTACTS.forEach(([svg,l,u])=>{const b=el(u?"a":"span","mp-b");if(u){b.href=u;b.target="_blank";b.rel="noopener"}const ic=el("i",null);ic.innerHTML=svg;b.appendChild(ic);b.appendChild(el("b",null,l));cg.appendChild(b)});
+     cs.appendChild(cg);H.appendChild(cs)}
   };
   window.__drSec=id=>{const x=document.getElementById("mp-"+id);if(x)x.scrollIntoView({behavior:"smooth",block:"start"})};
  }
