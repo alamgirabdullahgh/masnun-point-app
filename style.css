@@ -572,3 +572,13 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 .dr-timecard{background:var(--card-bg);border:1px solid var(--border-light);border-radius:14px;box-shadow:var(--shadow-card);padding:10px 8px 8px;margin:0 0 12px}
 .dr-timecard .dr-wbar{padding:0 0 4px;text-align:center}
 .dr-timecard .drw{background:transparent!important;margin:0 auto;padding:4px 6px 2px;border-radius:0}
+
+/* মাসনুন: বার্গার আইকন সরানো (জায়গা রেখে, যাতে নাম মাঝখানে থাকে); কুরআন বাছাই; অন্যান্য ৪ বাটন */
+#drMenu{visibility:hidden;pointer-events:none}
+.mp-q{display:grid;gap:8px;margin-top:8px}
+.mp-q[hidden]{display:none}
+.mp-qb{display:flex;align-items:center;gap:10px;padding:12px 14px;text-decoration:none;color:var(--primary);background:var(--primary-light);border:1.5px solid color-mix(in srgb,var(--primary) 28%,transparent);border-radius:14px;font-weight:700;font-size:14px}
+.mp-qb i{font-style:normal;font-size:18px;min-width:34px;text-align:center}
+button.mp-b{font-family:inherit;cursor:pointer}
+#mp-misc .mp-b b{font-size:12.5px}
+.mp-qb i.ar{font-family:"Amiri","Noto Naskh Arabic",serif}

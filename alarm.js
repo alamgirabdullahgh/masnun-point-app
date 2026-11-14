@@ -16,16 +16,15 @@
   }
 
   /* হোম পাতায় কার্ডের নিচের বোতাম */
-  var wb = document.getElementById("drWBar"), ws = document.getElementById("drWSet");
-  if (wb && ws) {
-    if (NATIVE && W) wb.hidden = false;
-    ws.onclick = function () {
-      if (!W || !W.pin) return;
-      W.pin().then(function (r) {
-        if (r && r.ok === false) alert("এই ফোনের লঞ্চার সরাসরি বসাতে দেয় না। হোম স্ক্রিনে ফাঁকা জায়গায় চেপে ধরে ‘উইজেট’ থেকে “টাইম উইজেট” বেছে নিন।");
-      }).catch(function () {});
-    };
-  }
+  /* হোম স্ক্রিনে বসান: বোতাম উইজেটের সূর্যোদয়-সূর্যাস্ত সারির মাঝখানে (widget.js আঁকে); উইজেট বারবার আঁকে, তাই ক্লিক document-এ ধরা হয় */
+  if (NATIVE && W) window.__drPinOK = true;
+  document.addEventListener("click", function (e) {
+    var b = e.target && e.target.closest && e.target.closest("[data-pin]");
+    if (!b || !W || !W.pin) return;
+    W.pin().then(function (r) {
+      if (r && r.ok === false) alert("এই ফোনের লঞ্চার সরাসরি বসাতে দেয় না। হোম স্ক্রিনে ফাঁকা জায়গায় চেপে ধরে ‘উইজেট’ থেকে “টাইম উইজেট” বেছে নিন।");
+    }).catch(function () {});
+  });
 
   var BD = "০১২৩৪৫৬৭৮৯";
   function bn(s) { return String(s).replace(/[0-9]/g, function (c) { return BD.charAt(+c); }); }

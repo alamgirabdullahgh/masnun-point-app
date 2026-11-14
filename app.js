@@ -953,9 +953,9 @@ function drShell(){
  {let built=false;
   const SECS=[
    ["ruq","🩺","রুকইয়াহ",3,[["📋","সিম্পটম ডায়াগনোসিস","#diag"],["💬","রেসপন্স ডায়াগনোসিস",null],["💊","ট্রিটমেন্ট",null]]],
-   ["hij","🩸","হিজামা",2,[["📋","সিম্পটম ডায়াগনোসিস",null],["💊","ট্রিটমেন্ট",null]]],
+   ["hij","🩸","হিজামা",2,[["📋","রোগ নির্ণয়",null],["💊","চিকিৎসা",null]]],
    ["oth","📜","আচরণবিধি",3,[["🧍","ব্যক্তি কেন্দ্রিক আচরণ",null],["🤝","সামাজিক আচরণ",null],["🏛","রাষ্ট্রীয় আচরণ",null]]],
-    ["misc","🧩","অন্যান্য",3,[["📖","কুরআন","#mushaf"],["🧭","কিবলা",null],["📿","তাসবীহ",null]]]
+    ["misc","🧩","অন্যান্য",4,[["📖","কুরআন","@quran"],["⏰","অ্যালার্ম","#alarm"],["🧭","কিবলা",null],["📿","তাসবীহ",null]]]
   ];
   window.__drMain=()=>{if(built)return;built=true;const H=$("mpHome");if(!H)return;H.innerHTML="";const tc=$("drTimeCard");if(tc)H.appendChild(tc);
    SECS.forEach(([id,ic,t,cols,items])=>{
@@ -963,10 +963,12 @@ function drShell(){
     sec.appendChild(el("h2","mp-h",ic+" "+t));
     const g=el("div","mp-g");g.style.gridTemplateColumns="repeat("+cols+",minmax(0,1fr))";
     items.forEach(([i,l,h])=>{
-     const b=el(h?"a":"span","mp-b"+(h?"":" mp-soon"));if(h)b.href=h;
+     const q=h==="@quran";const b=el(q?"button":h?"a":"span","mp-b"+(h?"":" mp-soon"));if(q){b.type="button";b.onclick=()=>{const p=document.getElementById("mpQuran");if(p)p.hidden=!p.hidden}}else if(h)b.href=h;
      b.appendChild(el("i",null,i));b.appendChild(el("b",null,l));
      g.appendChild(b)});
-    sec.appendChild(g);H.appendChild(sec)});
+    sec.appendChild(g);
+    if(id==="misc"){const qp=el("div","mp-q");qp.id="mpQuran";qp.hidden=true;[["قرآن","আরবি কুরআন (১৫ লাইন)","#mushaf"],["عب","আরবি ও বাংলা অনুবাদসহ","#read/arbn"]].forEach(([ar,t,hr])=>{const a=el("a","mp-qb");a.href=hr;a.appendChild(el("i","ar",ar));a.appendChild(el("b",null,t));qp.appendChild(a)});sec.appendChild(qp)}
+    H.appendChild(sec)});
   };
   window.__drSec=id=>{const x=document.getElementById("mp-"+id);if(x)x.scrollIntoView({behavior:"smooth",block:"start"})};
  }

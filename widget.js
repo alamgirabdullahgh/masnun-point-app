@@ -183,6 +183,8 @@
     ".drw{box-sizing:border-box;max-width:660px;margin:12px auto 0;padding:7px 14px 8px;border-radius:24px;background:#F2F5F8;color:#14212B;font-family:inherit;user-select:none;-webkit-user-select:none}" +
     ".drw *{box-sizing:border-box}" +
     ".drw-r{display:flex;align-items:center;justify-content:space-between;gap:8px}" +
+    ".drw-pin{flex:none;border:1px solid #c9d3dc;background:#fff;color:#0f5d3a;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;line-height:1.3}" +
+    ".drw-pin:active{background:#e6efe9}" +
     ".drw-sun{display:flex;align-items:center;gap:5px;font-size:11px;color:#3B4A55;white-space:nowrap}" +
     ".drw-sun svg{width:20px;height:20px;flex:none}" +
     ".drw-time{display:flex;align-items:flex-end;gap:4px;margin-top:1px}" +
@@ -252,7 +254,7 @@
       for (var i = 0; i < 5; i++)
         cells += '<div class="drw-c' + (i === s.cur ? " on" : "") + '" data-i="' + i + '"><i>' + NAMES[i] + "</i><b>" + fmt(s.m[i]) + "</b></div>";
       el.innerHTML =
-        '<div class="drw"><div class="drw-r"><span class="drw-sun">' + SUNRISE + "সূর্যোদয় " + fmt(s.sunrise) + '</span><span class="drw-sun">' + SUNSET + "সূর্যাস্ত " + fmt(s.sunset) + "</span></div>" +
+        '<div class="drw"><div class="drw-r"><span class="drw-sun">' + SUNRISE + "সূর্যোদয় " + fmt(s.sunrise) + '</span>' + (window.__drPinOK ? '<button class="drw-pin" type="button" data-pin="1">হোম স্ক্রিনে বসান</button>' : '') + '<span class="drw-sun">' + SUNSET + "সূর্যাস্ত " + fmt(s.sunset) + "</span></div>" +
         '<div class="drw-r"><div class="drw-time"><b>' + hh + ":" + mm + "</b><span>" + (now.getHours() < 12 ? "AM" : "PM") + "</span></div>" +
         '<div class="drw-en"><b>' + en + '</b><div class="drw-lr"><button class="drw-loc" type="button" data-loc="1">' + placeName(loc) + '</button><button class="drw-upd" type="button" data-upd="1">' + (updBusy ? "হচ্ছে…" : "আপডেট<br>লোকেশন") + "</button></div></div></div>" +
         '<div class="drw-r drw-d"><span>' + hijriText(now, inBd(loc.lat, loc.lng)) + "</span><span>" + banglaText(addDays(now, BANGLA_ADJ)) + "</span></div>" +
