@@ -822,7 +822,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
 {let zb=false;window.__drZakat=()=>{if(zb)return;zb=true;const Z=$("drZakat");if(!Z)return;
  const F=[["cash","নগদ টাকা ও ব্যাংকে জমা"],["gold","স্বর্ণের বর্তমান বাজারমূল্য"],["silver","রূপার বর্তমান বাজারমূল্য"],["biz","ব্যবসার পণ্যের মূল্য"],["recv","ফেরত পাওয়ার নিশ্চিত পাওনা"],["debt","বাদ যাবে: ঋণ/বকেয়া দেনা"]];
  const nz=s=>(+String(s).replace(/[০-৯]/g,d=>"০১২৩৪৫৬৭৮৯".indexOf(d)).replace(/[^\d.]/g,""))||0;
- let h='<h2 class="am-h">🧮 যাকাত ক্যালকুলেটর</h2><p class="am-intro">সব অঙ্ক টাকায় লিখুন। নিসাব হলো ৫২.৫ ভরি রূপার বর্তমান মূল্য; বাজারদর দেখে নিজে বসান। সম্পদের নিট মূল্য নিসাবের সমান বা বেশি হলে ২.৫% যাকাত।</p>';
+ let h='<h2 class="am-h hm-hh">'+((window.HM_ICONS||{})["যাকাত ক্যালকুলেটর"]||"🧮")+' যাকাত ক্যালকুলেটর</h2><p class="am-intro">সব অঙ্ক টাকায় লিখুন। নিসাব হলো ৫২.৫ ভরি রূপার বর্তমান মূল্য; বাজারদর দেখে নিজে বসান। সম্পদের নিট মূল্য নিসাবের সমান বা বেশি হলে ২.৫% যাকাত।</p>';
  F.forEach(f=>{h+='<label class="zk-r"><span>'+f[1]+'</span><input id="zk_'+f[0]+'" type="text" inputmode="decimal" placeholder="০"></label>'});
  h+='<label class="zk-r"><span>নিসাব (৫২.৫ ভরি রূপার মূল্য)</span><input id="zk_nisab" type="text" inputmode="decimal" placeholder="০"></label><div class="zk-o" id="zkOut">হিসাব এখানে দেখাবে</div><p class="am-intro">⚕ এটি সাধারণ হিসাব। জটিল ক্ষেত্রে নির্ভরযোগ্য আলেমের পরামর্শ নিন।</p>';
  Z.innerHTML=h;const bn=n=>bn2(Math.round(n));
@@ -898,9 +898,13 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
   const e0=$(hid[0]);if(k==="0"&&e0&&e0.getBoundingClientRect().top<-20)k="0";
   nv.forEach(b=>b.classList.toggle("on",b.dataset.hn===k))};
  addEventListener("scroll",spy,{passive:true});spy()}
+
+/* ───── সাইড মেনুর আইকন ───── */
+{const M={"#search":"রুকইয়াহ","#diag":"রোগ নির্ণয়","#topics":"বিষয়ভিত্তিক আয়াত","#zakat":"যাকাত ক্যালকুলেটর","#tasbih":"তাসবীহ্","#alarm":"অডিও অ্যালার্ম","#routine":"দৈনিক রুটিন","#mushaf":"কুরআন","#read/arbn":"কুরআন"};
+ document.querySelectorAll("#drSide .dr-nav").forEach(a=>{const k=M[a.getAttribute("href")],i=a.querySelector("i");if(k&&i&&window.HM_ICONS&&window.HM_ICONS[k]){i.className="hm-si";i.innerHTML=window.HM_ICONS[k]}})}
 /* ───── তাসবীহ ───── */
 {let tb=false;window.__drTasbih=()=>{if(tb)return;tb=true;const Z=$("drTasbih");if(!Z)return;let n=0,goal=33;
- Z.innerHTML='<h2 class="am-h">📿 তাসবীহ্</h2><div class="ts-g"><button data-g="33">৩৩</button><button data-g="99">৯৯</button><button data-g="100">১০০</button><button data-g="0">∞</button></div><button class="ts-b" id="tsB">০</button><button class="ts-r" id="tsR">↺ রিসেট</button>';
+ Z.innerHTML='<h2 class="am-h hm-hh">'+((window.HM_ICONS||{})["তাসবীহ্"]||"📿")+' তাসবীহ্</h2><div class="ts-g"><button data-g="33">৩৩</button><button data-g="99">৯৯</button><button data-g="100">১০০</button><button data-g="0">∞</button></div><button class="ts-b" id="tsB">০</button><button class="ts-r" id="tsR">↺ রিসেট</button>';
  const b=$("tsB"),upd=()=>{b.textContent=bn2(n)+(goal?" / "+bn2(goal):"")};
  b.onclick=()=>{n++;if(navigator.vibrate)navigator.vibrate(goal&&n%goal===0?[80,60,80]:15);upd()};
  $("tsR").onclick=()=>{n=0;upd()};
