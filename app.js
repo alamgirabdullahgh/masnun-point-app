@@ -948,13 +948,36 @@ function drShell(){
  document.addEventListener("keydown",e=>{if(e.key==="Escape")open(false)});
  const navs=[...document.querySelectorAll(".dr-nav,.dr-bn,.dr-sbtn")];
  let prev="";
+
+ /* ===== নতুন হোম: ৪টি হেডিং (রুকইয়াহ · হিজামা · অন্যান্য · শিক্ষা), প্রতিটির নিচে বড় বাটন ===== */
+ {let built=false;
+  const SECS=[
+   ["ruq","🩺","রুকইয়াহ",3,[["📋","সিম্পটম ডায়াগনোসিস","#diag"],["💬","রেসপন্স ডায়াগনোসিস",null],["💊","ট্রিটমেন্ট",null]]],
+   ["hij","🩸","হিজামা",2,[["📋","সিম্পটম ডায়াগনোসিস",null],["💊","ট্রিটমেন্ট",null]]],
+   ["oth","🧩","অন্যান্য",3,[["🧍","ব্যক্তি কেন্দ্রিক আচরণ",null],["🤝","সামাজিক আচরণ",null],["🏛","রাষ্ট্রীয় আচরণ",null]]],
+   ["edu","🎓","শিক্ষা",2,[["📖","কোরআন শিক্ষা","#mushaf"],["📜","হাদিস শিক্ষা",null],["🕋","রুকিয়া শিক্ষা",null],["🩸","হিজামা শিক্ষা",null]]]
+  ];
+  window.__drMain=()=>{if(built)return;built=true;const H=$("mpHome");if(!H)return;H.innerHTML="";
+   SECS.forEach(([id,ic,t,cols,items])=>{
+    const sec=el("section","mp-sec");sec.id="mp-"+id;
+    sec.appendChild(el("h2","mp-h",ic+" "+t));
+    const g=el("div","mp-g");g.style.gridTemplateColumns="repeat("+cols+",minmax(0,1fr))";
+    items.forEach(([i,l,h])=>{
+     const b=el(h?"a":"span","mp-b"+(h?"":" mp-soon"));if(h)b.href=h;
+     b.appendChild(el("i",null,i));b.appendChild(el("b",null,l));if(!h)b.appendChild(el("small",null,"শীঘ্রই আসছে"));
+     g.appendChild(b)});
+    sec.appendChild(g);H.appendChild(sec)});
+  };
+  window.__drSec=id=>{const x=document.getElementById("mp-"+id);if(x)x.scrollIntoView({behavior:"smooth",block:"start"})};
+ }
  let lastH="home";
  const route=()=>{open(false);const h=(location.hash||"#home").replace(/^#/,""),p=h.split("/");
   document.querySelectorAll("audio").forEach(a=>{try{a.pause()}catch(e){}});
-  const al=$("drAlarm");if(al)al.hidden=true;const hm=$("drHome");if(hm)hm.hidden=true;const am=$("drAmol");if(am)am.hidden=true;const rt=$("drRoutine");if(rt)rt.hidden=true;const mf=$("drMushaf");if(mf)mf.hidden=true;
+  const al=$("drAlarm");if(al)al.hidden=true;const hm=$("drHome");if(hm)hm.hidden=true;const mh=$("mpHome");if(mh)mh.hidden=true;const am=$("drAmol");if(am)am.hidden=true;const rt=$("drRoutine");if(rt)rt.hidden=true;const mf=$("drMushaf");if(mf)mf.hidden=true;
   if(p[0]==="timewidget"){window.DRALARM&&DRALARM.openWidget();location.hash="#"+lastH;return}
   let key="search";
-  if(p[0]==="home"&&hm){key="home";box.hidden=true;rd.hidden=true;hm.hidden=false;window.__drHome&&window.__drHome();window.scrollTo(0,0)}
+  if(p[0]==="home"&&mh){key="home";box.hidden=true;rd.hidden=true;mh.hidden=false;window.__drMain&&window.__drMain();window.scrollTo(0,0)}
+  else if(p[0]==="diag"&&hm){key="diag";box.hidden=true;rd.hidden=true;hm.hidden=false;window.__drHome&&window.__drHome();window.scrollTo(0,0)}
   else if(p[0]==="mushaf"&&mf){key="mushaf";box.hidden=true;rd.hidden=true;mf.hidden=false;window.__drMushaf&&window.__drMushaf(p[1]);window.scrollTo(0,0)}
   else if(p[0]==="routine"&&rt){key="routine";box.hidden=true;rd.hidden=true;rt.hidden=false;window.__drRoutine&&window.__drRoutine(p[1]);window.scrollTo(0,0)}
   else if(p[0]==="alarm"&&al){key="alarm";box.hidden=true;rd.hidden=true;al.hidden=false;window.DRALARM&&DRALARM.show();window.scrollTo(0,0)}
@@ -962,7 +985,7 @@ function drShell(){
   else{rd.hidden=true;box.hidden=false;RG++;if(p[0]==="topics"){key="topics";SHOWT&&SHOWT(true);window.scrollTo(0,0)}else if(prev.startsWith("read/")||prev===""||prev==="home"||prev==="alarm"||prev==="routine"||prev==="mushaf")window.scrollTo(0,0)}
   prev=key;lastH=h;{const bk=$("drBackRow");if(bk)bk.hidden=key==="home";window.__drNav=(window.__drNav||0)+1}{const sh=key==="home"?"":"none";["drWidget","drWBar"].forEach(i=>{const x=$(i);if(x)x.style.display=sh})}navs.forEach(a=>a.classList.toggle("on",a.dataset.nav===key))};
  {const bk=$("drBack");if(bk)bk.onclick=()=>{if((window.__drNav||0)>1)history.back();else location.hash="#home"}}
- navs.forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const h=a.getAttribute("href");if(location.hash===h)route();else location.hash=h;open(false)}));
+ navs.forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const sc=a.dataset.sec;if(sc){open(false);if((location.hash||"#home")!=="#home"){location.hash="#home";setTimeout(()=>window.__drSec&&window.__drSec(sc),160)}else window.__drSec&&window.__drSec(sc);return}const h=a.getAttribute("href");if(location.hash===h)route();else location.hash=h;open(false)}));
  addEventListener("hashchange",route);
  route()}
 init();drShell();

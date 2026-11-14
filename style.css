@@ -556,3 +556,16 @@ body.mq-fs .dr-bnav,body.mq-fs .dr-ufl{display:none!important}
 .dr-backrow[hidden]{display:none}
 .dr-backbtn{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--border);background:var(--card-bg);color:var(--primary);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.08);-webkit-tap-highlight-color:transparent}
 .dr-backbtn:active{background:color-mix(in srgb,var(--primary) 14%,var(--card-bg))}
+
+/* ===== নতুন হোম: ৪টি হেডিং-কার্ড, নিচে বড় বাটন ===== */
+#mpHome.rs-box{background:transparent!important;border:0!important;box-shadow:none!important;padding:6px 0 14px!important}
+.mp-sec{scroll-margin-top:calc(var(--bar-h,56px) + env(safe-area-inset-top) + 8px);background:var(--card-bg);border:1px solid var(--border-light);border-top:4px solid var(--primary);border-radius:14px;box-shadow:var(--shadow-card);padding:0 8px 10px;margin:0 0 12px}
+.mp-h{margin:0;padding:10px 6px 8px;font-size:18px;color:var(--primary-dark,var(--primary))}
+.mp-g{display:grid;gap:8px}
+.mp-b{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:92px;padding:10px 4px;text-align:center;text-decoration:none;color:var(--primary);background:var(--primary-light);border:1.5px solid color-mix(in srgb,var(--primary) 38%,transparent);border-radius:12px;box-shadow:0 2px 0 color-mix(in srgb,var(--primary) 30%,transparent);-webkit-tap-highlight-color:transparent}
+.mp-b i{font-style:normal;font-size:26px;line-height:1}
+.mp-b b{font-size:13px;line-height:1.3}
+.mp-b small{font-size:10px;color:var(--text-muted)}
+a.mp-b:active{transform:translateY(2px);box-shadow:none}
+.mp-soon{opacity:.75}
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
