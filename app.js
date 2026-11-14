@@ -660,6 +660,9 @@ ORG.forEach(o=>TOPICS.push({name:o[0],desc:o[1],intro:"কুরআনে “"+o
  const add=(pre,n)=>nm(n).terms.forEach(x=>T.push([pre+" — "+x[0]].concat(x.slice(1))));
  add("বদনজর","বদনজর");add("জাদু","জাদু");add("জাদু","জাদুর প্রকার");add("জিন","জিন");add("জিন (চালান)","চালানের প্রকার");
  ORG.forEach(o=>o[2].forEach(x=>T.push([ "অঙ্গ: "+o[0]+" — "+x[0]].concat(x.slice(1)))));
+  {const T3=[];const add3=(pre,n)=>nm(n).terms.forEach(x=>T3.push([pre+" — "+x[0]].concat(x.slice(1))));
+   add3("বদনজর","বদনজর");add3("জাদু","জাদু");add3("জাদু","জাদুর প্রকার");add3("জিন","জিন");add3("জিন (চালান)","চালানের প্রকার");
+   TOPICS.unshift({name:"বদনজর · জাদু · জিন (চিকিৎসা)",desc:"বদনজর → জাদু → জিন · সব আয়াত একসাথে · মার্জ অডিও",ordered:true,intro:"ক্রম: প্রথমে বদনজর, তারপর জাদু (জাদুর প্রকারসহ), তারপর জিন (চালানের প্রকারসহ)। প্রতিটি ভাগের ভেতরে আয়াত সূরার ক্রমে। একই আয়াত একাধিক ভাগে এলে অডিও ও কপিতে শুধু প্রথমবারই আসে। এগুলো শব্দভিত্তিক সংগ্রহ।",terms:T3})}
  TOPICS.unshift({name:"বদনজর · জাদু · জিন (সব একসাথে)",desc:"বদনজর → জাদু → জিন → প্রতিটি অঙ্গ-প্রত্যঙ্গ · মার্জ অডিও",ordered:true,intro:"ক্রম: প্রথমে বদনজর, তারপর জাদু (জাদুর প্রকারসহ), তারপর জিন (চালানের প্রকারসহ), সবশেষে শরীরের প্রতিটি অঙ্গ-প্রত্যঙ্গের আয়াত — অঙ্গে থাকা বদনজর, জাদু ও জিনের দুর্গ ভাঙার জন্য এগুলোও এর অন্তর্ভুক্ত। একই আয়াত একাধিক ভাগে এলে অডিও ও কপিতে শুধু প্রথমবারই আসে। প্রতিটি ভাগের ভেতরে আয়াত সূরার ক্রমে। এগুলো শব্দভিত্তিক সংগ্রহ।",terms:T});
  // শুধু অঙ্গ-প্রত্যঙ্গ, সব একসাথে (বদনজর/জাদু/জিন ছাড়া): প্রতিটি অঙ্গের আলাদা বিষয়ও আগের মতোই আছে
  const T2=[];ORG.forEach(o=>o[2].forEach(x=>T2.push([o[0]+" — "+x[0]].concat(x.slice(1)))));
@@ -767,6 +770,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
   l.slice().sort((a,b)=>a.rn<b.rn?-1:a.rn>b.rn?1:0).forEach(r=>{const row=el("div","rs-ri"),b=el("b",null,[...r.rn].join(" ")),c=el("span",null,bn2(r.n)+" বার");row.append(b,c);row.onclick=()=>{q.value=r.rn;rs.classList.remove("on");go();window.scrollTo({top:rs.getBoundingClientRect().top+scrollY-60,behavior:"smooth"})};rs.appendChild(row)})};
  const go=()=>(ALLF=false,run()).catch(e=>{console.error(e);$("rsInfo").textContent="ডেটা লোড করা যায়নি — ইন্টারনেট দেখে আবার চেষ্টা করুন"});
  const goTopic=t=>(ALLF=false,run(t)).catch(e=>{console.error(e);$("rsInfo").textContent="ডেটা লোড করা যায়নি — ইন্টারনেট দেখে আবার চেষ্টা করুন"});
+ window.__drTreat=()=>{const t=TOPICS.find(x=>x.name==="বদনজর · জাদু · জিন (চিকিৎসা)");if(!t)return;q.value=t.name;setDir();rs.classList.remove("on");goTopic(t)};
  const showTopics=async force=>{if(!force&&rs.classList.contains("on")&&rs.dataset.k==="topics"){rs.classList.remove("on");return}
   pad.classList.remove("on");rs.innerHTML="";rs.dataset.k="topics";rs.classList.add("bn","on");$("rsOut").innerHTML="";$("rsInfo").textContent="";
   const secH=t=>rs.appendChild(el("div","dr-sec",t));
@@ -980,7 +984,7 @@ function drShell(){
   if(p[0]==="home"&&mh){key="home";box.hidden=true;rd.hidden=true;mh.hidden=false;window.__drMain&&window.__drMain();window.scrollTo(0,0)}
   else if(p[0]==="diag"&&hm){key="diag";box.hidden=true;rd.hidden=true;hm.hidden=false;window.__drHome&&window.__drHome();window.scrollTo(0,0)}
   else if(p[0]==="mushaf"&&mf){key="mushaf";box.hidden=true;rd.hidden=true;mf.hidden=false;window.__drMushaf&&window.__drMushaf(p[1]);window.scrollTo(0,0)}
-  else if(p[0]==="amol"&&am){key="amol";box.hidden=true;rd.hidden=true;am.hidden=false;window.__drAmol&&window.__drAmol(p[1]);window.scrollTo(0,0)}
+  else if(p[0]==="amol"){key="amol";rd.hidden=true;box.hidden=false;RG++;window.scrollTo(0,0);setTimeout(()=>window.__drTreat&&window.__drTreat(),30)}
   else if((p[0]==="quran"||p[0]==="qibla"||p[0]==="tasbih")&&tl){key=p[0];box.hidden=true;rd.hidden=true;tl.hidden=false;window.__drTool&&window.__drTool(p[0]);window.scrollTo(0,0)}
   else if(p[0]==="routine"&&rt){key="routine";box.hidden=true;rd.hidden=true;rt.hidden=false;window.__drRoutine&&window.__drRoutine(p[1]);window.scrollTo(0,0)}
   else if(p[0]==="alarm"&&al){key="alarm";box.hidden=true;rd.hidden=true;al.hidden=false;window.DRALARM&&DRALARM.show();window.scrollTo(0,0)}

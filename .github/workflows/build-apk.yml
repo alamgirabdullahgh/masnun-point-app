@@ -18,7 +18,7 @@ jobs:
       - name: Prepare web files
         run: |
           mkdir www
-          cp -r index.html app.js boot.js widget.js alarm.js amol.js tools.js routine.js mushaf.js style.css sw.js manifest.webmanifest icons fonts data www/
+          cp -r index.html app.js boot.js widget.js alarm.js tools.js routine.js mushaf.js style.css sw.js manifest.webmanifest icons fonts data www/
       - name: Create Android project
         run: |
           npm init -y >/dev/null
