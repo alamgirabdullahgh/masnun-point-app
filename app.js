@@ -822,7 +822,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
  {let built=false;const SEL=new Map();
   window.__drHome=()=>{if(built)return;built=true;const H=$("drHome");if(!H)return;
    H.innerHTML="";const lg=k=>lsGet(k,"");
-   H.appendChild(els("div","font-weight:800;font-size:18px;color:var(--primary);margin:4px 2px 10px","🩺 রোগ নির্ণয় (ডায়াগনোসিস)"));
+   {const t0=els("div","font-weight:800;font-size:18px;color:var(--primary);margin:4px 2px 10px","🩺 রোগ নির্ণয় (ডায়াগনোসিস)");t0.id="drHomeT";H.appendChild(t0)}
    const card=els("div","display:flex;gap:8px;padding:10px;border:1px solid var(--border-light);border-radius:16px;background:var(--card-bg);margin:0 0 12px");
    
    const nm=document.createElement("input"),ph=document.createElement("input");
@@ -952,10 +952,10 @@ function drShell(){
  /* ===== নতুন হোম: ৩টি হেডিং (রুকইয়াহ · হিজামা · অন্যান্য), প্রতিটির নিচে বড় বাটন ===== */
  {let built=false;
   const SECS=[
-   ["ruq","🩺","রুকইয়াহ",3,[["📋","সিম্পটম ডায়াগনোসিস","#diag"],["💬","রেসপন্স ডায়াগনোসিস",null],["💊","ট্রিটমেন্ট",null]]],
+   ["ruq","🩺","রুকইয়াহ",3,[["📋","সিম্পটম ডায়াগনোসিস",null],["💬","রেসপন্স ডায়াগনোসিস","#diag"],["💊","ট্রিটমেন্ট","#amol/all"]]],
    ["hij","🩸","হিজামা",2,[["📋","রোগ নির্ণয়",null],["💊","চিকিৎসা",null]]],
    ["oth","📜","আচরণবিধি",3,[["🧍","ব্যক্তি কেন্দ্রিক আচরণ",null],["🤝","সামাজিক আচরণ",null],["🏛","রাষ্ট্রীয় আচরণ",null]]],
-    ["misc","🧩","অন্যান্য",4,[["📖","কুরআন","@quran"],["⏰","অ্যালার্ম","#alarm"],["🧭","কিবলা",null],["📿","তাসবীহ",null]]]
+    ["misc","🧩","অন্যান্য",4,[["📖","কুরআন","#quran"],["⏰","অ্যালার্ম","#alarm"],["🧭","কিবলা","#qibla"],["📿","তাসবীহ","#tasbih"]]]
   ];
   window.__drMain=()=>{if(built)return;built=true;const H=$("mpHome");if(!H)return;H.innerHTML="";const tc=$("drTimeCard");if(tc)H.appendChild(tc);
    SECS.forEach(([id,ic,t,cols,items])=>{
@@ -963,11 +963,10 @@ function drShell(){
     sec.appendChild(el("h2","mp-h",ic+" "+t));
     const g=el("div","mp-g");g.style.gridTemplateColumns="repeat("+cols+",minmax(0,1fr))";
     items.forEach(([i,l,h])=>{
-     const q=h==="@quran";const b=el(q?"button":h?"a":"span","mp-b"+(h?"":" mp-soon"));if(q){b.type="button";b.onclick=()=>{const p=document.getElementById("mpQuran");if(p)p.hidden=!p.hidden}}else if(h)b.href=h;
+     const b=el(h?"a":"span","mp-b"+(h?"":" mp-soon"));if(h)b.href=h;
      b.appendChild(el("i",null,i));b.appendChild(el("b",null,l));
      g.appendChild(b)});
     sec.appendChild(g);
-    if(id==="misc"){const qp=el("div","mp-q");qp.id="mpQuran";qp.hidden=true;[["قرآن","আরবি কুরআন (১৫ লাইন)","#mushaf"],["عب","আরবি ও বাংলা অনুবাদসহ","#read/arbn"]].forEach(([ar,t,hr])=>{const a=el("a","mp-qb");a.href=hr;a.appendChild(el("i","ar",ar));a.appendChild(el("b",null,t));qp.appendChild(a)});sec.appendChild(qp)}
     H.appendChild(sec)});
   };
   window.__drSec=id=>{const x=document.getElementById("mp-"+id);if(x)x.scrollIntoView({behavior:"smooth",block:"start"})};
@@ -975,12 +974,14 @@ function drShell(){
  let lastH="home";
  const route=()=>{open(false);const h=(location.hash||"#home").replace(/^#/,""),p=h.split("/");
   document.querySelectorAll("audio").forEach(a=>{try{a.pause()}catch(e){}});
-  const al=$("drAlarm");if(al)al.hidden=true;const hm=$("drHome");if(hm)hm.hidden=true;const mh=$("mpHome");if(mh)mh.hidden=true;const am=$("drAmol");if(am)am.hidden=true;const rt=$("drRoutine");if(rt)rt.hidden=true;const mf=$("drMushaf");if(mf)mf.hidden=true;
+  const al=$("drAlarm");if(al)al.hidden=true;const hm=$("drHome");if(hm)hm.hidden=true;const mh=$("mpHome");if(mh)mh.hidden=true;const am=$("drAmol");if(am)am.hidden=true;const rt=$("drRoutine");if(rt)rt.hidden=true;const tl=$("drTools");if(tl)tl.hidden=true;const mf=$("drMushaf");if(mf)mf.hidden=true;
   if(p[0]==="timewidget"){window.DRALARM&&DRALARM.openWidget();location.hash="#"+lastH;return}
   let key="search";
   if(p[0]==="home"&&mh){key="home";box.hidden=true;rd.hidden=true;mh.hidden=false;window.__drMain&&window.__drMain();window.scrollTo(0,0)}
   else if(p[0]==="diag"&&hm){key="diag";box.hidden=true;rd.hidden=true;hm.hidden=false;window.__drHome&&window.__drHome();window.scrollTo(0,0)}
   else if(p[0]==="mushaf"&&mf){key="mushaf";box.hidden=true;rd.hidden=true;mf.hidden=false;window.__drMushaf&&window.__drMushaf(p[1]);window.scrollTo(0,0)}
+  else if(p[0]==="amol"&&am){key="amol";box.hidden=true;rd.hidden=true;am.hidden=false;window.__drAmol&&window.__drAmol(p[1]);window.scrollTo(0,0)}
+  else if((p[0]==="quran"||p[0]==="qibla"||p[0]==="tasbih")&&tl){key=p[0];box.hidden=true;rd.hidden=true;tl.hidden=false;window.__drTool&&window.__drTool(p[0]);window.scrollTo(0,0)}
   else if(p[0]==="routine"&&rt){key="routine";box.hidden=true;rd.hidden=true;rt.hidden=false;window.__drRoutine&&window.__drRoutine(p[1]);window.scrollTo(0,0)}
   else if(p[0]==="alarm"&&al){key="alarm";box.hidden=true;rd.hidden=true;al.hidden=false;window.DRALARM&&DRALARM.show();window.scrollTo(0,0)}
   else if(p[0]==="read"&&RMODES.some(m=>m[0]===p[1])){key="read/"+p[1];const s=+p[2]||0;box.hidden=true;rd.hidden=false;renderReader(p[1],s>=1&&s<=114?s:0);window.scrollTo(0,0)}

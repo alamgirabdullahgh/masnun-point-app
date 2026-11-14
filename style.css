@@ -575,10 +575,51 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 
 /* মাসনুন: বার্গার আইকন সরানো (জায়গা রেখে, যাতে নাম মাঝখানে থাকে); কুরআন বাছাই; অন্যান্য ৪ বাটন */
 #drMenu{visibility:hidden;pointer-events:none}
-.mp-q{display:grid;gap:8px;margin-top:8px}
-.mp-q[hidden]{display:none}
-.mp-qb{display:flex;align-items:center;gap:10px;padding:12px 14px;text-decoration:none;color:var(--primary);background:var(--primary-light);border:1.5px solid color-mix(in srgb,var(--primary) 28%,transparent);border-radius:14px;font-weight:700;font-size:14px}
-.mp-qb i{font-style:normal;font-size:18px;min-width:34px;text-align:center}
 button.mp-b{font-family:inherit;cursor:pointer}
 #mp-misc .mp-b b{font-size:12.5px}
-.mp-qb i.ar{font-family:"Amiri","Noto Naskh Arabic",serif}
+/* v150: আমল/চিকিৎসা পাতা (Daily Ruqyah থেকে) */
+.am-tx{white-space:normal;word-break:break-word;font-size:14px;line-height:1.85;color:var(--text-main);padding:8px 0;border-top:1px dashed var(--border-light)}
+.am-tx p{margin:0 0 2px}.am-tx p.gp{margin-top:9px}.am-tx p:last-child{margin-bottom:0}
+.am-gh{margin:22px 0 8px;display:flex;align-items:center;gap:8px}
+.am-gh::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.am-ch{margin:14px 0 8px;padding:9px 12px;border-radius:10px;background:var(--primary-light);color:var(--primary);font-weight:700;font-size:14.5px}
+.am-nazar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0 4px;padding:12px 14px;border-radius:10px;background:var(--primary-light);color:var(--primary);font-weight:600;font-size:14px;text-decoration:none}
+.am-nazar::after{content:"\2192";font-weight:700;opacity:.6}
+.am-st{margin:14px 0 4px}.am-st h4{margin:0 0 6px;font-size:1.02em;color:#0b4a3a}.am-st p{margin:4px 0}.am-st ol{margin:4px 0 0;padding-left:1.5em}.am-st li{margin:5px 0}
+.am-cl{display:flex;flex-direction:column;margin-top:6px}.am-cond{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:13px 2px;border:0;border-bottom:1px solid var(--border-light);background:none;font:inherit;color:inherit}.am-cond i{font-style:normal;font-size:1.25em}.am-cond span{flex:1}.am-cond small{display:block;font-size:12px;color:var(--text-muted);margin-top:2px}.am-cond b{opacity:.5;font-size:1.3em}.am-back{border:0;background:none;color:#0b4a3a;font:inherit;padding:6px 0;margin-bottom:4px}.am-bk0{font-size:12px;color:var(--text-muted);margin:0 0 8px}
+.am-it{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;border-radius:0!important}.am-ref{background:none;border-radius:8px}
+.am-sh{margin:16px 0 6px;font-size:1.05em;color:#0b4a3a}.am-st ul{margin:4px 0 0;padding-left:1.4em}.am-lk{display:flex;gap:8px;margin:4px 0 2px}.am-lk a{font-size:13px;padding:4px 12px;border-radius:999px;background:var(--primary-light);color:var(--primary);text-decoration:none}
+.am-orig{margin-top:18px;border-top:1px dashed var(--border-light);padding-top:8px}.am-orig summary{cursor:pointer;font-size:13.5px;color:var(--text-muted)}.am-sd{border-bottom:1px solid var(--border-light);padding:4px 0}.am-sd summary{cursor:pointer;padding:10px 2px;font-weight:600}.am-go{display:inline-block;margin:6px 0 10px;font-size:13.5px;color:var(--primary)}.am-sec2{margin:10px 0 16px}
+.dr-main .am-h i{font-style:normal}
+.am-cond{border-bottom-width:1.5px;margin:0 0 8px;padding:12px 12px}
+.am-cl{gap:0}
+.am-cond{box-sizing:border-box;background:var(--primary-light);border:1.5px solid color-mix(in srgb,var(--primary) 38%,transparent);border-radius:12px;box-shadow:0 2px 0 color-mix(in srgb,var(--primary) 30%,transparent);color:var(--primary);font:inherit;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .08s,box-shadow .08s}
+.am-cond:active{transform:translateY(2px);box-shadow:0 0 0 transparent}
+
+/* v150: কুরআন বাছাই · কিবলা কম্পাস · ডিজিটাল তাসবীহ (tools.js) */
+#drTools .tl-h{font-size:21px;margin:4px 2px 12px;color:var(--primary-dark,var(--primary))}
+.tl-opt{display:flex;align-items:center;gap:14px;margin:0 0 12px;padding:18px 16px;text-decoration:none;color:var(--primary);background:var(--primary-light);border:1.5px solid color-mix(in srgb,var(--primary) 38%,transparent);border-radius:16px;box-shadow:0 3px 0 color-mix(in srgb,var(--primary) 30%,transparent)}
+.tl-opt:active{transform:translateY(2px);box-shadow:none}
+.tl-opt i{font-style:normal;font-size:30px;min-width:52px;text-align:center;font-family:"Amiri","Noto Naskh Arabic",serif}
+.tl-opt span{flex:1;display:flex;flex-direction:column;gap:2px}.tl-opt b{font-size:17px}.tl-opt small{font-size:12.5px;color:var(--text-muted);font-weight:400}.tl-opt em{font-style:normal;font-size:22px;opacity:.6}
+.tl-card{background:var(--card-bg);border:1px solid var(--border-light);border-radius:16px;box-shadow:var(--shadow-card);padding:14px 12px 16px}
+.tl-qinfo{text-align:center;font-size:15px;line-height:1.6;color:var(--primary)}.tl-qinfo small{color:var(--text-muted);font-size:12px}.tl-qinfo span{color:var(--text-muted);font-size:12.5px}
+.tl-comp{max-width:340px;margin:8px auto 4px}.tl-svg{display:block;width:100%;height:auto;color:var(--primary)}
+.tl-ring{fill:var(--primary-light);stroke:var(--primary);stroke-width:3;transition:fill .2s,stroke .2s}.tl-ring.ok{fill:#d9f2e2;stroke:#1b8a4b}
+.tl-n{font-size:22px;font-weight:800;fill:#c0392b}.tl-d{font-size:17px;font-weight:700;fill:currentColor}
+.tl-kl{stroke:var(--accent,#b8860b);stroke-width:3;stroke-linecap:round}.tl-kaaba{font-size:26px}
+.tl-ptr{fill:var(--accent,#b8860b)}.tl-hub{fill:var(--primary)}
+.tl-qstat{min-height:24px;text-align:center;font-size:15px;color:var(--text-muted);margin:4px 0 8px}.tl-ok{color:#1b8a4b;font-size:17px}
+.tl-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.tl-b{flex:1 1 140px;min-height:44px;padding:8px 10px;font:inherit;font-size:14px;font-weight:700;color:var(--primary);background:var(--primary-light);border:1.5px solid color-mix(in srgb,var(--primary) 38%,transparent);border-radius:12px;box-shadow:0 2px 0 color-mix(in srgb,var(--primary) 30%,transparent);cursor:pointer}
+.tl-b:active{transform:translateY(2px);box-shadow:none}.tl-b:disabled{opacity:.6}.tl-bad{color:#b3261e}
+.tl-note{font-size:12.5px;line-height:1.7;color:var(--text-muted);margin:12px 4px 0}
+.tl-chips,.tl-tgs{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none}.tl-tgs{justify-content:center;flex-wrap:wrap;overflow:visible}
+.tl-chip{flex:none;padding:7px 13px;font:inherit;font-size:14px;font-weight:700;color:var(--primary);background:var(--primary-light);border:1.5px solid color-mix(in srgb,var(--primary) 30%,transparent);border-radius:999px;cursor:pointer;white-space:nowrap}
+.tl-chip.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.tl-ar{text-align:center;font-size:30px;line-height:1.8;color:var(--primary);margin:2px 0 2px;min-height:12px}
+.tl-tap{position:relative;display:block;width:min(78vw,300px);aspect-ratio:1;margin:6px auto 8px;padding:0;border:0;border-radius:50%;background:var(--primary-light);color:var(--primary);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;box-shadow:0 5px 0 color-mix(in srgb,var(--primary) 35%,transparent);user-select:none;-webkit-user-select:none}
+.tl-tap:active{transform:translateY(3px);box-shadow:0 2px 0 color-mix(in srgb,var(--primary) 35%,transparent)}
+.tl-tsvg{position:absolute;inset:0;width:100%;height:100%}.tl-tbg{fill:none;stroke:color-mix(in srgb,var(--primary) 16%,transparent);stroke-width:12}.tl-tfg{fill:none;stroke:var(--primary);stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .15s}
+.tl-cnt{position:absolute;left:0;right:0;top:50%;transform:translateY(-58%);font-size:68px;font-weight:800;line-height:1}.tl-tg{position:absolute;left:0;right:0;bottom:26%;font-size:13px;color:var(--text-muted)}
+.tl-meta{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--text-muted);margin:0 6px 8px}
