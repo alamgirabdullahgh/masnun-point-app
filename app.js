@@ -950,7 +950,7 @@ function drShell(){
  const open=on=>{side.classList.toggle("on",on);scrim.classList.toggle("on",on);document.body.classList.toggle("dr-lock",on);side.setAttribute("aria-hidden",on?"false":"true");menu.setAttribute("aria-expanded",on?"true":"false")};
  menu.onclick=()=>open(true);{const sb=document.querySelector(".dr-sbtn");if(sb)sb.addEventListener("click",()=>{const rb=$("rsBox");if(rb&&rb.classList.contains("dr-tonly")){rb.classList.remove("dr-tonly");const ro=$("rsOut"),ri=$("rsInfo"),rq=$("rsQ");if(ro)ro.innerHTML="";if(ri)ri.textContent="";if(rq)rq.value="";window.scrollTo(0,0)}})}{const ac=$("drAcc");if(ac)ac.onclick=()=>{let t=document.querySelector(".dr-toast");if(!t){t=document.createElement("div");t.className="dr-toast";document.body.appendChild(t)}t.textContent="অ্যাকাউন্ট সুবিধা শীঘ্রই আসছে";clearTimeout(window.__drTo);window.__drTo=setTimeout(()=>{t.remove()},2200)}}$("drClose").onclick=scrim.onclick=()=>open(false);
  document.addEventListener("keydown",e=>{if(e.key==="Escape")open(false)});
- const navs=[...document.querySelectorAll(".dr-nav,.dr-bn,.dr-sbtn")];
+ const navs=[...document.querySelectorAll(".dr-nav,.dr-bn:not(#drAcc),.dr-sbtn")];
  let prev="";
 
  /* ===== নতুন হোম: ৩টি হেডিং (রুকইয়াহ · হিজামা · অন্যান্য), প্রতিটির নিচে বড় বাটন ===== */
