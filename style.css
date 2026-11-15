@@ -574,7 +574,7 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 .dr-timecard .drw{background:transparent!important;margin:0 auto;padding:4px 6px 2px;border-radius:0}
 
 /* মাসনুন: বার্গার আইকন সরানো (জায়গা রেখে, যাতে নাম মাঝখানে থাকে); কুরআন বাছাই; অন্যান্য ৪ বাটন */
-
+#drMenu{display:none}
 button.mp-b{font-family:inherit;cursor:pointer}
 #mp-misc .mp-b b{font-size:12.5px}
 /* v150: আমল/চিকিৎসা পাতা (Daily Ruqyah থেকে) */
@@ -634,13 +634,6 @@ button.mp-b{font-family:inherit;cursor:pointer}
 /* ট্রিটমেন্ট/বিষয়ের পাতা: সার্চ বক্স, কীবোর্ড ও বিষয়-বোতাম নেই; সার্চ আইকনে চাপলেই শুধু সার্চ দেখায় */
 #rsBox.dr-tonly .rs-bar,#rsBox.dr-tonly #rsTp,#rsBox.dr-tonly .rs-pad,#rsBox.dr-tonly .rs-tt,#rsBox.dr-tonly .rs-tadd{display:none!important}
 
-/* v157: ওপরের বার — বামে সার্চ, ডানে নাম+লোগো, একেবারে ডানে মেনু (একটু ফাঁক রেখে); নিচের নেভে বামে অ্যাকাউন্ট + হোম; সাইডবার ডান দিক থেকে পুরো প্রস্থে */
-.dr-brand{justify-content:flex-end;padding:0 0 0 4px}
-.dr-menu-r{margin-left:14px}
+/* v157: নিচের নেভ — বামে অ্যাকাউন্ট, মাঝে হোম, ডানে শেয়ার (তিনটি সমান ভাগ, হোম ঠিক মাঝখানে) */
 .dr-bnav{align-items:stretch}
-.dr-bn.dr-acc{flex:none;width:76px;background:none;border:0;font-family:inherit;cursor:pointer}
-.dr-bn[data-nav="home"]{flex:1}
-body.is-home .dr-bn.dr-acc,.dr-bn.dr-acc{margin:0}
-.dr-side{left:0;right:0;width:100vw;max-width:none;transform:translateX(104%);border-radius:0}
-.dr-side.on{transform:none}
-.dr-side-head{border-radius:0}
+.dr-bn.dr-acc,.dr-bn.dr-nsh{background:none;border:0;font-family:inherit;cursor:pointer}
