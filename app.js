@@ -775,8 +775,7 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
   const openT=t=>{clear();q.value=t.name;setDir();goTopic(t);setTimeout(()=>info.scrollIntoView({behavior:"smooth",block:"start"}),250)};
   const knotData=()=>{clear();showDiag({host:out,infoEl:info,filter:isKnotG,sq:"ট্রিটমেন্ট",nm:"চিকিৎসা",alive:()=>root.isConnected})};
   const root=catPanel({clear,ayat:n=>openT({name:n+" (চিকিৎসা)",terms:catTerms(n),intro:n+"ের চিকিৎসার আয়াত",ordered:true}),
-   git:(n,h)=>{if(n==="জাদু"){h.appendChild(el("div","dr-cnote","শরীরের ভেতরে ৭ জায়গার গিঁট (বইয়ের উল্লেখ অনুযায়ী, শব্দভিত্তিক)। প্রতিটি গিঁটের আয়াত নিচে; “📚 চিকিৎসা” বাটনে ওই গিঁটের সব আয়াত।"));knotData()}else organKnots(n,h,openT)},
-   extra:[["সব আয়াত একসাথে",()=>{const t=TOPICS.find(x=>x.name==="বদনজর · জাদু · জিন (চিকিৎসা)");if(t)openT(t)},"dr-cfull"]]});
+   git:(n,h)=>{if(n==="জাদু"){h.appendChild(el("div","dr-cnote","শরীরের ভেতরে ৭ জায়গার গিঁট (বইয়ের উল্লেখ অনুযায়ী, শব্দভিত্তিক)। প্রতিটি গিঁটের আয়াত নিচে; “📚 চিকিৎসা” বাটনে ওই গিঁটের সব আয়াত।"));knotData()}else organKnots(n,h,openT)}});
   root.id="drTrCats";clear();info.parentNode.insertBefore(root,info)};
  const showTopics=async force=>{if(!force&&rs.classList.contains("on")&&rs.dataset.k==="topics"){rs.classList.remove("on");return}
   pad.classList.remove("on");rs.innerHTML="";rs.dataset.k="topics";rs.classList.add("bn","on");$("rsOut").innerHTML="";$("rsInfo").textContent="";
@@ -851,12 +850,12 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
  {let built=false;const SEL=new Map();
   window.__drHome=()=>{if(built)return;built=true;const H=$("drHome");if(!H)return;
    H.innerHTML="";const lg=k=>lsGet(k,"");
-   {const t0=els("div","font-weight:800;font-size:18px;color:var(--primary);margin:4px 2px 10px","🩺 রোগ নির্ণয় (ডায়াগনোসিস)");t0.id="drHomeT";H.appendChild(t0)}
+   
    const card=els("div","display:flex;gap:8px;padding:10px;border:1px solid var(--border-light);border-radius:16px;background:var(--card-bg);margin:0 0 12px");
    
    const nm=document.createElement("input"),ph=document.createElement("input");
    [[nm,"Patient name","text","hmName","drPtN"],[ph,"WhatsApp","tel","hmPh","drPtP"]].forEach(([i,pl,t,id,key])=>{i.className="dr-find";i.style.cssText="flex:1;min-width:0;width:auto;margin:0;";i.type=t;i.id=id;i.placeholder=pl;i.autocomplete="off";i.value=lg(key);i.oninput=()=>lsSet(key,i.value);if(t==="tel")i.inputMode="tel";card.appendChild(i)});
-   H.appendChild(card);
+   
    /* সময়/মেয়াদের আয়াত এখন রোগ নির্ণয়ের অন্য ভাগগুলোর মতোই তালিকার একেবারে নিচে (data/quran-diagnosis.json) */
    const TM=[],DU=[],TSEL=new Set();let DSEL=null;const refTxt=r=>"সূরা "+SBN[r[0]-1]+" "+bn2(r[0])+":"+bn2(r[1]);
    const info=el("div"),out=el("div");H.append(info,out);
@@ -875,18 +874,17 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
     if(DSEL){const r=DU.find(x=>x[0]===DSEL)[1];m+="\n\n⏳ সমস্যা চলছে: "+DSEL+"\n   আয়াত (সময়-এককের উল্লেখ): "+r.map(refTxt).join("، ")}
     m+="\n\n— Masnun Ruqyah";
     const a=document.createElement("a");a.href="https://wa.me/"+n+"?text="+encodeURIComponent(m);a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove()});
-   send.style.margin="0";bar.append(cnt,send);H.appendChild(bar);
+   send.style.margin="0";bar.append(cnt,send);
    const pick=(c,k,g)=>{const id=c.name+"|"+k.s+":"+k.a+":"+k.from,lb=els("label","display:inline-flex;align-items:center;gap:6px;margin:0 0 0 auto;padding:4px 10px;border:1px dashed var(--accent);border-radius:999px;font-size:12.5px;color:var(--primary);cursor:pointer;white-space:nowrap"),cb=document.createElement("input");
     cb.type="checkbox";cb.style.cssText="width:18px;height:18px;accent-color:var(--primary)";cb.checked=SEL.has(id);
     cb.onchange=()=>{if(cb.checked)SEL.set(id,{sec:g.section||"",name:c.name,s:k.s,a:k.a,sn:SN[k.s-1]});else SEL.delete(id);upd()};
     lb.append(els("span",null,"রিয়্যাকশন হয়েছে"),cb);return lb};
    let DG=0;const clear=()=>{DG++;GEN++;out.innerHTML="";info.textContent=""};
-   const show=filter=>{const my=++DG;showDiag({host:out,infoEl:info,pick,filter,alive:()=>my===DG})};
+   const show=filter=>{const my=++DG;showDiag({host:out,infoEl:info,filter,alive:()=>my===DG})};
    const openT=t=>{location.hash="#search";setTimeout(()=>{q.value=t.name;setDir();rs.classList.remove("on");goTopic(t);window.scrollTo({top:0,behavior:"smooth"})},90)};
    const has=x=>g=>g.section===x;
    H.insertBefore(catPanel({clear,ayat:n=>show(g=>g.section===n&&!isKnotG(g)),
-    git:(n,h)=>{if(n==="জাদু"){h.appendChild(el("div","dr-cnote","শরীরের ভেতরে ৭ জায়গার গিঁট (বইয়ের উল্লেখ অনুযায়ী, শব্দভিত্তিক)। প্রতিটি গিঁটের আয়াত নিচে; “📚 চিকিৎসা” বাটনে ওই গিঁটের সব আয়াত।"));show(isKnotG)}else organKnots(n,h,openT)},
-    extra:[["⏱ সমস্যা কখন বাড়ে",()=>show(has("সমস্যা কখন বাড়ে"))],["⏳ সমস্যা কত সময় ধরে",()=>show(has("সমস্যা কত সময় ধরে"))]]}),info)};}
+    git:(n,h)=>{if(n==="জাদু"){h.appendChild(el("div","dr-cnote","শরীরের ভেতরে ৭ জায়গার গিঁট (বইয়ের উল্লেখ অনুযায়ী, শব্দভিত্তিক)। প্রতিটি গিঁটের আয়াত নিচে; “📚 চিকিৎসা” বাটনে ওই গিঁটের সব আয়াত।"));show(isKnotG)}else organKnots(n,h,openT)}}),info)};}
  SHOWT=showTopics;$("rsTp").onclick=()=>showTopics();
  document.querySelectorAll(".rs-ex").forEach(b=>b.onclick=()=>{q.value=b.dataset.q;go()});
  go();loadRoots().catch(()=>{})}
