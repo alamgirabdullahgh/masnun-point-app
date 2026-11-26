@@ -770,7 +770,14 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
   l.slice().sort((a,b)=>a.rn<b.rn?-1:a.rn>b.rn?1:0).forEach(r=>{const row=el("div","rs-ri"),b=el("b",null,[...r.rn].join(" ")),c=el("span",null,bn2(r.n)+" বার");row.append(b,c);row.onclick=()=>{q.value=r.rn;rs.classList.remove("on");go();window.scrollTo({top:rs.getBoundingClientRect().top+scrollY-60,behavior:"smooth"})};rs.appendChild(row)})};
  const go=()=>(ALLF=false,run()).catch(e=>{console.error(e);$("rsInfo").textContent="ডেটা লোড করা যায়নি — ইন্টারনেট দেখে আবার চেষ্টা করুন"});
  const goTopic=t=>(ALLF=false,$("rsBox").classList.add("dr-tonly"),run(t)).catch(e=>{console.error(e);$("rsInfo").textContent="ডেটা লোড করা যায়নি — ইন্টারনেট দেখে আবার চেষ্টা করুন"});
- window.__drTreat=()=>{const t=TOPICS.find(x=>x.name==="বদনজর · জাদু · জিন (চিকিৎসা)");if(!t)return;q.value=t.name;setDir();rs.classList.remove("on");goTopic(t)};
+ window.__drTreat=()=>{const old=$("drTrCats");if(old)old.remove();const info=$("rsInfo"),out=$("rsOut");
+  const clear=()=>{GEN++;CURT=null;window.__bq="";q.value="";setDir();rs.classList.remove("on");out.innerHTML="";info.textContent=""};
+  const openT=t=>{clear();q.value=t.name;setDir();goTopic(t);setTimeout(()=>info.scrollIntoView({behavior:"smooth",block:"start"}),250)};
+  const knotData=()=>{clear();showDiag({host:out,infoEl:info,filter:isKnotG,sq:"ট্রিটমেন্ট",nm:"চিকিৎসা",alive:()=>root.isConnected})};
+  const root=catPanel({clear,ayat:n=>openT({name:n+" (চিকিৎসা)",terms:catTerms(n),intro:n+"ের চিকিৎসার আয়াত",ordered:true}),
+   git:(n,h)=>{if(n==="জাদু"){h.appendChild(el("div","dr-cnote","শরীরের ভেতরে ৭ জায়গার গিঁট (বইয়ের উল্লেখ অনুযায়ী, শব্দভিত্তিক)। প্রতিটি গিঁটের আয়াত নিচে; “📚 চিকিৎসা” বাটনে ওই গিঁটের সব আয়াত।"));knotData()}else organKnots(n,h,openT)},
+   extra:[["সব আয়াত একসাথে",()=>{const t=TOPICS.find(x=>x.name==="বদনজর · জাদু · জিন (চিকিৎসা)");if(t)openT(t)},"dr-cfull"]]});
+  root.id="drTrCats";clear();info.parentNode.insertBefore(root,info)};
  const showTopics=async force=>{if(!force&&rs.classList.contains("on")&&rs.dataset.k==="topics"){rs.classList.remove("on");return}
   pad.classList.remove("on");rs.innerHTML="";rs.dataset.k="topics";rs.classList.add("bn","on");$("rsOut").innerHTML="";$("rsInfo").textContent="";
   const secH=t=>rs.appendChild(el("div","dr-sec",t));
@@ -785,10 +792,28 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
   const cnt=[];TOPICS.forEach((t,i)=>{const n=drRow(bn2(i+1),t.name,t.desc||"","…",()=>{q.value=t.name;setDir();rs.classList.remove("on");goTopic(t);window.scrollTo({top:rs.getBoundingClientRect().top+scrollY-60,behavior:"smooth"})});cnt.push([t,n])});fillCounts(cnt);
   const ft=el("div","dr-bak"),fi=document.createElement("input");fi.type="file";fi.accept=".json,application/json";fi.style.display="none";fi.onchange=()=>{if(fi.files[0])importTopics(fi.files[0]);fi.value=""};
   ft.append(mkBtn("📥 নিজের তালিকার ব্যাকআপ নামান",exportTopics),mkBtn("📤 ব্যাকআপ ফেরান",()=>fi.click()),fi);ft.style.position="static";rs.appendChild(ft)};
+ /* ───── বদনজর (ওপরের লাইন) · জাদু (বামে) · জিন (ডানে) → "আয়াত" ও "গিঁট" বাটন; রেসপন্স ডায়াগনোসিস ও ট্রিটমেন্ট দুই পাতায় একই বিন্যাস ───── */
+ const CATS={"বদনজর":["বদনজর"],"জাদু":["জাদু","জাদুর প্রকার"],"জিন":["জিন","চালানের প্রকার"]};
+ const isKnotG=g=>g.section==="জাদু"&&g.name.includes("শরীরের ভেতরে");
+ const catTerms=n=>CATS[n].flatMap(x=>{const t=TOPICS.find(y=>y.name===x);return t?t.terms:[]});
+ const catPanel=cfg=>{const root=el("div","dr-cats"),grid=el("div","dr-cgrid"),sub=el("div","dr-csub"),body=el("div","dr-cbody"),mains=[];
+  const mk=(cls,t,fn)=>{const b=el("button",cls,t);b.type="button";b.setAttribute("aria-pressed","false");b.onclick=fn;return b};
+  const mark=(list,b)=>list.forEach(x=>{x.classList.toggle("on",x===b);x.setAttribute("aria-pressed",String(x===b))});
+  const open=(b,subs)=>{mark(mains,b);sub.textContent="";body.textContent="";cfg.clear();const bs=[];subs.forEach(([t,fn])=>{const x=mk("dr-cbtn dr-csb",t,()=>{mark(bs,x);body.textContent="";cfg.clear();fn(body)});bs.push(x);sub.appendChild(x)})};
+  [["বদনজর","dr-cfull"],["জাদু",""],["জিন",""]].forEach(([n,c])=>{const b=mk("dr-cbtn "+c,n,()=>open(b,[["📖 আয়াত",()=>cfg.ayat(n)],["🪢 গিঁট",h=>cfg.git(n,h)]]));mains.push(b);grid.appendChild(b)});
+  root.append(grid);
+  if(cfg.extra){const ex=el("div","dr-cgrid dr-cextra");cfg.extra.forEach(([t,fn,c])=>{const b=mk("dr-cbtn dr-cmini "+(c||""),t,()=>{mark(mains,b);sub.textContent="";body.textContent="";cfg.clear();fn()});mains.push(b);ex.appendChild(b)});root.append(ex)}
+  root.append(sub,body);return root};
+ /* বদনজর ও জিনের গিঁট: অ্যাপের অঙ্গ-তালিকা ধরে; প্রতিটি অঙ্গের নিজের আয়াত */
+ const organKnots=(n,h,openT)=>{
+  h.appendChild(el("div","dr-cnote","শরীরের যে জায়গায় সমস্যা বা প্রতিক্রিয়া হয়, সেই জায়গার গিঁটে চাপুন; ওই অঙ্গের আয়াত ও অডিও খুলবে। কুরআন বা অ্যাপের তথ্যে "+n+"ের গিঁটের নির্দিষ্ট জায়গা বলা নেই। এটি অঙ্গের নাম ধরে শব্দভিত্তিক সংগ্রহ; আলেম বা অভিজ্ঞ রাকির পর্যালোচনা দরকার।"));
+  h.appendChild(mk1("📖 প্রতিটি গিঁটের সাথে পড়ুন: "+n+"ের আয়াত",()=>openT({name:n,terms:catTerms(n),intro:n+"ের আয়াত",ordered:false})));
+  const g=el("div","dr-cgrid dr-cknots");ORG.forEach((o,i)=>g.appendChild(mk1(bn2(i+1)+". "+o[0],()=>openT({name:o[0]+" — "+n+"ের গিঁট",terms:o[2].map(x=>[o[0]+" — "+x[0]].concat(x.slice(1))),intro:"শরীরের জায়গা: "+o[0]+" — এই গিঁটে পড়ার আয়াত",ordered:true}))));h.appendChild(g)};
+ const mk1=(t,fn)=>{const b=el("button","dr-cbtn dr-cknot",t);b.type="button";b.onclick=fn;return b};
 // ---------- রোগ নির্ণয়ের তালিকা (quran-diagnosis.json) ----------
  const showDiag=async(cfg)=>{window.__bq="";const CF=Object.assign({file:"quran-diagnosis.json?v="+DV+"d19",title:"🩺 রোগ নির্ণয় (ডায়াগনোসিস)",sq:"রোগ নির্ণয়",nm:"নির্ণয়",badge:["আয়াতে সরাসরি আছে","শব্দভিত্তিক"],intro:null},cfg&&(cfg.file||cfg.host)?cfg:{});GEN++;CURT=null;rs.classList.remove("on");pad.classList.remove("on");const out=CF.host||$("rsOut"),info=CF.infoEl||$("rsInfo");out.innerHTML="";info.textContent="লোড হচ্ছে…";q.value="";setDir();window.__sq=CF.sq;
   let D;try{D=await rsFetch(BASE+CF.file)}catch(e){info.textContent="তালিকা লোড করা যায়নি — ইন্টারনেট দেখে আবার চেষ্টা করুন";return}
-  info.textContent="";if(!CF.host)info.appendChild(els("div","font-weight:700;color:var(--primary);margin-bottom:4px",CF.title));
+  if(CF.alive&&!CF.alive())return;if(CF.filter)D=Object.assign({},D,{groups:D.groups.filter(CF.filter)});info.textContent="";if(!CF.host)info.appendChild(els("div","font-weight:700;color:var(--primary);margin-bottom:4px",CF.title));
   const resolve=sel=>{const terms=[];sel.forEach(x=>{const t=TOPICS.find(y=>y.name===x.topic);if(t)t.terms.forEach(y=>{if(x.all||(x.prefix?y[0].split(" — ")[0]===x.prefix:(x.titles||[]).includes(y[0])))terms.push(y)})});return terms};
   const keyList=cs=>{const list=[],seen=new Set();cs.forEach(c=>c.keys.forEach(k=>{const id=k.s+":"+k.a;if(!seen.has(id)){seen.add(id);list.push([k.s,k.a])}}));return{list}};
   const audio=(cs,label)=>{const w=els("div","margin-top:6px"),note=els("div","font-size:12px;color:var(--text-muted);margin-top:4px"),res=el("div"),b=mkBtn("🔊 "+label,()=>{window.__sq=CF.sq+" "+(cs.length===1?cs[0].name:label);const k=keyList(cs);if(k.list.length===1&&setAll()<=1&&repOf(k.list[0][0],k.list[0][1])<=1){playOne(k.list[0][0],k.list[0][1],res,note);return}mergeAudio(k.list,res,t=>note.textContent=t)});b.style.margin="0";w.append(b,note,res);w.btn=b;return w};
@@ -855,7 +880,13 @@ function init(){const q=$("rsQ"),pad=$("rsPad");let mode="ar",BW=null,kb=false;
     cb.type="checkbox";cb.style.cssText="width:18px;height:18px;accent-color:var(--primary)";cb.checked=SEL.has(id);
     cb.onchange=()=>{if(cb.checked)SEL.set(id,{sec:g.section||"",name:c.name,s:k.s,a:k.a,sn:SN[k.s-1]});else SEL.delete(id);upd()};
     lb.append(els("span",null,"রিয়্যাকশন হয়েছে"),cb);return lb};
-   showDiag({host:out,infoEl:info,pick})};}
+   let DG=0;const clear=()=>{DG++;GEN++;out.innerHTML="";info.textContent=""};
+   const show=filter=>{const my=++DG;showDiag({host:out,infoEl:info,pick,filter,alive:()=>my===DG})};
+   const openT=t=>{location.hash="#search";setTimeout(()=>{q.value=t.name;setDir();rs.classList.remove("on");goTopic(t);window.scrollTo({top:0,behavior:"smooth"})},90)};
+   const has=x=>g=>g.section===x;
+   H.insertBefore(catPanel({clear,ayat:n=>show(g=>g.section===n&&!isKnotG(g)),
+    git:(n,h)=>{if(n==="জাদু"){h.appendChild(el("div","dr-cnote","শরীরের ভেতরে ৭ জায়গার গিঁট (বইয়ের উল্লেখ অনুযায়ী, শব্দভিত্তিক)। প্রতিটি গিঁটের আয়াত নিচে; “📚 চিকিৎসা” বাটনে ওই গিঁটের সব আয়াত।"));show(isKnotG)}else organKnots(n,h,openT)},
+    extra:[["⏱ সমস্যা কখন বাড়ে",()=>show(has("সমস্যা কখন বাড়ে"))],["⏳ সমস্যা কত সময় ধরে",()=>show(has("সমস্যা কত সময় ধরে"))]]}),info)};}
  SHOWT=showTopics;$("rsTp").onclick=()=>showTopics();
  document.querySelectorAll(".rs-ex").forEach(b=>b.onclick=()=>{q.value=b.dataset.q;go()});
  go();loadRoots().catch(()=>{})}
@@ -985,7 +1016,7 @@ function drShell(){
  }
  let lastH="home";
  const route=()=>{open(false);const h=(location.hash||"#home").replace(/^#/,""),p=h.split("/");
-  {const rb=$("rsBox");if(rb){if(p[0]==="amol")rb.classList.add("dr-tonly");else if(rb.classList.contains("dr-tonly")){rb.classList.remove("dr-tonly");const ro=$("rsOut"),ri=$("rsInfo"),rq=$("rsQ");if(ro)ro.innerHTML="";if(ri)ri.textContent="";if(rq)rq.value=""}}}
+  {const rb=$("rsBox");if(p[0]!=="amol"){const tc=$("drTrCats");if(tc)tc.remove()}if(rb){if(p[0]==="amol")rb.classList.add("dr-tonly");else if(rb.classList.contains("dr-tonly")){rb.classList.remove("dr-tonly");const ro=$("rsOut"),ri=$("rsInfo"),rq=$("rsQ");if(ro)ro.innerHTML="";if(ri)ri.textContent="";if(rq)rq.value=""}}}
   document.querySelectorAll("audio").forEach(a=>{try{a.pause()}catch(e){}});
   const al=$("drAlarm");if(al)al.hidden=true;const hm=$("drHome");if(hm)hm.hidden=true;const mh=$("mpHome");if(mh)mh.hidden=true;const am=$("drAmol");if(am)am.hidden=true;const rt=$("drRoutine");if(rt)rt.hidden=true;const tl=$("drTools");if(tl)tl.hidden=true;const mf=$("drMushaf");if(mf)mf.hidden=true;
   if(p[0]==="timewidget"){window.DRALARM&&DRALARM.openWidget();location.hash="#"+lastH;return}

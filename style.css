@@ -637,3 +637,16 @@ button.mp-b{font-family:inherit;cursor:pointer}
 /* v157: নিচের নেভ — বামে অ্যাকাউন্ট, মাঝে হোম, ডানে শেয়ার (তিনটি সমান ভাগ, হোম ঠিক মাঝখানে) */
 .dr-bnav{align-items:stretch}
 .dr-bn.dr-acc,.dr-bn.dr-nsh{background:none;border:0;font-family:inherit;cursor:pointer}
+
+/* বদনজর · জাদু · জিন বাটন */
+.dr-cats{margin:4px 0 12px}
+.dr-cgrid,.dr-csub{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dr-csub,.dr-cextra,.dr-cknots{margin-top:10px}
+.dr-cfull{grid-column:1/-1}
+.dr-cbtn{font:inherit;font-weight:800;font-size:17px;line-height:1.5;padding:13px 8px;border-radius:14px;border:1.5px solid var(--primary);background:var(--card-bg);color:var(--primary);cursor:pointer;min-width:0}
+.dr-cbtn.on{background:var(--primary);color:#fff}
+.dr-csb{border-color:var(--accent);color:var(--accent)}
+.dr-csb.on{background:var(--accent);color:#fff}
+.dr-cmini,.dr-cknot{font-size:14px;font-weight:700;padding:9px 8px;border-width:1px}
+.dr-cbody>.dr-cknot{display:block;width:100%;margin-top:8px}
+.dr-cnote{font-size:13px;line-height:1.7;color:var(--text-muted);margin-top:10px}
